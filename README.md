@@ -1,5 +1,9 @@
-
-![Logo](https://github.com/MatiasAlfaroDev/volando-uy/blob/main/src/main/resources/static/favicon.png?raw=true)
+<p align="center">
+  <img src="https://github.com/MatiasAlfaroDev/volando-uy/blob/main/src/main/resources/static/favicon.png?raw=true" 
+       alt="Logo" 
+       width="150" 
+       height="150">
+</p>
 
 
 
