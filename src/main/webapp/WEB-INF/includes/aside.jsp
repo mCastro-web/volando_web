@@ -30,7 +30,7 @@
                 <ul class="dark:text-white mt-2 menu p-0">
                     <li>
                         <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                            <span class="icon-[tabler--users] size-5"></span>
                             Usuarios
                         </a>
                     </li>
@@ -119,7 +119,7 @@
                 <!-- Contenido para VISITANTE -->
                 <ul class="dark:text-white mt-2 menu p-0">
                     <li>
-                        <a href="consultaUsuario.html">
+                        <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
                             <span class="icon-[tabler--users] size-5"></span>
                             Usuarios
                         </a>

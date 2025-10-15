@@ -133,7 +133,7 @@
                 </div>
                 </li>
                 <li>
-                <a class="dropdown-item" href="modificarUsuario.html">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/modUser">
                     <span class="icon-[tabler--user]"></span>
                     Mi Usuario
                 </a>

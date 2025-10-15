@@ -31,4 +31,9 @@ public class approuter {
     public String listUser() {
         return "listUser"; 
     }
+
+    @GetMapping("/modUser") 
+    public String modUser() {
+        return "modUser"; 
+    }
 }
