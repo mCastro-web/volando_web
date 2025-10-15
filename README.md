@@ -1,5 +1,5 @@
 
-![Logo](https://cdn.discordapp.com/attachments/921147865882058752/1407950946423537746/image.png?ex=68a7f800&is=68a6a680&hm=b7011f9f6f1ed227d69182a6ff59bda34a44bb5d699332b6ef473858f1da0390&)
+![Logo](https://github.com/MatiasAlfaroDev/volando-uy/blob/main/src/main/resources/static/favicon.png?raw=true)
 
 
 
