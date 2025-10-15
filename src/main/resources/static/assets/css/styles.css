@@ -1,0 +1,41 @@
+:root {
+  /* Primary */
+  --color-primary: #0C4DC3;          /* Azul base */
+  --color-primary-content: #ffffff;  /* Texto legible encima del azul */
+}
+
+.input-floating-label {
+  background-color: inherit !important; /* toma el color del contenedor */
+}
+
+/* Quita separación entre navbar y sidebar */
+.drawer {
+  margin-top: 0 !important;
+  border-top: none !important;
+}
+
+/* Evita que el contenido tenga margen adicional */
+.drawer-body {
+  padding-top: 0 !important;
+}
+
+
+.mobile-version {
+  display: block;
+}
+
+.desktop-version {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hidden-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+}
