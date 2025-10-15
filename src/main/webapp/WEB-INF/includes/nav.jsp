@@ -20,15 +20,20 @@
         
         <!-- Centro de la NAV-->
         <div class="navbar-center">
-            <div class="flex items-center gap-3">
-            <img src="${pageContext.request.contextPath}/favicon.png" class="w-8 h-8 rounded-md" alt="logo" />
-            </div>
+          <div class="flex items-center gap-3">
+            <a href="${pageContext.request.contextPath}/">
+              <img src="${pageContext.request.contextPath}/favicon.png" 
+                  class="w-8 h-8 rounded-md cursor-pointer hover:scale-105 transition-transform" 
+                  alt="logo" />
+            </a>
+          </div>
         </div>
 
-    <%
-        Object usuario  = session.getAttribute("usuario");
-        if (usuario == null) {
-    %>  <!-- NAV PARA USUARIO NO LOG -->
+
+        <%
+            Object usuario  = session.getAttribute("usuario");
+            if (usuario == null) {
+        %>  <!-- NAV PARA USUARIO NO LOG -->
         <div id="navres" class="navbar-end">
         <button
           class="text-sm btn btn-sm btn-primary shadow-none rounded"

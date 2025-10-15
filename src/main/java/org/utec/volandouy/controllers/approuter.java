@@ -26,4 +26,9 @@ public class approuter {
     public String loginPost() {
         return "index"; 
     }
+
+    @GetMapping("/listUser") 
+    public String listUser() {
+        return "listUser"; 
+    }
 }
