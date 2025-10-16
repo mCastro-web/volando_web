@@ -18,9 +18,7 @@ public class ListUserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-            System.out.println("=== DEBUG ListUserServlet ===");
             List<Cliente> c = s.listarClientes();
-            System.out.println("Cantidad de clientes encontrados: " + (c != null ? c.size() : "null"));
 
             request.setAttribute("clientes", c);
             request.getRequestDispatcher("/WEB-INF/listUser.jsp").forward(request, response);

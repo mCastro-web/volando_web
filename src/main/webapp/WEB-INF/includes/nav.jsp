@@ -103,7 +103,17 @@
                 <li class="dropdown-header gap-2">
                 <div class="avatar">
                     <div class="w-10 rounded-full">
-                    <img src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png" alt="avatar" />
+
+                      <%
+                          String imagen = "Usuario";
+                          try {
+                              java.lang.reflect.Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                              Object nombreObj = getUrlImagen.invoke(usuario);
+                              if (nombreObj != null) imagen = nombreObj.toString();
+                          } catch (Exception ex) { }
+                      %>
+                      
+                    <img src="<%= imagen %>" alt="avatar" />
                     </div>
                 </div>
                 <div>
