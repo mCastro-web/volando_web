@@ -77,13 +77,13 @@
                 <!-- Contenido para AEROLINEA -->
                 <ul class="dark:text-white mt-2 menu p-0">
                     <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
+                        <a <a href="${pageContext.request.contextPath}/altavuelo" class="flex items-center gap-2">
                             <span class="icon-[tabler--map-search] size-5"></span>
                             Crear Vuelo
                         </a>
                     </li>
                     <li>
-                        <a href="consultaUsuario.html">
+                        <a href="${pageContext.request.contextPath}/AltaRutaVueloServlet">
                             <span class="icon-[tabler--users] size-5"></span>
                             Crear Rutas de Vuelo
                         </a>
@@ -125,7 +125,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="consultaVuelo.html">
+                        <a href="${pageContext.request.contextPath}/consultaVuelo">
                             <span class="icon-[tabler--plane] size-5"></span>
                             Vuelos
                         </a>

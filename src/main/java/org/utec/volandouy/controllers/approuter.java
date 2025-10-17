@@ -36,4 +36,20 @@ public class approuter {
     public String modUser() {
         return "modUser"; 
     }
+
+
+    @GetMapping("/altavuelo") 
+    public String altavuelo() {
+        return "altavuelo"; 
+    }
+
+    @GetMapping("/consultaVuelo") 
+    public String consultaVuelo() {
+        return "consultaVuelo"; 
+    }
+
+        @PostMapping("/altaRutaVuelo")
+    public String AltaRutaVuelo() {
+        return "altaRutaVuelo"; 
+    }
 }

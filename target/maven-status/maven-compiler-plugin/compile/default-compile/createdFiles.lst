@@ -1,3 +1,4 @@
+org\utec\volandouy\web\servlets\AltaVueloServlet.class
 org\utec\volandouy\web\servlets\RegisterServlet.class
 org\utec\volandouy\VolandouyApplication.class
 org\utec\volandouy\web\servlets\ModUserServlet.class
