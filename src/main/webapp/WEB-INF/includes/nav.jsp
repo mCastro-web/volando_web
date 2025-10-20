@@ -95,7 +95,16 @@
             <button id="dropdown-scrollable" type="button" class="dropdown-toggle flex items-center" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                 <div class="avatar">
                 <div class="size-9.5 rounded-full">
-                    <img src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png" alt="avatar 1" />
+                                      <%
+                          String imagenAvatar = "Usuario";
+                          try {
+                              java.lang.reflect.Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                              Object nombreObj = getUrlImagen.invoke(usuario);
+                              if (nombreObj != null) imagenAvatar = nombreObj.toString();
+                          } catch (Exception ex) { }
+                      %>
+
+                    <img src="<%= imagenAvatar %>" alt="avatar" />
                 </div>
                 </div>
             </button>
@@ -155,7 +164,7 @@
                 </a>
                 </li>
                 <li>
-                <a class="dropdown-item" href="consultaVuelo.html">
+                <a class="dropdown-item" href="consultaVuelo">
                     <span class="icon-[tabler--receipt-rupee]"></span>
                     Estado de Vuelos
                 </a>

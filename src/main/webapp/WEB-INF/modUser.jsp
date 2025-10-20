@@ -9,23 +9,56 @@
         Object usuario  = session.getAttribute("usuario");            
     %>
 
-    <main class="flex flex-1 p-4 gap-4">
+    <main class="flex flex-1 p-4 gap-4 bg-base-200">
         <!-- Contenido central -->
-        <section class="flex-1 bg-base-100 p-4 rounded-lg shadow-md space-y-4">
-                    <%
-                        String nombre = "Usuario";
-                        try {
-                            java.lang.reflect.Method getNombre = usuario.getClass().getMethod("getNombre");
-                            Object nombreObj = getNombre.invoke(usuario);
-                            if (nombreObj != null) nombre = nombreObj.toString();
-                        } catch (Exception ex) { }
-                    %>
-            <h2 class="mt-6 text-2xl font-bold text-center">Modificar Datos de <%= nombre %></h2>
+        <section class="flex-1 bg-base-200 p-4 rounded-lg  space-y-4">
+
+            <div class="mt-10 w-full mx-auto    max-w-4xl">
+                <h1 class="text-3xl mb-2">Modificar Datos</h1>
+                <p class="text-sm mb-6">
+           <b> Actualizá la información de tu cuenta</b> de VolandoUy. 
+             Asegurate de que tus datos estén siempre correctos para una mejor experiencia.
+                </p>
+                
+            </div>
             
-            <form class="space-y-6 max-w-md mx-auto" action="ModUserServlet" method="post">
+            <form class="max-w-4xl w-full mx-auto gap-4 base-200  space-y-6 mx-auto" action="ModUserServlet" method="post">
                 <div class="mt-10"></div>
 
+<div class="flex items-center gap-6">
+  <!-- Imagen de perfil actual -->
+  <div class="avatar">
 
+                       <%
+                          String imagen = "Usuario";
+                          try {
+                              java.lang.reflect.Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                              Object nombreObj = getUrlImagen.invoke(usuario);
+                              if (nombreObj != null) imagen = nombreObj.toString();
+                          } catch (Exception ex) { }
+                      %>
+                      
+    <div class="w-20 h-20 bg-base-200 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+      <img
+        src="<%= imagen %>"
+        alt="Foto de perfil actual"
+        class="object-cover w-full h-full"
+      />
+    </div>
+  </div>
+
+  <!-- Selector de nueva imagen -->
+  <div class="form-control w-full max-w-xs">
+    <label class="label">
+      <span class="label-text font-medium">Cambiar imagen de Perfil</span>
+    </label>
+        <input type="file" name="file" accept="image/*"  class="input input-bordered w-full bg-base-200"/>
+
+    <label class="label">
+      <span class="label-text-alt text-xs opacity-70">Seleccioná una nueva imagen de perfil.</span>
+    </label>
+  </div>
+</div>
 
 
                     <%
@@ -40,7 +73,7 @@
 
 
             <!-- Nickname (no editable) -->
-                <div class="mt-4 input-floating bg-base-100">
+                <div class="bg-base-200 mt-10 input-floating bg-base-100">
                     <input
                         type="text"
                         id="nickname"
@@ -55,9 +88,9 @@
                     </label>
                 </div>
 
-            <div class="mt-3"></div>
+            <div class="mt-3 bg-base-200"></div>
             <!-- Correo electrónico (no editable) -->
-                <div class="input-floating bg-base-100">
+                <div class="bg-base-200 input-floating bg-base-100">
 
                 <%
                     String userEmail = "Usuario";
@@ -83,7 +116,7 @@
             </div>
                 <div class="mt-3"></div>
             <!-- Nombre -->
-            <div class="mt-10 input-floating bg-base-100">
+            <div class="mt-10 input-floating bg-base-200">
                 <%
                     String nombreUser = "Usuario";
                         try {
@@ -99,7 +132,7 @@
                         name="nombreUser"
                         value="<%= nombreUser %>"
                         placeholder=" "
-                        class="input input-bordered w-full peer bg-base-100"
+                        class="input input-bordered w-full peer bg-base-200"
                         required
                     />
                     <label for="nombreUser" class="input-floating-label bg-base-100">
@@ -213,60 +246,78 @@
             } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) {
         %>
             <!-- Campos extra para AEROLÍNEA -->
+            
             <div id="aerolineaFields" class=" space-y-4">
-                <div class="input-floating">
-                <textarea placeholder="Descripción de la aerolínea" class="textarea textarea-bordered w-full" id="descripcion "                        name="descripcion"
-></textarea>
+                <div class="bg-base-200 input-floating">
+
+                <% 
+                String descripcion = "Descripción de la aerolínea";
+                try {
+                    java.lang.reflect.Method getDescripcion = usuario.getClass().getMethod("getDescripcion");
+                    Object nombreObj = getDescripcion.invoke(usuario);
+                    if (nombreObj != null) descripcion = nombreObj.toString();
+                } catch (Exception ex) { }
+                %>
+                    <textarea placeholder="Descripción de la aerolínea" class="bg-base-200 textarea textarea-bordered w-full" id="descripcion" name="descripcion"><%= descripcion %></textarea>
                 </div>
+
+
+
                 <div class="mt-3"></div>
-                <div class="input-floating">
-                <input type="url" placeholder="https://www.sitioweb.com" class="input input-bordered w-full" id="web"                        name="web"
- />
-                <label class="input-floating-label" for="web">Sitio web (opcional)</label>
+                <div class="input-floating bg-base-200">
+                <%
+                String web = "https://www.sitioweb.com";
+                try {
+                    java.lang.reflect.Method getWeb = usuario.getClass().getMethod("getWeb");
+                    Object nombreObj = getWeb.invoke(usuario);
+                    if (nombreObj != null) web = nombreObj.toString();
+                } catch (Exception ex) { }
+                %>
+                <input type="url" placeholder="https://www.sitioweb.com" class="bg-base-200 input input-bordered w-full" id="web" name="web" value="<%= web %>" />
+                <label class="input-floating-label bg-base-200" for="web">Sitio web</label>
                 </div>
             </div>
                 <div class="mt-3"></div>
             <!-- Contraseña -->
-            <div class="input-floating bg-base-100">
-                <input type="password" placeholder="Nueva contraseña" class="input input-bordered w-full" id="passwordA"                         name="passwordA"
+            <div class="input-floating bg-base-200">
+                <input type="password" placeholder="Nueva contraseña" class="bg-base-200 input input-bordered w-full" id="passwordA"                         name="passwordA"
 />
                 <label class="input-floating-label" for="password">Nueva Contraseña</label>
             </div>
                 <div class="mt-3"></div>
             <!-- Confirmar Contraseña -->
-            <div class="input-floating bg-base-100">
-                <input type="password" placeholder="Confirmar contraseña" class="input input-bordered w-full" id="confirmPasswordA"                         name="confirmPasswordA"
+            <div class="input-floating bg-base-200">
+                <input type="password" placeholder="Confirmar contraseña" class="bg-base-200 input input-bordered w-full" id="confirmPasswordA"                         name="confirmPasswordA"
 />
                 <label class="input-floating-label" for="confirmPassword">Confirmar Contraseña</label>
             </div>
                 <div class="mt-3"></div>
             <!-- Imagen -->
-            <div class="form-control">
-                <label class="label">
-                <span class="label-text">Imagen de perfil</span>
-                </label>
-                <input id="fotoPerfilA" name="fotoPerfilA" type="file" accept="image/*" class="" />
-            </div>
+
+
         
         <% } %>
 
 
 
-                <div class="mt-3"></div>
-            <!-- Botones -->
-                <div class="mt-6 flex gap-3 justify-end">
-                <button 
-                    class="btn btn-outline " 
-                    >
-                    Cancelar
-                </button>
-                <button
-                    type="submit"
-                    class="btn btn-primary " 
-                    >
-                    Guardar Cambios
-                </button>
-                </div>
+<div class="mt-10 mb-4 flex justify-between items-center">
+  <!-- Botón Cancelar -->
+  <button
+    type="button"
+    onclick="window.location.href='/'"
+    class="btn btn-outline rounded-full"
+  >
+    Cancelar
+  </button>
+
+  <!-- Botón Crear cuenta -->
+  <button
+    type="submit"
+    class="btn btn-primary rounded-full"
+  >
+    Guardar cambios
+  </button>
+</div>
             </form>
         </section>
     </main>

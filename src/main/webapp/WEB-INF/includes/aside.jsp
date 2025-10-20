@@ -1,3 +1,4 @@
+<script src="../path/to/notyf/notyf.js"></script>
 <aside id="collapsible-sidebar" class="overlay [--body-scroll:true] overlay-open:translate-x-0 drawer drawer-start sm:overlay-layout-open:translate-x-0 hidden w-64 [--auto-close:sm] [--is-layout-affect:true] sm:absolute sm:z-0 sm:flex sm:shadow-none lg:[--overlay-backdrop:false] border-0 !shadow-none !m-0 !p-0">
       <div class="drawer-body px-0 pt-0">
         <!-- Header del MENU -->

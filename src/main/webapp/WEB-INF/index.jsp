@@ -6,14 +6,15 @@
     <jsp:include page="includes/nav.jsp" />
 
 
-    <!-- Footer--> 
+    <h2>Subir imagen a Supabase</h2>
+    <form action="testServlet" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Subir</button>
+    </form>
+
+
+        <!-- Footer--> 
     <jsp:include page="includes/footer.jsp" />
-
-
-
-
-
-
 
     <!-- Menu Hamburguesa-->
     <jsp:include page="includes/aside.jsp" />

@@ -1,6 +1,7 @@
+   <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script>
     <footer class="bg-[#0C4DC3] text-white py-6 px-10 mt-auto w-full">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="text-left space-y-2 md:space-y-1">
+        <div class="sm:hide text-left space-y-2 md:space-y-1">
             <div class="flex items-center gap-3">
                 <img src="${pageContext.request.contextPath}/assets/img/logo_utec.png" alt="Logo UTEC" class="h-10 w-auto" />
                 <img src="${pageContext.request.contextPath}/assets/img/logo_tecnologo.png" alt="Logo Tecnólogo" class="h-10 w-auto"/>
@@ -25,3 +26,16 @@
         </div>
       </div>
     </footer>
+    <script>
+        const notyf = new Notyf({
+            duration: 2500,
+            position: { x: 'right', y: 'bottom' },
+            types: [
+            {
+                type: 'dummy',
+                background: '#12c930ff',
+                icon: false
+            }
+            ]
+        });
+    </script>

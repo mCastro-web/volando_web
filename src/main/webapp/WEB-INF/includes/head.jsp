@@ -4,5 +4,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/output.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon.png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf/notyf.min.css">
     <title>VolandoUY</title>
 </head>

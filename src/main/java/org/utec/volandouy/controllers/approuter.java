@@ -52,4 +52,24 @@ public class approuter {
     public String AltaRutaVuelo() {
         return "altaRutaVuelo"; 
     }
+
+    @GetMapping("/registerindex")
+    public String registerindex() {
+        return "registerindex";
+    }
+
+    @GetMapping("/registeraerolinea")
+    public String registeraerolinea() {
+        return "registeraerolinea";
+    }
+
+    @GetMapping("/registercliente")
+    public String registercliente() {
+        return "registercliente";
+    }
+
+    @GetMapping("/testServlet")
+    public String testServlet() {
+        return "testServlet";
+    }
 }

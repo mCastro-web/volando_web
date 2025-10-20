@@ -97,12 +97,40 @@ public class ModUserServlet extends HttpServlet {
         else if (tipoUsuario.equals("AEROLINEA")) {
             
             String nombreA = request.getParameter("nombreUser");
+
             String descripcion = request.getParameter("descripcion");
             String web = request.getParameter("web");
-            String passwordA = BCrypt.hashpw(request.getParameter("passwordA"), BCrypt.gensalt());
-            String fotoPerfilA = request.getParameter("fotoPerfilA");
+            String passwordA = request.getParameter("passwordA");
+            String confirmPasswordA = request.getParameter("confirmPasswordA");
 
-            s.modificarAerolinea(nickNameCliente.toLowerCase(), nombreA, userEmail, passwordA, fotoPerfilA, descripcion, web, nickNameCliente.toLowerCase());
+            if (passwordA != null && confirmPasswordA != null && !passwordA.isEmpty() && !confirmPasswordA.isEmpty()) {
+
+                if (!passwordA.equals(confirmPasswordA)) {
+                    System.out.println("Las contraseñas no coinciden.");
+                }
+            } else {
+                try {
+                    java.lang.reflect.Method getPassword = usuario.getClass().getMethod("getPassword");
+                    Object tipoObj = getPassword.invoke(usuario);
+                    if (tipoObj != null) passwordA = tipoObj.toString();
+                } catch (Exception e) {
+                    System.out.println("Error obteniendo la contraseña: " + e.getMessage());
+                }
+            }
+
+            String urlFoto = request.getParameter("fotoPerfilA");
+
+            if (urlFoto != null && !urlFoto.isEmpty()) {
+                try {
+                    java.lang.reflect.Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                    Object tipoObj = getUrlImagen.invoke(usuario);
+                    if (tipoObj != null) urlFoto = tipoObj.toString().toUpperCase();
+                } catch (Exception e) {
+                    System.out.println("Error obteniendo la imagen: " + e.getMessage());
+                }
+            }
+
+            s.modificarAerolinea(nickNameCliente.toLowerCase(), nombreA, userEmail, passwordA, urlFoto, descripcion, web, nickNameCliente.toLowerCase());
 
             Object usuarioActualizado = s.buscarPorNick(nickNameCliente.toLowerCase());
             session.setAttribute("usuario", usuarioActualizado);

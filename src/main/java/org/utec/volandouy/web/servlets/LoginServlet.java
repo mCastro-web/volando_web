@@ -27,26 +27,39 @@ public class LoginServlet extends HttpServlet {
         String pass = request.getParameter("pass");
 
 
-    try {
-        DtUsuario usuario = s.iniciarSesionUsuario(user, pass);
-        HttpSession session = request.getSession();
-        session.setAttribute("usuario", usuario);
+        try {
 
-        if (usuario.getTipo().equalsIgnoreCase("AEROLINEA")) {
-            List<String> rutas = s.listarRutasConfirmadasAerolinea(usuario.getNombre());
-            session.setAttribute("rutas", rutas);
+            DtUsuario usuario = s.iniciarSesionUsuario(user, pass);
+
+            HttpSession session = request.getSession();
+            session.setAttribute("usuario", usuario);
+
+            if (usuario.getTipo().equalsIgnoreCase("AEROLINEA")) {
+                List<String> rutas = s.listarRutasConfirmadasAerolinea(usuario.getNombre());
+                session.setAttribute("rutas", rutas);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/");
+
+        } catch (IllegalArgumentException e) {
+
+            String mensaje = e.getMessage();
+                if (mensaje.contains("usuario")) {
+                    request.setAttribute("errorUser", mensaje);
+                } else if (mensaje.contains("contraseña") || mensaje.contains("password")) {
+                    request.setAttribute("errorPass", mensaje);
+                } else {
+                    request.setAttribute("errorGeneral", mensaje);
+                }
+
+                request.getRequestDispatcher("login").forward(request, response);
+
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+            request.setAttribute("errorPass", "Error interno del sistema.");
+            request.getRequestDispatcher("login").forward(request, response);
         }
-
-        response.sendRedirect(request.getContextPath() + "/");
-
-    } catch (IllegalArgumentException e) {
-        request.setAttribute("errorPass", e.getMessage());
-        request.getRequestDispatcher("login").forward(request, response);
-    } catch (Exception e) {
-        e.printStackTrace();
-        request.setAttribute("errorPass", "Error interno del sistema.");
-        request.getRequestDispatcher("login").forward(request, response);
-    }
 
     }
 }

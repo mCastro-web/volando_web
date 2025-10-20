@@ -39,6 +39,10 @@
               <span class="helper-text hidden text-red-500" id="userError">
                 Ingresá tu correo o nickname.
               </span>
+              <% String errorUser = (String) request.getAttribute("errorUser");
+                if (errorUser != null) { %>
+                  <span class="text-red-500 text-sm mt-1"><%= errorUser %></span>
+              <% } %>
             </div>
 
 
@@ -57,13 +61,10 @@
               <label class="input-floating-label bg-base-200" for="pass">
                 Contraseña
               </label>
-
-              <span
-                class="helper-text text-red-500 ${empty errorPass ? 'hidden' : ''}"
-                id="passError"
-              >
-                ${not empty errorPass ? errorPass : 'La contraseña ingresada es incorrecta.'}
-              </span>
+              <% String errorPass = (String) request.getAttribute("errorPass");
+                if (errorPass != null) { %>
+                  <span class="text-red-500 text-sm mt-1"><%= errorPass %></span>
+              <% } %>
             </div>
 
 
@@ -89,7 +90,7 @@
 
           <p class="text-center text-base-content/80">
             ¿Nuevo en nuestra plataforma?
-            <a href="register" class="link link-primary">
+            <a href="registerindex" class="link link-primary">
               Crea una cuenta
             </a>
           </p>

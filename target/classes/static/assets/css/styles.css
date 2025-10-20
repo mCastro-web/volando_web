@@ -2,8 +2,16 @@
   /* Primary */
   --color-primary: #0C4DC3;          /* Azul base */
   --color-primary-content: #ffffff;  /* Texto legible encima del azul */
+
+  /* Accent */
+  --color-accent: #042869;        /* Azul oscuro */
+  --color-accent-content: #fff;/* Texto legible encima del azul oscuro */
 }
 
+  [data-strong-password] {
+    display: none !important;
+  }
+  
 .input-floating-label {
   background-color: inherit !important; /* toma el color del contenedor */
 }
