@@ -103,19 +103,10 @@ public class ModUserServlet extends HttpServlet {
             String passwordA = request.getParameter("passwordA");
             String confirmPasswordA = request.getParameter("confirmPasswordA");
 
-            if (passwordA != null && confirmPasswordA != null && !passwordA.isEmpty() && !confirmPasswordA.isEmpty()) {
-
-                if (!passwordA.equals(confirmPasswordA)) {
-                    System.out.println("Las contraseñas no coinciden.");
-                }
+            if (passwordA != null && !passwordA.isEmpty() && passwordA.equals(confirmPasswordA)) {
+                passwordA = BCrypt.hashpw(passwordA, BCrypt.gensalt());
             } else {
-                try {
-                    java.lang.reflect.Method getPassword = usuario.getClass().getMethod("getPassword");
-                    Object tipoObj = getPassword.invoke(usuario);
-                    if (tipoObj != null) passwordA = tipoObj.toString();
-                } catch (Exception e) {
-                    System.out.println("Error obteniendo la contraseña: " + e.getMessage());
-                }
+                passwordA = "";
             }
 
             String urlFoto = request.getParameter("fotoPerfilA");
