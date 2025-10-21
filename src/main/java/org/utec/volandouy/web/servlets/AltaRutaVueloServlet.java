@@ -21,6 +21,7 @@ public class AltaRutaVueloServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
                 
         List<String> categorias = s.listarNombresCategorias();
         List<String> ciudades = s.listarNombresCiudades();
@@ -38,7 +39,7 @@ public class AltaRutaVueloServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
 
         try {
-            String nombre = request.getParameter("nombre");
+            String nombre = request.getParameter("nombreRuta");
             String descripcionCorta = request.getParameter("descripcionCorta");
             String descripcion = request.getParameter("descripcion");
             String costoTuristaStr = request.getParameter("costoTurista");
@@ -48,11 +49,10 @@ public class AltaRutaVueloServlet extends HttpServlet {
             String ciudadDestino = request.getParameter("ciudadDestino");
             String categoria = request.getParameter("categorias");
 
-            Part imagen = request.getPart("imagen");
+            Part imagen = request.getPart("fotoRepresentativa");
             String nombreArchivo = null;
             if (imagen != null && imagen.getSize() > 0) {
                 nombreArchivo = imagen.getSubmittedFileName();
-                // Aquí podrías guardar el archivo si lo deseas
             }
 
             float costoTurista = Float.parseFloat(costoTuristaStr);
@@ -62,19 +62,19 @@ public class AltaRutaVueloServlet extends HttpServlet {
             DtUsuario usuario = (DtUsuario) request.getSession().getAttribute("usuario");
             String nickAerolinea = usuario.getNickname(); // o el método correcto
 
-
+            
             s.altaRutaVuelo(nombre, descripcion, fechaAlta, costoTurista, costoEjecutivo,
                     costoEquipajeExtra, nickAerolinea, ciudadOrigen, ciudadDestino, categoria, nombreArchivo, descripcionCorta);
 
-            request.setAttribute("successMessage", "¡Ruta de vuelo creada exitosamente!");
-        request.getRequestDispatcher("/WEB-INF/index.jsp").forward(request, response);
+        request.setAttribute("notyf_success_ARV", "Vuelo creado correctamente");
+        request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
 
         } catch (IllegalArgumentException e) {
-            request.setAttribute("errorMessage", e.getMessage());
+            request.setAttribute("notyf_error_ARV", e.getMessage());
             request.getRequestDispatcher("altaRutaVuelo").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Error interno del sistema.");
+            request.setAttribute("notyf_error_ARV", "Error interno del sistema.");
             request.getRequestDispatcher("altaRutaVuelo").forward(request, response);
         }
     }

@@ -1,102 +1,249 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List" %>
+<%@ page import="DataTypes.DtRutaVuelo" %>
+<%@ page import="DataTypes.DtVuelo" %>
+<%@ page import="DataTypes.DtReserva" %>
+
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
 <body class="bg-base-200 min-h-screen flex flex-col">
-    <!-- Barra de Navegacion --> 
+    <!-- Barra de Navegacion -->
     <jsp:include page="includes/nav.jsp" />
 
+    <%
+        Object usuario = session.getAttribute("usuario");
+        String tipoCuenta = "usuario";
+        try {
+            if (usuario != null) {
+                java.lang.reflect.Method getTipo = usuario.getClass().getMethod("getTipo");
+                Object tipoObj = getTipo.invoke(usuario);
+                if (tipoObj != null) tipoCuenta = tipoObj.toString().toUpperCase();
+            }
+        } catch (Exception ex) { }
+        String tipo = (String) session.getAttribute("tipoUsuario");
+    %>
+
     <main class="flex flex-1 p-4 gap-4">
+        <section class="flex-1 bg-base-100 p-4 rounded-lg shadow-md space-y-6">
+            <h2 class="text-2xl font-bold mb-4">Consulta de Vuelo</h2>
 
+            <% if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) { %>
 
+            <!-- FILTROS -->
+            <div class="rounded-box border p-4 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
-    <!-- Contenido central -->
-    <section class="flex-1 bg-base-100 p-4 rounded-lg shadow-md space-y-6">
-        <h2 class="text-2xl font-bold text-center">Consulta de Vuelo</h2>
+                    <!-- Rol -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Rol </span></label>
+                        <select id="selRol" class="input input-bordered w-full bg-base-100">
+                            <option value="CLIENTE" selected>Cliente</option>
+                        </select>
+                    </div>
 
-        <!-- Filtros -->
-        <div class="rounded-box border p-4 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <!-- Aerolínea -->
-            <div class="form-control">
-            <label class="label"><span class="label-text">Aerolínea</span></label>
-            <select id="selAero" class="select select-bordered w-full"></select>
+                    <!-- Aerolínea -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Aerolínea</span></label>
+                        <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+                            <select id="selAero" name="aerolinea" class="select select-bordered w-full">
+                                <%
+                                    List<String> aerolineas = (List<String>) request.getAttribute("aerolineas");
+                                    if (aerolineas != null && !aerolineas.isEmpty()) {
+                                        for (String a : aerolineas) {
+                                %>
+                                    <option value="<%= a %>"
+                                        <%= a.equals(request.getAttribute("aerolineaSeleccionada")) ? "selected" : "" %>>
+                                        <%= a %>
+                                    </option>
+                                <%
+                                        }
+                                    } else {
+                                %>
+                                    <option value="">No hay aerolíneas disponibles</option>
+                                <%
+                                    }
+                                %>
+                            </select>
+                            <button type="submit" id="btnFiltrar" class="btn btn-primary w-full mt-3">Listar rutas confirmadas</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Rutas confirmadas -->
+                <div>
+                    <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
+                    <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                        <%
+                            List<DtRutaVuelo> rutasDt = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
+                            if (rutasDt != null && !rutasDt.isEmpty()) {
+                                for (DtRutaVuelo ruta : rutasDt) {
+                                    String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
+                                    String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
+                        %>
+                        <div class="card bg-base-100 shadow-xl">
+                            <div class="form-control">
+                                <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+                                    <input type="hidden" name="aerolinea" value="<%= request.getAttribute("aerolineaSeleccionada") %>">
+                                    <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
+                                        <%= nombre %>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-sm text-base-content/70">
+                                    <%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %>
+                                </p>
+                            </div>
+                        </div>
+                        <%
+                                }
+                            } else if (request.getParameter("aerolinea") != null) {
+                        %>
+                        <p class="col-span-full text-center text-base-content/70">
+                            No hay rutas confirmadas para esta aerolínea
+                        </p>
+                        <%
+                            }
+                        %>
+                    </div>
+                </div>
+
+                <!-- Paso 3: Vuelos de la ruta seleccionada -->
+                <%
+                    List<?> vuelos = (List<?>) request.getAttribute("vuelos");
+                    String rutaSeleccionada = (String) request.getAttribute("rutaIdSeleccionada");
+                    if (vuelos != null && !vuelos.isEmpty()) {
+                %>
+                <div class="mt-6">
+                    <h3 class="font-semibold mb-2">
+                        Vuelos en ruta: <span class="font-normal"><%= rutaSeleccionada %></span>
+                    </h3>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <%
+                            for (Object v : vuelos) {
+                                String vNombre = (v != null) ? v.toString() : "Sin nombre";
+                        %>
+                        <div class="card bg-base-100 shadow">
+                            <div class="card-body">
+                                <p class="font-medium mb-2"><%= vNombre %></p>
+                                <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+                                    <input type="hidden" name="aerolinea" value="<%= request.getAttribute("aerolineaSeleccionada") %>">
+                                    <input type="hidden" name="rutaId" value="<%= rutaSeleccionada %>">
+                                    <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">
+                                        Ver vuelo
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <%
+                            }
+                        %>
+                    </div>
+                </div>
+                <%
+                    } else if (request.getParameter("rutaId") != null) {
+                %>
+                <p class="mt-4 text-base-content/70">No hay vuelos para la ruta seleccionada.</p>
+                <%
+                    }
+                %>
             </div>
 
-            <div class="form-control">
-            <button id="btnFiltrar" class="mt-2   btn btn-primary w-full">Listar rutas confirmadas</button>
+            <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
+            <!-- BLOQUE PARA AEROLÍNEAS (idéntico flujo si lo necesitás duplicar) -->
+            <p>Modo aerolínea aún no implementado aquí.</p>
+            <% } %>
+
+            <!-- Paso 4: Detalle del vuelo seleccionado -->
+            <%
+                String vueloIdSeleccionado = (String) request.getAttribute("vueloIdSeleccionado");
+                DtVuelo dtVuelo = (DtVuelo) request.getAttribute("dtVuelo");
+                if (vueloIdSeleccionado != null && dtVuelo != null) {
+            %>
+            <div class="mt-8 p-6 border rounded-lg bg-base-200 shadow-lg">
+                <h4 class="text-xl font-semibold mb-3">
+                    Detalles del Vuelo: <span class="font-normal"><%= dtVuelo.getNombre() %></span>
+                </h4>
+
+                <div class="space-y-2">
+                    <p><strong>Fecha de Salida:</strong> <%= dtVuelo.getFecha() %></p>
+                    <p><strong>Duración:</strong> <%= dtVuelo.getDuracion() %></p>
+                    <p><strong>Asientos Turista:</strong> <%= dtVuelo.getAsientosTurista() %></p>
+                    <p><strong>Asientos Ejecutivos:</strong> <%= dtVuelo.getAsientosEjecutivo() %></p>
+                </div>
+
+                <%
+                    String urlImg = dtVuelo.getUrlImagen();
+                    if (urlImg != null && !urlImg.isBlank()) {
+                %>
+                    <img src="<%= urlImg %>"
+                         alt="Imagen del Vuelo"
+                         class="w-64 h-64 object-cover mt-4 rounded-lg shadow-md" />
+                <% } else { %>
+                    <p class="text-sm text-gray-400 mt-4">Sin imagen disponible</p>
+                <% } %>
+            </div>
+            <% } %>
+
+<!-- Sección reserva: mostrar botón Ver reserva o mensaje según dtReservaExists -->
+<%
+    Boolean dtReservaExists = (Boolean) request.getAttribute("dtReservaExists");
+    if (dtReservaExists != null && dtReservaExists.booleanValue()) {
+%>
+    <!-- Hay reserva: mostramos botón para ver detalle (envía verReserva=1) -->
+    <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get" class="mt-4 space-y-3">
+        <input type="hidden" name="aerolinea" value="${param.aerolinea}" />
+        <input type="hidden" name="rutaId" value="${param.rutaId}" />
+        <input type="hidden" name="vueloId" value="${param.vueloId != null ? param.vueloId : (dtVuelo != null ? dtVuelo.nombre : '')}" />
+        <button type="submit" name="verReserva" value="1" class="btn btn-success">
+            Ver reserva
+        </button>
+    </form>
+
+    <c:if test="${param.verReserva == '1' and not empty dtReserva}">
+        <div class="mt-4 card bg-base-100 shadow">
+            <div class="card-body">
+                <h4 class="font-semibold">Detalle de la reserva</h4>
+                <p><strong>Código reserva:</strong> ${dtReserva.getId}</p>
+                <p><strong>Fecha reserva:</strong> ${dtReserva.getFecha}</p>
+                <p><strong>Asiento:</strong> ${dtReserva.getTipoAsiento}</p>
+                <p><strong>Equipaje Extra:</strong> ${dtReserva.getEquipajeExtra}</p>
+                <p><strong>Costo:</strong> ${dtReserva.getCosto}</p>
+
+                <c:forEach var="pasaje" items="${dtReserva.getPasajes}">
+                    <p><strong>Pasaje:</strong> ${pasaje}</p>
+                    <p><strong>Nombre:</strong> ${pasaje.getNombre}</p>
+                    <p><strong>Apellido:</strong> ${pasaje.getApellido}</p>
+                </c:forEach>
             </div>
         </div>
+    </c:if>
 
-        <!-- Paso 2: Rutas confirmadas -->
-        <div>
-            <h3 class="font-semibold mb-2">Rutas confirmadas de la aerolínea</h3>
-            <div id="rutasWrap" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 max-w-sm">
-            <!-- tarjetas de rutas -->
-            </div>
-            <p id="msgRutas" class="text-sm text-base-content/70 mt-2"></p>
-        </div>
+<%
+    } else if (dtReservaExists != null && !dtReservaExists.booleanValue()) {
+%>
+    <p class="text-base-content/70">No hay reserva registrada para este vuelo.</p>
+<%
+    } else {
+        // dtReservaExists == null -> no es cliente o no se consultó la reserva
+    }
+%>
 
-        <!-- Paso 3: Vuelos de la ruta seleccionada -->
-        <div id="vuelosPanel" class="hidden">
-            <div class="flex items-center justify-between mt-4 mb-2">
-            <h3 class="font-semibold">Vuelos de la ruta: <span id="rutaNombre" class="font-normal"></span></h3>
-            <button id="btnClearRuta" class="btn btn-ghost btn-sm">Cambiar ruta</button>
-            </div>
-            <div id="vuelosWrap" class="max-w-sm grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <!-- tarjetas de vuelos -->
-            </div>
-        </div>
 
-        <!-- Paso 4: Datos del vuelo -->
-        <div id="vueloPanel" class="hidden">
-            <div class="flex items-center justify-between mt-4 mb-2">
-            <h3 class="font-semibold">Datos del vuelo</h3>
-            <button id="btnClearVuelo" class="btn btn-ghost btn-sm">Cambiar vuelo</button>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-            <div>
-                <img id="vueloImg" class="w-full h-56 md:h-72 object-cover rounded-lg" alt="Imagen del vuelo">
-            </div>
-            <div class="space-y-2">
-                <p><span class="font-medium">Código:</span> <span id="vueloCod"></span></p>
-                <p><span class="font-medium">Ruta:</span> <span id="vueloRuta"></span></p>
-                <p><span class="font-medium">Fecha:</span> <span id="vueloFecha"></span></p>
-                <p><span class="font-medium">Duración:</span> <span id="vueloDur"></span></p>
-                <p><span class="font-medium">Aerolínea:</span> <span id="vueloAero"></span></p>
-                <p><span class="font-medium">Estado de ruta:</span> <span id="vueloEstadoRuta"></span></p>
-            </div>
-            </div>
-            
 
-            <!-- Bloques condicionales: reservas -->
-            <div id="panelAero" class="hidden mt-4">
-            <h4 class="font-semibold mb-2">Reservas del vuelo (vista Aerolínea)</h4>
-            <div id="tablaReservas" class="overflow-x-auto">
-                <!-- tabla -->
-            </div>
-            </div>
-
-            <div id="panelCliente" class="hidden mt-4">
-            <h4 class="font-semibold mb-2">Mi reserva</h4>
-            <div id="miReserva" class="bg-base-100 border rounded-lg p-3">
-                <!-- datos reserva cliente -->
-            </div>
-            </div>
-        </div>
-        </div>
-
-        <button class="btn btn-primary btn-block" onclick="window.location.href='index.html'">Volver</button>
-    </section>
-
+            <!-- Botón Volver -->
+            <button class="btn btn-primary btn-block mt-6"
+                    onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
+        </section>
     </main>
 
-    <!-- Footer--> 
+    <!-- Footer -->
     <jsp:include page="includes/footer.jsp" />
-
-    <!-- Menu Hamburguesa-->
     <jsp:include page="includes/aside.jsp" />
 
     <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
+    <script src="${pageContext.request.contextPath}/js/consultaVuelo.js"></script>
 </body>
 </html>

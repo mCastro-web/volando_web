@@ -29,45 +29,45 @@
 
                 <!-- Contenido para CLIENTE -->
                 <ul class="dark:text-white mt-2 menu p-0">
-                    <li>
+                    <li class="bg-primary">
                         <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
-                            <span class="icon-[tabler--users] size-5"></span>
+                            <span class="material-icons-outlined">group</span>
                             Usuarios
                         </a>
                     </li>
-                    <li>
-                        <a href="consultaUsuario.html">
-                            <span class="icon-[tabler--users] size-5"></span>
+                    <li class="bg-primary">
+                        <a href="${pageContext.request.contextPath}/ReservarVueloServlet">
+                            <span class="material-icons-outlined">flight</span>
                             Reservar Vuelos
                         </a>
                     </li>
                     <li>
                         <a href="consultaVuelo.html">
-                            <span class="icon-[tabler--plane] size-5"></span>
-                            Reservas
+                            <span class="material-icons-outlined">manage_search</span>
+                            Consultar Reservas
                         </a>
                     </li>
                     <li>
                         <a href="consultaRutaVuelo.html">
-                            <span class="icon-[tabler--route] size-5"></span>
+                            <span class="material-icons-outlined">add_shopping_cart</span>
                             Comprar Paquetes
                         </a>
                     </li>
                     <li>
                         <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                            <span class="material-icons-outlined">airplane_ticket</span>
                             Paquetes
                         </a>
                     </li>
-                    <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                    <li class="bg-primary">
+                        <a href="${pageContext.request.contextPath}/ConsultaVueloServlet" class="flex items-center gap-2">
+                            <span class="material-icons-outlined">travel_explore</span>
                             Vuelos
                         </a>
                     </li>
                     <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                        <a href="consultaRutaVuelo">
+                            <span class="material-icons-outlined">route</span>
                             Rutas de Vuelo
                         </a>
                     </li>
@@ -79,37 +79,43 @@
                 <ul class="dark:text-white mt-2 menu p-0">
                     <li>
                         <a <a href="${pageContext.request.contextPath}/altavuelo" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                            <span class="icon-[tabler--plane] size-5"></span>
                             Crear Vuelo
                         </a>
                     </li>
                     <li>
+                        <a href="${pageContext.request.contextPath}/consultaVuelo">
+                            <span class="icon-[tabler--plane] size-5"></span>
+                            Vuelos
+                        </a>
+                    </li>
+                    <li>
                         <a href="${pageContext.request.contextPath}/AltaRutaVueloServlet">
-                            <span class="icon-[tabler--users] size-5"></span>
+                            <span class="icon-[tabler--route] size-5"></span>
                             Crear Rutas de Vuelo
                         </a>
                     </li>
-                    <li>
-                        <a href="consultaVuelo.html">
-                            <span class="icon-[tabler--plane] size-5"></span>
+                    <li class="bg-primary">
+                        <a  href="consultaReservasVuelo">
+                            <span class="icon-[tabler--calendar] size-5"></span>
                             Consultar Reservas
                         </a>
                     </li>
-                    <li>
+                    <li class="bg-primary">
                         <a href="consultaRutaVuelo.html">
-                            <span class="icon-[tabler--route] size-5"></span>
+                            <span class="icon-[tabler--packages] size-5"></span>
                             Consultar Paquetes
                         </a>
                     </li>
-                    <li>
+                    <li class="bg-primary">
                         <a href="consultaPaquete.html" class="flex items-center gap-2">
                             <span class="icon-[tabler--map-search] size-5"></span>
                             Consultar Rutas
                         </a>
                     </li>
                     <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
+                        <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
+                            <span class="icon-[tabler--users] size-5"></span>
                             Consultar Usuarios
                         </a>
                     </li>
@@ -121,32 +127,26 @@
                 <ul class="dark:text-white mt-2 menu p-0">
                     <li>
                         <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
-                            <span class="icon-[tabler--users] size-5"></span>
+                            <span class="material-icons-outlined">group</span>
                             Usuarios
                         </a>
                     </li>
                     <li>
-                        <a href="${pageContext.request.contextPath}/consultaVuelo">
-                            <span class="icon-[tabler--plane] size-5"></span>
-                            Vuelos
-                        </a>
-                    </li>
-                    <li>
-                        <a href="consultaRutaVuelo.html">
-                            <span class="icon-[tabler--route] size-5"></span>
+                        <a href="consultaRutaVuelo">
+                            <span class="material-icons-outlined">route</span>
                             Rutas de Vuelo
                         </a>
                     </li>
                     <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="icon-[tabler--map-search] size-5"></span>
-                            Paquetes de Rutas
+                        <a href="consultaPaquete.html">
+                            <span class="material-icons-outlined">card_travel</span>Paquetes de Rutas
                         </a>
                     </li>
                 </ul>
         <%
             }
         %>
+
 
 
 

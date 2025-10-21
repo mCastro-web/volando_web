@@ -78,7 +78,7 @@
   
   <div class="max-w-4xl w-full mx-auto gap-4">
     <!-- Formulario -->
-    <form class="mt-4 grid gap-6" action="RegisterServlet" method="post">
+    <form class="mt-4 grid gap-6" action="RegisterServlet" method="post" enctype="multipart/form-data">
       
             <!-- Nombre(s) -->
       <label class=" mt-2 form-control w-full">

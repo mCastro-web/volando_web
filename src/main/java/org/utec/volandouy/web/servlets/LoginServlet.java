@@ -30,13 +30,14 @@ public class LoginServlet extends HttpServlet {
         try {
 
             DtUsuario usuario = s.iniciarSesionUsuario(user, pass);
-
+            
             HttpSession session = request.getSession();
             session.setAttribute("usuario", usuario);
 
             if (usuario.getTipo().equalsIgnoreCase("AEROLINEA")) {
-                List<String> rutas = s.listarRutasConfirmadasAerolinea(usuario.getNombre());
+                List<String> rutas = s.listarRutasConfirmadasAerolinea(usuario.getNickname());
                 session.setAttribute("rutas", rutas);
+                System.out.println(rutas);
             }
 
             response.sendRedirect(request.getContextPath() + "/");

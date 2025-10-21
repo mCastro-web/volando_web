@@ -5,20 +5,23 @@
     <!-- Barra de Navegacion --> 
     <jsp:include page="includes/nav.jsp" />
 
+    <script>
+    <% String successMsg = (String) request.getAttribute("notyf_success");
+    if (successMsg != null) { %>
+        const notyf = new Notyf({
+        duration: 4000,
+        position: { x: 'right', y: 'top' }
+        });
+        notyf.success("<%= successMsg %>");
+    <% } %>
+    </script>
 
-    <h2>Subir imagen a Supabase</h2>
-    <form action="testServlet" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*" required>
-        <button type="submit">Subir</button>
-    </form>
 
-
-        <!-- Footer--> 
+    <!-- Footer--> 
     <jsp:include page="includes/footer.jsp" />
 
     <!-- Menu Hamburguesa-->
     <jsp:include page="includes/aside.jsp" />
 
-    <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
 </body>
 </html>

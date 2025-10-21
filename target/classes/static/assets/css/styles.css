@@ -47,3 +47,8 @@
     display: none !important;
   }
 }
+
+  .notyf {
+    bottom: var(--notyf-bottom, 120px) !important;
+    top: auto !important;
+  }

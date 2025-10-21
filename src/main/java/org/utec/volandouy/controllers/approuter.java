@@ -72,4 +72,14 @@ public class approuter {
     public String testServlet() {
         return "testServlet";
     }
+
+    @GetMapping("/consultaRutaVuelo") 
+    public String consultaRutaVuelo() {
+        return "consultaRutaVuelo"; 
+    }
+
+    @GetMapping("/reservarVuelo")
+    public String reservarVuelo() {
+        return "reservarVuelo";
+    }
 }

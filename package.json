@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@material/web": "^2.4.0",
+    "material-icons": "^1.13.14",
     "notyf": "^3.10.0"
   }
 }

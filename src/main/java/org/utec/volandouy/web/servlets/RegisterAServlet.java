@@ -17,7 +17,6 @@ public class RegisterAServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // --- Lectura de campos de texto ---
         String nicknameAerolinea = request.getParameter("nicknameAerolinea");
         String nombre = request.getParameter("nombreAerolinea");
         String email = request.getParameter("emailAerolinea");
@@ -26,26 +25,23 @@ public class RegisterAServlet extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // --- Validar contraseñas ---
         if (!password.equals(confirmPassword)) {
             response.sendRedirect("error.jsp?message=Las contraseñas no coinciden.");
             return;
         }
 
-        // --- Subir imagen ---
         Part filePart = request.getPart("file");
-        System.out.println("📁 Archivo recibido: " + filePart.getSubmittedFileName());
-        System.out.println("📏 Tamaño: " + filePart.getSize());
+        System.out.println("Archivo recibido: " + filePart.getSubmittedFileName());
+        System.out.println("Tamaño: " + filePart.getSize());
 
         String url = s.subirImagen(filePart, "vuy_aerolineas");
-        System.out.println("➡️ URL devuelta por subirImagen(): " + url);
+        System.out.println("URL devuelta por subirImagen(): " + url);
 
         if (url == null || url.isEmpty()) {
             response.sendRedirect("error.jsp?message=Error al subir imagen");
             return;
         }
 
-        // --- Alta de aerolínea ---
         try {
             s.altaAerolinea(nicknameAerolinea, nombre, email, password, url, descripcion, sitioWeb);
             response.sendRedirect(request.getContextPath() + "/");
