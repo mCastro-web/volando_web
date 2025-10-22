@@ -22,7 +22,7 @@
             Iniciar sesión
           </h3>
 
-          <form action="/LoginServlet" method="post" class="space-y-5">
+          <form action="${pageContext.request.contextPath}/LoginServlet" method="post" class="space-y-5">
             <!-- Usuario -->
             <div class="input-floating max-w-sm bg-base-200">
               <input
@@ -30,21 +30,20 @@
                 id="user"
                 name="user"
                 placeholder=""
-                class="input input-bordered w-full peer bg-base-200"
+                class="input input-bordered w-full peer bg-base-200
+                      <%= (request.getAttribute("errorUser") != null) ? "input-error" : "" %>"
+                value="<%= (request.getParameter("user") != null) ? request.getParameter("user") : "" %>"
                 required
               />
               <label class="input-floating-label bg-base-200" for="user">
                 Correo electrónico o Nickname
               </label>
-              <span class="helper-text hidden text-red-500" id="userError">
-                Ingresá tu correo o nickname.
-              </span>
+
               <% String errorUser = (String) request.getAttribute("errorUser");
                 if (errorUser != null) { %>
-                  <span class="text-red-500 text-sm mt-1"><%= errorUser %></span>
+                  <span class="text-red-500 text-sm mt-1 block"><%= errorUser %></span>
               <% } %>
             </div>
-
 
             <!-- Contraseña -->
             <div class="input-floating max-w-sm bg-base-200">
@@ -54,19 +53,19 @@
                 name="pass"
                 placeholder=""
                 class="input input-bordered w-full peer bg-base-200
-                ${not empty errorPass ? 'input-error' : ''}"
+                      <%= (request.getAttribute("errorPass") != null) ? "input-error" : "" %>"
                 required
                 minlength="6"
               />
               <label class="input-floating-label bg-base-200" for="pass">
                 Contraseña
               </label>
+
               <% String errorPass = (String) request.getAttribute("errorPass");
                 if (errorPass != null) { %>
-                  <span class="text-red-500 text-sm mt-1"><%= errorPass %></span>
+                  <span class="text-red-500 text-sm mt-1 block"><%= errorPass %></span>
               <% } %>
             </div>
-
 
             <!-- Recordarme y enlace -->
             <div class="flex items-center justify-between">

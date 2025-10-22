@@ -150,10 +150,98 @@
                 %>
             </div>
 
-            <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
-            <!-- BLOQUE PARA AEROLÍNEAS (idéntico flujo si lo necesitás duplicar) -->
-            <p>Modo aerolínea aún no implementado aquí.</p>
-            <% } %>
+<% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
+
+<div class="rounded-box border p-4 space-y-4">
+    <h3 class="text-xl font-semibold mb-3">Consulta de Vuelos de la Aerolínea</h3>
+
+    <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get" class="space-y-4">
+        <input type="hidden" name="aerolinea" value="<%= request.getAttribute("nickNameAero") %>">
+
+        <!-- Mostrar las rutas confirmadas de la aerolínea -->
+        <div>
+            <h4 class="font-semibold mb-2">Rutas confirmadas</h4>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <%
+                    List<DtRutaVuelo> rutasDt = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
+                    if (rutasDt != null && !rutasDt.isEmpty()) {
+                        for (DtRutaVuelo ruta : rutasDt) {
+                %>
+                <div class="card bg-base-100 shadow-md">
+                    <div class="card-body">
+                        <p class="font-semibold mb-2"><%= ruta.getNombre() %></p>
+                        <button type="submit" name="rutaId" value="<%= ruta.getNombre() %>"
+                                class="btn btn-primary w-full">Ver vuelos</button>
+                    </div>
+                </div>
+                <%
+                        }
+                    } else {
+                %>
+                <p class="text-base-content/70 col-span-full">No hay rutas confirmadas.</p>
+                <%
+                    }
+                %>
+            </div>
+        </div>
+
+        <!-- Vuelos de la ruta seleccionada -->
+        <%
+            List<?> vuelos = (List<?>) request.getAttribute("vuelos");
+            String rutaSeleccionada = (String) request.getAttribute("rutaIdSeleccionada");
+            if (vuelos != null && !vuelos.isEmpty()) {
+        %>
+        <div>
+            <h4 class="font-semibold mb-2">Vuelos de la ruta <%= rutaSeleccionada %></h4>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <%
+                    for (Object v : vuelos) {
+                        String vNombre = (v != null) ? v.toString() : "Sin nombre";
+                %>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <p class="font-medium mb-2"><%= vNombre %></p>
+                        <button type="submit" name="vueloId" value="<%= vNombre %>"
+                                class="btn btn-outline w-full">Ver reservas</button>
+                    </div>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Reservas del vuelo seleccionado -->
+        <%
+            List<DtReserva> reservasVuelo = (List<DtReserva>) request.getAttribute("reservasVuelo");
+            String vueloIdSel = (String) request.getAttribute("vueloIdSeleccionado");
+            if (reservasVuelo != null && !reservasVuelo.isEmpty()) {
+        %>
+        <div class="mt-6">
+            <h4 class="font-semibold mb-2">Reservas del vuelo <%= vueloIdSel %></h4>
+            <div class="space-y-2">
+                <%
+                    for (DtReserva r : reservasVuelo) {
+                %>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <p><strong>Cliente:</strong> <%= r.getCliente().getNickname() %></p>
+                        <p><strong>Tipo asiento:</strong> <%= r.getTipoAsiento() %></p>
+                        <p><strong>Costo:</strong> <%= r.getCosto() %></p>
+                    </div>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+        </div>
+        <% } %>
+    </form>
+</div>
+
+<% } %> <!-- Fin bloque aerolínea -->
+
 
             <!-- Paso 4: Detalle del vuelo seleccionado -->
             <%

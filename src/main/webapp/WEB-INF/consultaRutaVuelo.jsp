@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List, DataTypes.DtRutaVuelo" %>
+<%@ page import="java.util.List, DataTypes.DtVuelo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.net.URLEncoder" %>
 
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
@@ -142,25 +144,68 @@
         </div>
 
         <!-- Mostrar detalles de la ruta seleccionada -->
-        <%
-            DataTypes.DtRutaVuelo rutaDetalle = (DataTypes.DtRutaVuelo) request.getAttribute("ruta");
-            if (rutaDetalle != null) {
-        %>
-            <div class="mt-6 p-4 rounded-md bg-base-200 shadow">
-                <h3 class="font-semibold">Detalle de la ruta: <span class="font-normal"><%= rutaDetalle.getNombre() %></span></h3>
-                <table class="table-auto mt-3 w-full">
-                    <tr><th class="text-left pr-4">Nombre</th><td><%= rutaDetalle.getNombre() %></td></tr>
-                    <tr><th class="text-left pr-4">Costo</th><td><%= rutaDetalle.getCosto() %></td></tr>
-                    <tr><th class="text-left pr-4">Descripción</th><td><%= rutaDetalle.getDescripcion() %></td></tr>
-                    <tr><th class="text-left pr-4">Descuento</th><td><%= rutaDetalle.getDescuento() %></td></tr>
-                    <tr><th class="text-left pr-4">Días validez</th><td><%= rutaDetalle.getDiasValidez() %></td></tr>
-                </table>
-            </div>
-        <%s
-            }
-        %>
+<%
+    DataTypes.DtRutaVuelo rutaDetalle = (DataTypes.DtRutaVuelo) request.getAttribute("ruta");
+    if (rutaDetalle != null) {
+%>
+    <div class="card mt-6 p-4 rounded-md bg-base-200 shadow">
+        <img src="<%= rutaDetalle.getUrlImagen() %>"
+             class="object-cover transition-transform duration-500 ease-in-out hover:scale-110" />
+        <h3 class="text-4xl font-semibold">
+            Detalle de la ruta:
+            <span class="font-normal"><%= rutaDetalle.getNombre() %></span>
+        </h3>
+        <table class="table-auto mt-3 w-full">
+            <tr><th class="text-left pr-4">Nombre</th><td><%= rutaDetalle.getNombre() %></td></tr>
+            <tr><th class="text-left pr-4">Descripción</th><td><%= rutaDetalle.getDescripcion() %></td></tr>
+            <tr><th class="text-left pr-4">Fecha Alta</th><td><%= rutaDetalle.getFechaAlta() %></td></tr>
+            <tr><th class="text-left pr-4">Costo Turista</th><td><%= rutaDetalle.getCostoBaseTurista() %></td></tr>
+            <tr><th class="text-left pr-4">Costo Ejecutivo</th><td><%= rutaDetalle.getCostoBaseEjecutivo() %></td></tr>
+            <tr><th class="text-left pr-4">Costo Equipaje Extra</th><td><%= rutaDetalle.getCostoEquipajeExtra() %></td></tr>
+            <tr><th class="text-left pr-4">Origen</th><td><%= rutaDetalle.getOrigen() %></td></tr>
+            <tr><th class="text-left pr-4">Destino</th><td><%= rutaDetalle.getDestino() %></td></tr>
+            <tr><th class="text-left pr-4">Aerolínea</th><td><%= rutaDetalle.getAerolinea() %></td></tr>
+            <tr><th class="text-left pr-4">Categoría</th><td><%= rutaDetalle.getCategoria() %></td></tr>
+        </table>
 
-        <!-- Hidden inputs para mantener contexto: si venían seleccionadas, las mantenemos -->
+        <%
+          List<DtVuelo> vuelos = (List<DtVuelo>) request.getAttribute("ListaDtVuelo");
+          String rutaSeleccionada = (String) request.getAttribute("rutaIdSeleccionada");
+          if (vuelos != null && !vuelos.isEmpty()) {
+        %>
+        <div class="mt-6">
+            <h3 class="font-semibold mb-2">
+                Vuelos en ruta: <span class="font-normal"><%= rutaSeleccionada %></span>
+            </h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <%
+                    for (DtVuelo v : vuelos) {
+                        String vNombre = (v != null) ? v.getNombre() : "Sin nombre";
+                        String vUrlImagen = (v != null) ? v.getUrlImagen() : "";
+                %>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <img src="<%= vUrlImagen %>" class="object-cover h-32 w-full rounded-md mb-4" />
+                        <p class="font-medium mb-2"><%= vNombre %></p>
+                                <a href="${pageContext.request.contextPath}/ConsultaVueloServlet?aerolinea=<%= java.net.URLEncoder.encode((String) request.getAttribute("aerolineaSeleccionada") != null ? (String) request.getAttribute("aerolineaSeleccionada") : "", "UTF-8") %>&rutaId=<%= java.net.URLEncoder.encode(rutaSeleccionada != null ? rutaSeleccionada : "", "UTF-8") %>&vueloId=<%= java.net.URLEncoder.encode(vNombre, "UTF-8") %>"
+                                class="btn btn-outline w-full">
+                                Ver vuelo
+                                </a>
+                    </div>
+                </div>
+                <%
+                    } 
+                %>
+            </div>
+        </div>
+        <%
+          } 
+        %>
+    </div>
+<%
+    } 
+%>
+
         <input type="hidden" name="categoria" id="hiddenCategoria" value="<%= request.getAttribute("categoriaSeleccionada") != null ? request.getAttribute("categoriaSeleccionada") : "" %>"/>
         <input type="hidden" name="aerolinea" id="hiddenAerolinea" value="<%= request.getAttribute("aerolineaSeleccionada") != null ? request.getAttribute("aerolineaSeleccionada") : "" %>"/>
 

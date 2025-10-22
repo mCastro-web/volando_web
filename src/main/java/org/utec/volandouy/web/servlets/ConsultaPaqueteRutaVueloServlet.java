@@ -9,8 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import DataTypes.DtPaqueteVuelo;
-import DataTypes.DtRutaVuelo;
+import data_types.*;
+import data_types.DtPaqueteVuelo;
+import data_types.DtRutaVuelo;
 
 @WebServlet("/ConsultaPaqueteRutaVueloServlet")
 public class ConsultaPaqueteRutaVueloServlet extends HttpServlet {

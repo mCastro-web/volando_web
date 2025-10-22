@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import DataTypes.DtVuelo;
-import DataTypes.TipoAsiento;
+import data_types.DtVuelo;
+import data_types.TipoAsiento;
 
 @WebServlet("/ReservarVueloServlet")
 public class ReservarVueloServlet extends HttpServlet {

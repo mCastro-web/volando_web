@@ -8,7 +8,7 @@ import sistema.Sistema;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import DataTypes.DtRutaVuelo;
+import data_types.DtRutaVuelo;
 
 @WebServlet("/ConsultaReservaVueloServlet")
 public class ConsultaReservaVueloServlet extends HttpServlet {
@@ -66,6 +66,7 @@ public class ConsultaReservaVueloServlet extends HttpServlet {
                             String nombreRuta = (r != null) ? r.toString() : null;
                             if (nombreRuta != null && !nombreRuta.isBlank()) {
                                 DtRutaVuelo dt = s.obtenerDtRutaPorNombre(nombreRuta);
+
                                 if (dt != null) rutasDt.add(dt);
                             }
                         } catch (Exception ex) {

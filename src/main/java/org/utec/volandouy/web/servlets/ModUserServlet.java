@@ -2,17 +2,19 @@ package org.utec.volandouy.web.servlets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
 import sistema.ISistema;
 import sistema.Sistema;
 import java.io.IOException;
 import java.time.LocalDate;
-
 import org.mindrot.jbcrypt.BCrypt;
-
-import DataTypes.TipoDoc;
+import data_types.TipoDoc;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 @WebServlet("/ModUserServlet")
+@MultipartConfig(maxFileSize = 10 * 1024 * 1024) 
 public class ModUserServlet extends HttpServlet {
 
     ISistema s = Sistema.getInstance();
@@ -30,40 +32,30 @@ public class ModUserServlet extends HttpServlet {
         Object usuario = session.getAttribute("usuario");
 
         String tipoUsuario = "";
-        try {
-            java.lang.reflect.Method getTipo = usuario.getClass().getMethod("getTipo");
-            Object tipoObj = getTipo.invoke(usuario);
-            if (tipoObj != null) tipoUsuario = tipoObj.toString().toUpperCase();
-        } catch (Exception e) {
-            System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
-        }
-
         String nickNameCliente = "";
-        try {
-            java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
-            Object tipoObj = getNickname.invoke(usuario);
-            if (tipoObj != null) nickNameCliente = tipoObj.toString().toUpperCase();
-        } catch (Exception e) {
-            System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
-        }
-
         String userEmail = "";
+
         try {
-            java.lang.reflect.Method getEmail = usuario.getClass().getMethod("getEmail");
-            Object tipoObj = getEmail.invoke(usuario);
-            if (tipoObj != null) userEmail = tipoObj.toString().toUpperCase();
+            Method getTipo = usuario.getClass().getMethod("getTipo");
+            tipoUsuario = Objects.toString(getTipo.invoke(usuario), "").toUpperCase();
+
+            Method getNickname = usuario.getClass().getMethod("getNickname");
+            nickNameCliente = Objects.toString(getNickname.invoke(usuario), "").toLowerCase();
+
+            Method getEmail = usuario.getClass().getMethod("getEmail");
+            userEmail = Objects.toString(getEmail.invoke(usuario), "").toLowerCase();
+
         } catch (Exception e) {
-            System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
+            System.out.println("Error obteniendo atributos del usuario: " + e.getMessage());
         }
 
-
-        if (tipoUsuario.equals("CLIENTE")) {
+        if ("CLIENTE".equals(tipoUsuario)) {
 
             String nombreUser = request.getParameter("nombreUser");
             String apellido = request.getParameter("apellido");
             String nacionalidad = request.getParameter("nacionalidad");
-            
             String tipoDocParam = request.getParameter("tipoDoc");
+            String confirmPassword = request.getParameter("confirmPassword");
             TipoDoc tipoDoc = null;
 
             if (tipoDocParam != null && !tipoDocParam.isEmpty()) {
@@ -75,8 +67,25 @@ public class ModUserServlet extends HttpServlet {
             }
 
             String numDoc = request.getParameter("numDoc");
-            String password = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt());
-            String fotoPerfilC = request.getParameter("fotoPerfilC");
+            String password = request.getParameter("password");
+            if (password != null && !password.isEmpty() && password.equals(confirmPassword)) {
+                password = BCrypt.hashpw(password, BCrypt.gensalt());
+            } else {
+                password = null;
+            }
+
+            Part fotoPerfilC = request.getPart("fotoPerfilMod");
+            String url = null;
+
+            if (fotoPerfilC != null && fotoPerfilC.getSize() > 0) {
+                url = s.subirImagen(fotoPerfilC, nombreUser);
+            } else {
+                try {
+                    Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                    url = Objects.toString(getUrlImagen.invoke(usuario), "");
+                } catch (Exception ignored) {}
+            }
+
             String bdateParam = request.getParameter("bdate");
             LocalDate bdate = null;
             if (bdateParam != null && !bdateParam.isEmpty()) {
@@ -87,17 +96,17 @@ public class ModUserServlet extends HttpServlet {
                 }
             }
 
-            s.modificarCliente(nickNameCliente.toLowerCase(), nombreUser, userEmail.toLowerCase(), password, fotoPerfilC, apellido, bdate, nacionalidad, tipoDoc, numDoc, nickNameCliente.toLowerCase());
-        
-        Object usuarioActualizado = s.buscarPorNick(nickNameCliente.toLowerCase());
-        session.setAttribute("usuario", usuarioActualizado);
-        
+            s.modificarCliente(
+                nickNameCliente, nombreUser, userEmail, password, url, apellido,
+                bdate, nacionalidad, tipoDoc, numDoc, nickNameCliente
+            );
+
+            Object usuarioActualizado = s.buscarPorNick(nickNameCliente);
+            session.setAttribute("usuario", usuarioActualizado);
         }
 
-        else if (tipoUsuario.equals("AEROLINEA")) {
-            
+        else if ("AEROLINEA".equals(tipoUsuario)) {
             String nombreA = request.getParameter("nombreUser");
-
             String descripcion = request.getParameter("descripcion");
             String web = request.getParameter("web");
             String passwordA = request.getParameter("passwordA");
@@ -106,26 +115,28 @@ public class ModUserServlet extends HttpServlet {
             if (passwordA != null && !passwordA.isEmpty() && passwordA.equals(confirmPasswordA)) {
                 passwordA = BCrypt.hashpw(passwordA, BCrypt.gensalt());
             } else {
-                passwordA = "";
+                passwordA = null;
             }
 
-            String urlFoto = request.getParameter("fotoPerfilA");
+            Part fotoPerfilA = request.getPart("fotoPerfilA");
+            String urlFoto = null;
 
-            if (urlFoto != null && !urlFoto.isEmpty()) {
+            if (fotoPerfilA != null && fotoPerfilA.getSize() > 0) {
+                urlFoto = s.subirImagen(fotoPerfilA, nombreA);
+            } else {
                 try {
-                    java.lang.reflect.Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
-                    Object tipoObj = getUrlImagen.invoke(usuario);
-                    if (tipoObj != null) urlFoto = tipoObj.toString().toUpperCase();
-                } catch (Exception e) {
-                    System.out.println("Error obteniendo la imagen: " + e.getMessage());
-                }
+                    Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
+                    urlFoto = Objects.toString(getUrlImagen.invoke(usuario), "");
+                } catch (Exception ignored) {}
             }
 
-            s.modificarAerolinea(nickNameCliente.toLowerCase(), nombreA, userEmail, passwordA, urlFoto, descripcion, web, nickNameCliente.toLowerCase());
+            s.modificarAerolinea(
+                nickNameCliente, nombreA, userEmail, passwordA,
+                urlFoto, descripcion, web, nickNameCliente
+            );
 
-            Object usuarioActualizado = s.buscarPorNick(nickNameCliente.toLowerCase());
+            Object usuarioActualizado = s.buscarPorNick(nickNameCliente);
             session.setAttribute("usuario", usuarioActualizado);
-            System.out.println("Aerolínea modificada correctamente.");
         }
 
         else {

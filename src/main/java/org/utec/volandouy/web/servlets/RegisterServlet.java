@@ -5,8 +5,8 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import DataTypes.DtUsuario;
-import DataTypes.TipoDoc;
+import data_types.DtUsuario;
+import data_types.TipoDoc;
 import sistema.*;
 
 @WebServlet("/RegisterServlet")

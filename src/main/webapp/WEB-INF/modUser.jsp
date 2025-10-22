@@ -21,8 +21,12 @@
                 </p>
                 
             </div>
-            
-            <form class="max-w-4xl w-full mx-auto gap-4 base-200  space-y-6 mx-auto" action="ModUserServlet" method="post">
+
+            <form enctype="multipart/form-data" 
+                  class="max-w-4xl w-full mx-auto gap-4 base-200  space-y-6 mx-auto" 
+                  action="ModUserServlet" 
+                  method="post">
+
                 <div class="mt-10"></div>
 
 <div class="flex items-center gap-6">
@@ -52,8 +56,7 @@
     <label class="label">
       <span class="label-text font-medium">Cambiar imagen de Perfil</span>
     </label>
-        <input type="file" name="file" accept="image/*"  class="input input-bordered w-full bg-base-200"/>
-
+        <input required type="file" name="fotoPerfilMod" id="fotoPerfilMod" accept="image/*" class="input input-bordered w-full bg-base-200" required />
     <label class="label">
       <span class="label-text-alt text-xs opacity-70">Seleccioná una nueva imagen de perfil.</span>
     </label>
@@ -107,10 +110,10 @@
                         name="userEmail"
                         value="<%= userEmail %>"
                         placeholder=" "
-                        class="input input-bordered w-full peer bg-base-100"
+                        class="input input-bordered w-full peer bg-base-200"
                         disabled
                     />
-                    <label for="userEmail" class="input-floating-label bg-base-100">
+                    <label for="userEmail" class="input-floating-label bg-base-200">
                         Correo electrónico
                     </label>
             </div>
@@ -164,9 +167,9 @@
                             if (nombreObj != null) Apellido = nombreObj.toString();
                         } catch (Exception ex) { }
                 %>
-                <div class="input-floating bg-base-100">
-                <input required type="text" placeholder="Apellido" value="<%= Apellido %>" class="bg-base-100 input input-bordered w-full" id="apellido" name="apellido"/>
-                <label class="input-floating-label bg-base-100" for="apellido">Apellido</label>
+                <div class="input-floating bg-base-200">
+                <input required type="text" placeholder="Apellido" value="<%= Apellido %>" class="bg-base-200 input input-bordered w-full" id="apellido" name="apellido"/>
+                <label class="input-floating-label bg-base-200" for="apellido">Apellido</label>
                 </div>
 
 
@@ -186,16 +189,16 @@
                         } catch (Exception ex) { }
                 %>  
                 <div class="mt-3"></div>
-                <div class="input-floating bg-base-100">
+                <div class="input-floating bg-base-200">
                 <input                         name="nacionalidad"
- required type="text" placeholder="Nacionalidad" value="<%= nacionalidad %>" class="input input-bordered w-full bg-base-100" id="nacionalidad" />
-                <label class="input-floating-label bg-base-100" for="nacionalidad">Nacionalidad</label>
+ required type="text" placeholder="Nacionalidad" value="<%= nacionalidad %>" class="input input-bordered w-full bg-base-200" id="nacionalidad" />
+                <label class="input-floating-label bg-base-200" for="nacionalidad">Nacionalidad</label>
 
 
                 </div>
                 <div class="mt-3"></div>
-                <div class="input-floating bg-base-100" >
-                <select  type="text" placeholder="Tipo de Documento" class="input input-bordered w-full bg-base-100" id="tipoDoc"                         name="tipoDoc"
+                <div class="input-floating bg-base-200" >
+                <select  type="text" placeholder="Tipo de Documento" class="input input-bordered w-full bg-base-200" id="tipoDoc"                         name="tipoDoc"
 >
                         <option value="CI">CI</option>
                         <option value="Pasaporte">PASAPORTE</option>
@@ -214,33 +217,26 @@
                 %> 
                 </div>
                 <div class="mt-3"></div>
-                <div class="input-floating bg-base-100">
-                <input required value="<%= documentoci %>" type="text" placeholder="Número de Documento" class="bg-base-100 input input-bordered w-full" id="numDoc"                         name="numDoc"
+                <div class="input-floating bg-base-200">
+                <input required value="<%= documentoci %>" type="text" placeholder="Número de Documento" class="bg-base-200 input input-bordered w-full" id="numDoc"                         name="numDoc"
 />
-                <label class="input-floating-label bg-base-100" for="numDoc">Número de Documento</label>
+                <label class="input-floating-label bg-base-200" for="numDoc">Número de Documento</label>
                 </div>
 
 
                 <!-- Contraseña -->
-            <div class="mt-10 input-floating bg-base-100">
-                <input  type="password" placeholder="Nueva contraseña" class="input input-bordered w-full" id="password"                        name="password"
+            <div class="mt-10 input-floating bg-base-200">
+                <input  type="password" placeholder="Nueva contraseña" class="bg-base-200 input input-bordered w-full" id="password"                        name="password"
  />
                 <label class="input-floating-label" for="password">Nueva Contraseña</label>
             </div>
                 <div class="mt-3"></div>
             <!-- Confirmar Contraseña -->
-            <div class="input-floating bg-base-100">
-                <input  type="password" placeholder="Confirmar contraseña" class="input input-bordered w-full" id="confirmPassword"                        name="confirmPassword"
+            <div class="input-floating bg-base-200">
+                <input  type="password" placeholder="Confirmar contraseña" class="bg-base-200 input input-bordered w-full" id="confirmPassword"                        name="confirmPassword"
  />
                 <label class="input-floating-label" for="confirmPassword">Confirmar Contraseña</label>
             </div>
-
-                                        <div class="form-control">
-                <label class="label">
-                <span class="label-text">Imagen de perfil</span>
-                </label>
-<input  id="fotoPerfilC" name="fotoPerfil" type="file" class="input" aria-label="file-input" />            </div>
-
             </div>
        <%
             } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) {
