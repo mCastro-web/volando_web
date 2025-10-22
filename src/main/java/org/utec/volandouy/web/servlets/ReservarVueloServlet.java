@@ -67,6 +67,7 @@ public class ReservarVueloServlet extends HttpServlet {
         Integer equipaje_extra = null;
         try {
             equipaje_extra = Integer.parseInt(request.getParameter("equipaje_extra"));
+            request.setAttribute("equipaje_extra", equipaje_extra);
         } catch (NumberFormatException e) {
             equipaje_extra = 0;
         }

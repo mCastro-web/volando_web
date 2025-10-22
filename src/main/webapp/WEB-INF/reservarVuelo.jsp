@@ -131,26 +131,25 @@
     </div>
 
     <% } %>
-
                 <div class="relative">
                     <span>Tipo de Asiento</span>
-                    <select name="tipo_asiento" class="bg-base-200 select select-bordered w-full peer mt-1 pt-6">
+                    <select  name="tipo_asiento" class="bg-base-200 select select-bordered w-full peer mt-1 pt-6" onchange="this.form.submit()">
                         <option value="" disabled selected>Selecciona un tipo de asiento</option>
                         <option>Turista</option>
-                        <option>Ejecutiva</option>
+                        <option>Ejecutiva</option> 
                     </select>
                     <span class="text-xs text-gray-500 mt-2 block">Elige el tipo de asiento que deseas reservar.</span>
                 </div>
 
                 <div class="relative">
                     <span>Cantidad de Pasajes</span>
-                    <input type="number" name="cantidad_pasajes" min="1" class="bg-base-200 input input-bordered w-full peer mt-1 pt-6" placeholder="Cantidad de Pasajes" />
+                    <input value="<%= request.getAttribute("cantPasajeros") != null ? request.getAttribute("cantPasajeros") : 1 %>" type="number" name="cantidad_pasajes" min="1" class="bg-base-200 input input-bordered w-full peer mt-1 pt-6" placeholder="Cantidad de Pasajes" onchange="this.form.submit()" />
                     <span class="text-xs text-gray-500 mt-2 block">Elige la cantidad de pasajes que deseas reservar.</span>
                 </div>
         
                 <div class="relative">
                     <span>Equipaje Extra</span>
-                    <input type="number" name="equipaje_extra" min="0" class="bg-base-200 input input-bordered w-full peer mt-1 pt-6" placeholder="Cantidad de Equipaje Extra" />
+                    <input value="<%= request.getAttribute("equipaje_extra") != null ? request.getAttribute("equipaje_extra") : 0 %>" type="number" name="equipaje_extra" min="0" class="bg-base-200 input input-bordered w-full peer mt-1 pt-6" placeholder="Cantidad de Equipaje Extra" onchange="this.form.submit()" />
                     <span class="text-xs text-gray-500 mt-2 block">Elige la cantidad de equipaje extra que deseas incluir.</span>
                 </div>
 

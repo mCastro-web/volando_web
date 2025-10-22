@@ -41,22 +41,22 @@
                             Reservar Vuelos
                         </a>
                     </li>
-                    <li>
-                        <a href="consultaVuelo.html">
+                    <li class="bg-primary">
+                        <a href="${pageContext.request.contextPath}/ConsultaReservaVueloServlet">
                             <span class="material-icons-outlined">manage_search</span>
                             Consultar Reservas
                         </a>
                     </li>
-                    <li>
-                        <a href="consultaRutaVuelo.html">
+                    <li class="bg-primary">
+                        <a href="${pageContext.request.contextPath}/CompraPaqueteServlet">
                             <span class="material-icons-outlined">add_shopping_cart</span>
                             Comprar Paquetes
                         </a>
                     </li>
                     <li>
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
-                            <span class="material-icons-outlined">airplane_ticket</span>
-                            Paquetes
+                        <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
+                            <span class="icon-[tabler--packages] size-5"></span>
+                            Consultar Paquetes
                         </a>
                     </li>
                     <li class="bg-primary">
@@ -95,20 +95,20 @@
                             Crear Rutas de Vuelo
                         </a>
                     </li>
-                    <li class="bg-primary">
-                        <a  href="consultaReservasVuelo">
-                            <span class="icon-[tabler--calendar] size-5"></span>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/ConsultaReservaVueloServlet">
+                            <span class="material-icons-outlined">manage_search</span>
                             Consultar Reservas
                         </a>
                     </li>
                     <li class="bg-primary">
-                        <a href="consultaRutaVuelo.html">
+                        <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
                             <span class="icon-[tabler--packages] size-5"></span>
                             Consultar Paquetes
                         </a>
                     </li>
                     <li class="bg-primary">
-                        <a href="consultaPaquete.html" class="flex items-center gap-2">
+                        <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet">
                             <span class="icon-[tabler--map-search] size-5"></span>
                             Consultar Rutas
                         </a>
@@ -132,14 +132,21 @@
                         </a>
                     </li>
                     <li>
-                        <a href="consultaRutaVuelo">
+                        <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
+                            <span class="icon-[tabler--packages] size-5"></span>
+                            Consultar Paquetes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet">
                             <span class="material-icons-outlined">route</span>
                             Rutas de Vuelo
                         </a>
                     </li>
                     <li>
-                        <a href="consultaPaquete.html">
-                            <span class="material-icons-outlined">card_travel</span>Paquetes de Rutas
+                        <a href="${pageContext.request.contextPath}/ConsultaVueloServlet" class="flex items-center gap-2">
+                            <span class="material-icons-outlined">travel_explore</span>
+                            Vuelos
                         </a>
                     </li>
                 </ul>

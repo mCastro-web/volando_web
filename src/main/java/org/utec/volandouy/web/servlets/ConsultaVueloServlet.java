@@ -126,7 +126,7 @@ request.setAttribute("nickNameAero", nickNameAero);
                         try {
                             // Llamada al método que dijiste que existe en ISistema:
                             // Ajustá el nombre si es distinto en tu implementación real.
-                            dtReserva = s.obtenerDtReservaPorCliVue(nickNameCliente.toLowerCase(), vueloId);
+                            dtReserva = s.obtenerDtReservaPorClienteVuelo(nickNameCliente.toLowerCase(), vueloId);
                             System.out.println("DtReserva obtenida para cliente " + nickNameCliente + " y vuelo " + vueloId + ":");
                             System.out.println(dtReserva);
                         } catch (Exception ex) {

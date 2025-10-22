@@ -82,4 +82,19 @@ public class approuter {
     public String reservarVuelo() {
         return "reservarVuelo";
     }
+
+    @GetMapping("/compraPaquete")
+    public String compraPaquete() {
+        return "compraPaquete";
+    }
+
+    @GetMapping("/consultaReservaVuelo") 
+    public String consultaReservaVuelo() {
+        return "consultaReservaVuelo"; 
+    }
+
+    @GetMapping("/consultaPaqueteRutaVuelo") 
+    public String consultaPaqueteRutaVuelo() {
+        return "consultaPaqueteRutaVuelo"; 
+    }
 }
