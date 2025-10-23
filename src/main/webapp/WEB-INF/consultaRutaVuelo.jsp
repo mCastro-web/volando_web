@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, DataTypes.DtRutaVuelo" %>
-<%@ page import="java.util.List, DataTypes.DtVuelo" %>
+<%@ page import="java.util.List, data_types.DtRutaVuelo" %>
+<%@ page import="java.util.List, data_types.DtVuelo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.net.URLEncoder" %>
 
@@ -115,9 +115,9 @@
             <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
             <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <%
-                    List<DataTypes.DtRutaVuelo> rutasDt = (List<DataTypes.DtRutaVuelo>) request.getAttribute("rutasDt");
+                    List<data_types.DtRutaVuelo> rutasDt = (List<data_types.DtRutaVuelo>) request.getAttribute("rutasDt");
                     if (rutasDt != null && !rutasDt.isEmpty()) {
-                        for (DataTypes.DtRutaVuelo ruta : rutasDt) {
+                        for (data_types.DtRutaVuelo ruta : rutasDt) {
                             String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                             String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
                 %>
@@ -145,7 +145,7 @@
 
         <!-- Mostrar detalles de la ruta seleccionada -->
 <%
-    DataTypes.DtRutaVuelo rutaDetalle = (DataTypes.DtRutaVuelo) request.getAttribute("ruta");
+    data_types.DtRutaVuelo rutaDetalle = (data_types.DtRutaVuelo) request.getAttribute("ruta");
     if (rutaDetalle != null) {
 %>
     <div class="card mt-6 p-4 rounded-md bg-base-200 shadow">

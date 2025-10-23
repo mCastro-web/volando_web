@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, DataTypes.DtRutaVuelo" %>
+<%@ page import="java.util.List, data_types.DtPaqueteVuelo, data_types.DtRutaVuelo" %>
 
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
@@ -27,39 +27,40 @@
                   java.lang.reflect.Method getTipo = usuario.getClass().getMethod("getTipo");
                   Object tipoObj = getTipo.invoke(usuario);
                   if (tipoObj != null) tipoCuenta = tipoObj.toString().toUpperCase();
-                     } catch (Exception ex) { }
-                     String tipo = (String) session.getAttribute("tipoUsuario");
+               } catch (Exception ex) { }
+               String tipo = (String) session.getAttribute("tipoUsuario");
 
             if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) {
-         
-         %>
+            %>
+
                <label class="label"><span class="label-text">Rol </span></label>
                <select id="selRol" class="input input-bordered w-full bg-base-100">
-
-               <option value="CLIENTE" <%= "CLIENTE".equalsIgnoreCase(tipoCuenta) ? "selected" : "" %>>Cliente</option>
-            </select>
+                   <option value="CLIENTE" selected>Cliente</option>
+               </select>
           </div>
 
-                <div class="form-control">
-    <label class="label"><span class="label-text">Paquete ruta de vuelo</span></label>
-    <select id="selpaquete" name="paquete" class="select select-bordered w-full">
-        <%
-            List<String> paquetes = (List<String>) request.getAttribute("paquetes");
-            if (paquetes != null && !paquetes.isEmpty()) {
-                for (String a : paquetes) {
-        %>
-            <option value="<%= a %>" <%= a.equals(request.getAttribute("paqueteSeleccionado")) ? "selected" : "" %>><%= a %></option>
-        <%
-                }
-                   } else {
-    %>
-        <option value="">No hay paquetes disponibles</option>
-    <%
-            }
-        %>
-    </select>
-</div>
-
+          <!-- Selector de paquetes -->
+          <div class="form-control">
+            <label class="label"><span class="label-text">Paquete ruta de vuelo</span></label>
+            <select id="selpaquete" name="paquete" class="select select-bordered w-full">
+                <%
+                    List<String> paquetes = (List<String>) request.getAttribute("paquetes");
+                    if (paquetes != null && !paquetes.isEmpty()) {
+                        for (String a : paquetes) {
+                %>
+                    <option value="<%= a %>" <%= a.equals(request.getAttribute("paqueteSeleccionado")) ? "selected" : "" %>>
+                        <%= a %>
+                    </option>
+                <%
+                        }
+                    } else {
+                %>
+                    <option value="">No hay paquetes disponibles</option>
+                <%
+                    }
+                %>
+            </select>
+          </div>
 
           <!-- Botón filtrar -->
           <div class="form-control">
@@ -67,199 +68,143 @@
           </div>
         </div>
 
-        <!-- Paso 2: Rutas confirmadas -->
-<div>
-    <h3 class="font-semibold mb-2">Detalle del paquete</h3>
-    <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        
-    <%
-        List<DataTypes.DtRutaVuelo> rutasDt = (List<DataTypes.DtRutaVuelo>) request.getAttribute("rutasDt");
-        if (rutasDt != null && !rutasDt.isEmpty()) {
-            for (DataTypes.DtRutaVuelo ruta : rutasDt) {
-                String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
-                String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
-    %>
-        <div class="card bg-base-100 shadow-xl">
-            <div class="form-control">
-                <!-- este submit envía rutaId al servlet -->
-                <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
-                    <%= nombre %>
-                </button>
-            </div>
-            <div class="card-body">
-                <p class="text-sm text-base-content/70"><%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %></p>
-            </div>
+<%
+    DtPaqueteVuelo paqueteDt = (DtPaqueteVuelo) request.getAttribute("paqueteDt");
+    if (paqueteDt != null) {
+%>
+<div class="mt-6 p-4 rounded-lg border bg-base-200 shadow-sm">
+    <h3 class="text-xl text-center font-semibold mb-3">
+        Detalles del paquete "<%= paqueteDt.getNombre() %>"
+    </h3>
+    <hr class="mb-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+            <p class="font-medium">Nombre:</p>
+            <p><%= paqueteDt.getNombre() %></p>
         </div>
-    <%
-            }
-        } else if (request.getParameter("aerolinea") != null) {
-    %>
-        <p class="col-span-full text-center text-base-content/70">No hay rutas confirmadas para esta aerolínea</p>
-    <%
-        }
-    %>
+        <div>
+            <p class="font-medium">Descripción:</p>
+            <p><%= paqueteDt.descripcion() %></p>
+        </div>
+        <div>
+            <p class="font-medium">Costo:</p>
+            <p>USD <%= paqueteDt.costo() %></p>
+        </div>
+        <div>
+            <p class="font-medium">Descuento:</p>
+            <p><%= paqueteDt.descuento() %> %</p>
+        </div>
+        <div>
+            <p class="font-medium">Días de validez:</p>
+            <p><%= paqueteDt.diasValidez() %></p>
+        </div>
+        <div>
+            <p class="font-medium">Fecha de alta:</p>
+            <p><%= paqueteDt.altaFecha() %></p>
+        </div>
     </div>
 </div>
-
-<!-- Nueva sección: Listado de vuelos (cuando se clicka una ruta) -->
 <%
-    List<?> vuelos = (List<?>) request.getAttribute("vuelos");
-    String rutaSeleccionada = (String) request.getAttribute("rutaIdSeleccionada");
-    if (vuelos != null && !vuelos.isEmpty()) {
+    } else if (request.getParameter("paquete") != null) {
 %>
-    <div class="mt-6">
-        <h3 class="font-semibold mb-2">Vuelos en ruta: <span class="font-normal"><%= rutaSeleccionada %></span></h3>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <%
-                for (Object v : vuelos) {
-                    String vNombre = (v != null) ? v.toString() : "Sin nombre";
-            %>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <p class="font-medium mb-2"><%= vNombre %></p>
-                        <!-- al hacer click enviamos vueloId al servlet -->
-                        <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">Ver reserva del vuelo</button>
-                    </div>
-                </div>
-            <%
-                }
-            %>
-        </div>
-    </div>
-<%
-    } else if (request.getParameter("rutaId") != null) {
-%>
-    <p class="mt-4 text-base-content/70">No hay vuelos para la ruta seleccionada.</p>
+<p class="mt-4 text-base-content/70 text-center">
+    No se encontraron detalles para el paquete seleccionado.
+</p>
 <%
     }
 %>
 
-<!-- Paso 5: Listado de reservas del vuelo seleccionado (botones por reserva) -->
-<%
-    List<String> reservasVuelo = (List<String>) request.getAttribute("reservasVuelo");
-    String mensajeReservas = (String) request.getAttribute("mensajeReservas");
-    String vueloSeleccionado = (String) request.getAttribute("vueloIdSeleccionado");
-    String reservaSeleccionada = (String) request.getAttribute("reservaSeleccionada");
+<!-- Paso 3: Rutas del paquete -->
+<div class="mt-8">
+  <h3 class="font-semibold mb-2">Rutas del paquete</h3>
+  <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
-    if (reservasVuelo != null && !reservasVuelo.isEmpty()) {
-%>
-    <div class="mt-8">
-        <h3 class="font-semibold mb-2">Reservas del vuelo: <span class="font-normal"><%= vueloSeleccionado %></span></h3>
-
-        <!-- Hidden inputs para mantener contexto al enviar reservaIndex -->
-        <input type="hidden" name="vueloId" value="<%= vueloSeleccionado %>" />
-        <% String aeroSel = (String) request.getAttribute("aerolineaSeleccionada"); 
-           if (aeroSel != null) { %>
-            <input type="hidden" name="aerolinea" value="<%= aeroSel %>" />
-        <% } %>
-        <% String rutaSel = (String) request.getAttribute("rutaIdSeleccionada");
-           if (rutaSel != null) { %>
-            <input type="hidden" name="rutaId" value="<%= rutaSel %>" />
-        <% } %>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            <% for (int i = 0; i < reservasVuelo.size(); i++) {
-                   int numero = i + 1;
-            %>
-                <div>
-                    <!-- botón que envía reservaIndex = numero -->
-                    <button type="submit" name="reservaIndex" value="<%= numero %>" class="btn btn-sm btn-outline w-full">
-                        Ver reserva N° <%= numero %>
-                    </button>
-                </div>
-            <% } %>
+    <%
+      List<String> rutas = (List<String>) request.getAttribute("rutas");
+      if (rutas != null && !rutas.isEmpty()) {
+          for (String nombreRuta : rutas) {
+    %>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="form-control">
+          <form action="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" method="get">
+            <input type="hidden" name="paquete" value="<%= paqueteDt != null ? paqueteDt.getNombre() : "" %>">
+            <button type="submit" name="rutaId" value="<%= nombreRuta %>" class="btn btn-primary w-full">
+              <%= nombreRuta %>
+            </button>
+          </form>
         </div>
-
-        <!-- Si se seleccionó una reserva concreta, la mostramos abajo -->
-        <%
-            if (reservaSeleccionada != null) {
-        %>
-            <div class="mt-4 p-3 rounded-md bg-base-200 shadow-sm">
-                <p class="font-medium">Reserva seleccionada:</p>
-                <p class="mt-2"><%= reservaSeleccionada %></p>
-            </div>
-        <%
-            }
-        %>
-    </div>
-<%
-    } else if (mensajeReservas != null) {
-%>
-    <p class="mt-4 text-base-content/70"><%= mensajeReservas %></p>
-<%
-    }
-%>
-
+        <div class="card-body">
+          <p class="text-sm text-base-content/70">
+            Ruta asociada al paquete seleccionado
+          </p>
         </div>
-
       </div>
+    <%
+          }
+      } else if (request.getParameter("paquete") != null) {
+    %>
+      <p class="col-span-full text-center text-base-content/70">
+        No hay rutas asociadas a este paquete.
+      </p>
+    <%
+      }
+    %>
+  </div>
+</div>
 
-      <button class="btn btn-primary btn-block" onclick="window.location.href='../index.html'">Volver</button>
+      <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
     </section>
-               
 
-          <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
-               
-          
-          
+    <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
+
           <label class="label"><span class="label-text">Rol </span></label>
-               <select id="selRol" class="input input-bordered w-full bg-base-100">
-
-               <option value="AEROLINEA" <%= "AEROLINEA".equalsIgnoreCase(tipoCuenta) ? "selected" : "" %>>Aerolínea</option>
-                </select>
+          <select id="selRol" class="input input-bordered w-full bg-base-100">
+              <option value="AEROLINEA" selected>Aerolínea</option>
+          </select>
           </div>
 
-           <%
-                        String nickNameAero = "Usuario";
-                        try {
-                            java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
-                            Object nombreObj = getNickname.invoke(usuario);
-                            if (nombreObj != null) nickNameAero = nombreObj.toString();
-                        } catch (Exception ex) { }
-                    %>
+          <%
+              String nickNameAero = "Usuario";
+              try {
+                  java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
+                  Object nombreObj = getNickname.invoke(usuario);
+                  if (nombreObj != null) nickNameAero = nombreObj.toString();
+              } catch (Exception ex) { }
+          %>
 
-            <!-- Nickname (no editable) -->
-               <div class="form-control">
-    <label class="label">
-        <span class="label-text">Aerolínea</span>
-    </label>
-    <select 
-        id="nicknameAero"
-        name="aerolinea"
-        value="<%= nickNameAero %>"
-        class="input input-bordered w-full"
-    >
-        <option value="<%= nickNameAero %>" selected><%= nickNameAero %></option>
-    </select>
-</div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">Aerolínea</span></label>
+            <select id="nicknameAero" name="aerolinea" class="input input-bordered w-full">
+                <option value="<%= nickNameAero %>" selected><%= nickNameAero %></option>
+            </select>
+          </div>
 
-            <!-- Botón filtrar -->
           <div class="form-control">
            <button type="submit" id="btnFiltrar" class="btn btn-primary w-full">Listar rutas confirmadas</button>
           </div>
         </div>
 
-<!-- Paso 2: Rutas confirmadas (AEROLINEA) -->
+<!-- Paso 2: Rutas confirmadas (AEROLÍNEA) -->
 <div>
     <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
     <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        
     <%
-        List<DataTypes.DtRutaVuelo> rutasDt2 = (List<DataTypes.DtRutaVuelo>) request.getAttribute("rutasDt");
+        List<DtRutaVuelo> rutasDt2 = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
         if (rutasDt2 != null && !rutasDt2.isEmpty()) {
-            for (DataTypes.DtRutaVuelo ruta : rutasDt2) {
+            for (DtRutaVuelo ruta : rutasDt2) {
                 String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                 String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
     %>
         <div class="card bg-base-100 shadow-xl">
             <div class="form-control">
-                <!-- este submit envía rutaId al servlet -->
                 <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
                     <%= nombre %>
                 </button>
             </div>
             <div class="card-body">
-                <p class="text-sm text-base-content/70"><%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %></p>
+                <p class="text-sm text-base-content/70">
+                    <%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %>
+                </p>
             </div>
         </div>
     <%
@@ -273,7 +218,7 @@
     </div>
 </div>
 
-<!-- Nueva sección: Listado de vuelos (cuando se clicka una ruta) (AEROLINEA) -->
+<!-- Vuelos y reservas (AEROLÍNEA) -->
 <%
     List<?> vuelos2 = (List<?>) request.getAttribute("vuelos");
     String rutaSeleccionada2 = (String) request.getAttribute("rutaIdSeleccionada");
@@ -289,8 +234,9 @@
                 <div class="card bg-base-100 shadow">
                     <div class="card-body">
                         <p class="font-medium mb-2"><%= vNombre %></p>
-                        <!-- al hacer click enviamos vueloId al servlet -->
-                        <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">Ver reservas del vuelo</button>
+                        <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">
+                            Ver reservas del vuelo
+                        </button>
                     </div>
                 </div>
             <%
@@ -306,73 +252,12 @@
     }
 %>
 
-<!-- Paso 5: Listado de reservas del vuelo seleccionado (AEROLINEA) -->
-<%
-    // Reutilizamos atributos ya seteados por el servlet (mismo nombre de atributos)
-    List<String> reservasVuelo2 = (List<String>) request.getAttribute("reservasVuelo");
-    String mensajeReservas2 = (String) request.getAttribute("mensajeReservas");
-    String vueloSeleccionado2 = (String) request.getAttribute("vueloIdSeleccionado");
-    String reservaSeleccionada2 = (String) request.getAttribute("reservaSeleccionada");
-
-    if (reservasVuelo2 != null && !reservasVuelo2.isEmpty()) {
-%>
-    <div class="mt-8">
-        <h3 class="font-semibold mb-2">Reservas del vuelo: <span class="font-normal"><%= vueloSeleccionado2 %></span></h3>
-
-        <!-- Hidden inputs para mantener contexto al enviar reservaIndex -->
-        <input type="hidden" name="vueloId" value="<%= vueloSeleccionado2 %>" />
-        <% String aeroSel2 = (String) request.getAttribute("aerolineaSeleccionada"); 
-           if (aeroSel2 != null) { %>
-            <input type="hidden" name="aerolinea" value="<%= aeroSel2 %>" />
-        <% } %>
-        <% String rutaSel2 = (String) request.getAttribute("rutaIdSeleccionada");
-           if (rutaSel2 != null) { %>
-            <input type="hidden" name="rutaId" value="<%= rutaSel2 %>" />
-        <% } %>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            <% for (int i = 0; i < reservasVuelo2.size(); i++) {
-                   int numero = i + 1;
-            %>
-                <div>
-                    <!-- botón que envía reservaIndex = numero -->
-                    <button type="submit" name="reservaIndex" value="<%= numero %>" class="btn btn-sm btn-outline w-full">
-                        Ver reserva N° <%= numero %>
-                    </button>
-                </div>
-            <% } %>
-        </div>
-
-        <!-- Si se seleccionó una reserva concreta, la mostramos abajo -->
-        <%
-            if (reservaSeleccionada2 != null) {
-        %>
-            <div class="mt-4 p-3 rounded-md bg-base-200 shadow-sm">
-                <p class="font-medium">Reserva seleccionada:</p>
-                <p class="mt-2"><%= reservaSeleccionada2 %></p>
-            </div>
-        <%
-            }
-        %>
-    </div>
-<%
-    } else if (mensajeReservas2 != null) {
-%>
-    <p class="mt-4 text-base-content/70"><%= mensajeReservas2 %></p>
-<%
-    }
-%>
-
-        </div>
-
-      </div>
-
-      <button class="btn btn-primary btn-block" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
+      <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
     </section>
-
-   <% } %>
+    <% } %>
 
    </main>
+
     <!-- Footer--> 
     <jsp:include page="includes/footer.jsp" />
 

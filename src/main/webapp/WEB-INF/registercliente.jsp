@@ -128,7 +128,7 @@
           <select id="tipoDocumento" name="tipoDocumento" class="select select-bordered w-full bg-base-200">
             <option value="" disabled selected>Selecciona tu tipo de documento</option>
             <option value="CEDULA">Cédula de Identidad</option>
-            <option value="PASAPORTE">Pasaporte</option>
+            <option value="Pasaporte">Pasaporte</option>
         </select>
         <span class="label-text-alt text-xs opacity-70">Selecciona el tipo de documento que usarás para identificarte.</span>
       </label>

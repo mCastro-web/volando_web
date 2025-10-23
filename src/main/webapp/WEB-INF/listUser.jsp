@@ -4,6 +4,7 @@
 <%@ page import="model.Cliente" %>
 <%@ page import="model.Aerolinea" %>
 
+
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
 <body class="bg-base-200 min-h-screen flex flex-col">

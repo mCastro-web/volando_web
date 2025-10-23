@@ -29,37 +29,37 @@
 
                 <!-- Contenido para CLIENTE -->
                 <ul class="dark:text-white mt-2 menu p-0">
-                    <li class="bg-primary">
+                    <li class="bg-warning">
                         <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
                             <span class="material-icons-outlined">group</span>
                             Usuarios
                         </a>
                     </li>
-                    <li class="bg-primary">
+                    <li class="bg-warning">
                         <a href="${pageContext.request.contextPath}/ReservarVueloServlet">
                             <span class="material-icons-outlined">flight</span>
                             Reservar Vuelos
                         </a>
                     </li>
-                    <li class="bg-primary">
+                    <li>
                         <a href="${pageContext.request.contextPath}/ConsultaReservaVueloServlet">
                             <span class="material-icons-outlined">manage_search</span>
                             Consultar Reservas
                         </a>
                     </li>
-                    <li class="bg-primary">
+                    <li>
                         <a href="${pageContext.request.contextPath}/CompraPaqueteServlet">
                             <span class="material-icons-outlined">add_shopping_cart</span>
                             Comprar Paquetes
                         </a>
                     </li>
-                    <li>
+                    <li class="bg-primary">
                         <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
                             <span class="icon-[tabler--packages] size-5"></span>
                             Consultar Paquetes
                         </a>
                     </li>
-                    <li class="bg-primary">
+                    <li>
                         <a href="${pageContext.request.contextPath}/ConsultaVueloServlet" class="flex items-center gap-2">
                             <span class="material-icons-outlined">travel_explore</span>
                             Vuelos
@@ -107,7 +107,7 @@
                             Consultar Paquetes
                         </a>
                     </li>
-                    <li class="bg-primary">
+                    <li>
                         <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet">
                             <span class="icon-[tabler--map-search] size-5"></span>
                             Consultar Rutas

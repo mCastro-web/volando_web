@@ -139,6 +139,10 @@ public class ConsultaVueloServlet extends HttpServlet {
                         request.setAttribute("dtReservaExists", false);
                         System.out.println("DtReserva no encontrada.");
                     }
+
+                    request.setAttribute("nickNameCliente", nickNameCliente);
+                    request.setAttribute("dtReservaExists", dtReserva != null);
+
                 }
 
 

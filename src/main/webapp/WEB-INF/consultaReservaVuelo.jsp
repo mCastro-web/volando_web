@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, DataTypes.DtRutaVuelo" %>
+<%@ page import="java.util.List, data_types.DtRutaVuelo" %>
 
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
@@ -73,9 +73,9 @@
     <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         
     <%
-        List<DataTypes.DtRutaVuelo> rutasDt = (List<DataTypes.DtRutaVuelo>) request.getAttribute("rutasDt");
+        List<data_types.DtRutaVuelo> rutasDt = (List<data_types.DtRutaVuelo>) request.getAttribute("rutasDt");
         if (rutasDt != null && !rutasDt.isEmpty()) {
-            for (DataTypes.DtRutaVuelo ruta : rutasDt) {
+            for (data_types.DtRutaVuelo ruta : rutasDt) {
                 String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                 String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
     %>
@@ -286,9 +286,9 @@
     <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         
     <%
-        List<DataTypes.DtRutaVuelo> rutasDt2 = (List<DataTypes.DtRutaVuelo>) request.getAttribute("rutasDt");
+        List<data_types.DtRutaVuelo> rutasDt2 = (List<data_types.DtRutaVuelo>) request.getAttribute("rutasDt");
         if (rutasDt2 != null && !rutasDt2.isEmpty()) {
-            for (DataTypes.DtRutaVuelo ruta : rutasDt2) {
+            for (data_types.DtRutaVuelo ruta : rutasDt2) {
                 String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                 String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
     %>

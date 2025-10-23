@@ -36,7 +36,7 @@
                         for (PaqueteVuelo paquete : paquetes) {
                     %>
                             <option value="<%= paquete.getNombre() %>">
-                            <%= paquete.getNombre() %> - <%= paquete.getCostoConDescuento() %> USD
+                            <%= paquete.getNombre() %> - <%= paquete.getCosto() * (1 - paquete.getDescuento()) %> USD
                             </option>
                     <%
                         }
@@ -78,7 +78,7 @@ if (seleccionado != null) {
   </figure>
 
   <div class="card-body">
-    <button class="card-title"><%= seleccionado.getCostoConDescuento() %> USD</button>
+    <button class="card-title"><%= seleccionado.getCosto() * (1 - seleccionado.getDescuento()) %> USD</button>
     <h5 class="card-title"><%= seleccionado.getNombre() %></h5>
     <p class="text-sm text-base-content/80"><%= seleccionado.getDescripcion() %></p>
 

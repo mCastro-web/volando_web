@@ -1,3 +1,4 @@
+org\utec\volandouy\web\servlets\ConsultaPaqueteRutaVueloServlet.class
 org\utec\volandouy\VolandouyApplication.class
 org\utec\volandouy\web\servlets\ReservarVueloServlet.class
 org\utec\volandouy\web\servlets\ListUserServlet.class
@@ -5,6 +6,7 @@ org\utec\volandouy\web\servlets\AltaRutaVueloServlet.class
 org\utec\volandouy\web\servlets\testServlet.class
 org\utec\volandouy\web\servlets\AltaVueloServlet.class
 org\utec\volandouy\web\servlets\RegisterServlet.class
+org\utec\volandouy\web\servlets\ConsultaRutaVueloServlet.class
 org\utec\volandouy\web\servlets\ModUserServlet.class
 org\utec\volandouy\web\servlets\RegisterAServlet.class
 org\utec\volandouy\web\servlets\CompraPaqueteServlet.class
@@ -12,3 +14,4 @@ org\utec\volandouy\controllers\approuter.class
 org\utec\volandouy\web\servlets\LoginServlet.class
 org\utec\volandouy\web\servlets\ConsultaVueloServlet.class
 org\utec\volandouy\web\servlets\LogoutServlet.class
+org\utec\volandouy\web\servlets\ConsultaReservaVueloServlet.class

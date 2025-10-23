@@ -10,7 +10,7 @@ import sistema.ISistema;
 import sistema.Sistema;
 import java.util.List;
 
-import DataTypes.DtUsuario;
+import data_types.DtUsuario;
 
 @WebServlet("/AltaRutaVueloServlet")
 @MultipartConfig
