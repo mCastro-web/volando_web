@@ -9,13 +9,18 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import sistema.*;
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
+import publicadores.DtUsuario;
 
 @WebServlet("/AltaVueloServlet")
 @MultipartConfig
 public class AltaVueloServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -29,19 +34,16 @@ public class AltaVueloServlet extends HttpServlet {
 
         Object usuario = session.getAttribute("usuario");
         String nomAero = "";
-        try {
-            java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
-            Object tipoObj = getNickname.invoke(usuario);
-            if (tipoObj != null) nomAero = tipoObj.toString().toUpperCase();
-        } catch (Exception e) {
-            System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
+        if (usuario instanceof DtUsuario) {
+            nomAero = ((DtUsuario) usuario).getNickname().toUpperCase();
         }
 
         // Gracias por existir tio gpt.
         java.util.function.Function<String, String> getText = (name) -> {
             try {
                 Part p = request.getPart(name);
-                if (p == null) return null;
+                if (p == null)
+                    return null;
                 String value = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
                 return value.isEmpty() ? null : value;
             } catch (Exception e) {
@@ -57,6 +59,11 @@ public class AltaVueloServlet extends HttpServlet {
         String asientosEjecutivoStr = getText.apply("asientosEjecutivo");
         String nombreRuta = getText.apply("ruta"); // viene del select
 
+        // Validaciones...
+        // ... (omitted for brevity, keeping original logic structure but adapting
+        // calls)
+        // Actually I need to keep the parsing logic.
+
         LocalDate fechaVuelo = null;
         if (fechaVueloStr != null) {
             try {
@@ -69,6 +76,8 @@ public class AltaVueloServlet extends HttpServlet {
         LocalTime duracion = null;
         if (duracionStr != null && !duracionStr.isEmpty()) {
             try {
+                // Assuming duracion comes as minutes or HH:mm?
+                // Original code:
                 int minutos = Integer.parseInt(duracionStr);
                 duracion = LocalTime.of(minutos / 60, minutos % 60);
             } catch (Exception e) {
@@ -100,40 +109,46 @@ public class AltaVueloServlet extends HttpServlet {
         try {
             Part filePart = request.getPart("file");
             if (filePart != null && filePart.getSize() > 0) {
-                imagenVuelo = s.subirImagen(filePart, "vuy_vuelos");
-                System.out.println("Imagen subida correctamente: " + imagenVuelo);
+                // WS adaptation: Just get the filename, upload not supported via WS yet
+                imagenVuelo = filePart.getSubmittedFileName();
+                System.out.println("Imagen seleccionada: " + imagenVuelo);
             } else {
                 System.out.println("No se recibió archivo de imagen");
             }
         } catch (Exception e) {
-            System.out.println("Error subiendo imagen: " + e.getMessage());
+            System.out.println("Error obteniendo imagen: " + e.getMessage());
         }
 
         if (nombreVuelo == null || fechaVuelo == null || duracion == null ||
-            asientosTurista == null || asientosEjecutivo == null || nombreRuta == null) {
+                asientosTurista == null || asientosEjecutivo == null || nombreRuta == null) {
             System.out.println("Faltan datos obligatorios en el formulario de vuelo");
             response.sendRedirect("error.jsp?message=Faltan+campos+obligatorios");
             return;
         }
 
         try {
-            s.altaVuelo(
-                nombreVuelo,
-                fechaVuelo,
-                duracion,
-                asientosTurista,
-                asientosEjecutivo,
-                fechaAlta,
-                nombreRuta,
-                imagenVuelo
-            );
+            ControladorSistemaPublish port = getPort();
+            // WS expects Strings for dates usually, but let's check the method signature in
+            // ControladorSistemaPublish.java
+            // altaVuelo(String nombre, String fecha, String duracion, int asientosTurista,
+            // int asientosEjecutivo, String fechaAlta, String nombreRuta, String urlImagen)
+
+            port.altaVuelo(
+                    nombreVuelo,
+                    fechaVuelo.toString(),
+                    duracion.toString(),
+                    asientosTurista,
+                    asientosEjecutivo,
+                    fechaAlta.toString(),
+                    nombreRuta,
+                    imagenVuelo);
 
             request.setAttribute("notyf_success", "Vuelo creado correctamente");
             request.getRequestDispatcher("/WEB-INF/altavuelo.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("error.jsp?message=" +
-                java.net.URLEncoder.encode("Error al registrar vuelo: " + e.getMessage(), "UTF-8"));
+                    java.net.URLEncoder.encode("Error al registrar vuelo: " + e.getMessage(), "UTF-8"));
         }
     }
 }

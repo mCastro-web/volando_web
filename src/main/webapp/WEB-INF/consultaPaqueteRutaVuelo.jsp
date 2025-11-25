@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, data_types.DtPaqueteVuelo, data_types.DtRutaVuelo" %>
+<%@ page import="java.util.List, publicadores.DtPaqueteVuelo, publicadores.DtRutaVuelo" %>
 
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
@@ -42,77 +42,19 @@
           <!-- Selector de paquetes -->
           <div class="form-control">
             <label class="label"><span class="label-text">Paquete ruta de vuelo</span></label>
-            <select id="selpaquete" name="paquete" class="select select-bordered w-full">
-                <%
-                    List<String> paquetes = (List<String>) request.getAttribute("paquetes");
-                    if (paquetes != null && !paquetes.isEmpty()) {
-                        for (String a : paquetes) {
-                %>
-                    <option value="<%= a %>" <%= a.equals(request.getAttribute("paqueteSeleccionado")) ? "selected" : "" %>>
-                        <%= a %>
-                    </option>
-                <%
-                        }
-                    } else {
-                %>
-                    <option value="">No hay paquetes disponibles</option>
-                <%
-                    }
-                %>
-            </select>
-          </div>
-
-          <!-- Botón filtrar -->
-          <div class="form-control">
-           <button type="submit" id="btnFiltrar" class="btn btn-primary w-full">Ver datos del paquete</button>
-          </div>
-        </div>
-
+<select id="selpaquete" name="paquete" class="select select-bordered w-full">
 <%
-    DtPaqueteVuelo paqueteDt = (DtPaqueteVuelo) request.getAttribute("paqueteDt");
-    if (paqueteDt != null) {
+    List<String> paquetes = (List<String>) request.getAttribute("paquetes");
+    if (paquetes != null && !paquetes.isEmpty()) {
+        for (String a : paquetes) {
 %>
-<div class="mt-6 p-4 rounded-lg border bg-base-200 shadow-sm">
-    <h3 class="text-xl text-center font-semibold mb-3">
-        Detalles del paquete "<%= paqueteDt.getNombre() %>"
-    </h3>
-    <hr class="mb-4">
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-            <p class="font-medium">Nombre:</p>
-            <p><%= paqueteDt.getNombre() %></p>
-        </div>
-        <div>
-            <p class="font-medium">Descripción:</p>
-            <p><%= paqueteDt.descripcion() %></p>
-        </div>
-        <div>
-            <p class="font-medium">Costo:</p>
-            <p>USD <%= paqueteDt.costo() %></p>
-        </div>
-        <div>
-            <p class="font-medium">Descuento:</p>
-            <p><%= paqueteDt.descuento() %> %</p>
-        </div>
-        <div>
-            <p class="font-medium">Días de validez:</p>
-            <p><%= paqueteDt.diasValidez() %></p>
-        </div>
-        <div>
-            <p class="font-medium">Fecha de alta:</p>
-            <p><%= paqueteDt.altaFecha() %></p>
-        </div>
-    </div>
-</div>
+            <option value="<%= a %>"><%= a %></option>
 <%
-    } else if (request.getParameter("paquete") != null) {
-%>
-<p class="mt-4 text-base-content/70 text-center">
-    No se encontraron detalles para el paquete seleccionado.
-</p>
-<%
+        }
     }
 %>
+</select>
+
 
 <!-- Paso 3: Rutas del paquete -->
 <div class="mt-8">
@@ -127,11 +69,12 @@
       <div class="card bg-base-100 shadow-xl">
         <div class="form-control">
           <form action="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" method="get">
-            <input type="hidden" name="paquete" value="<%= paqueteDt != null ? paqueteDt.getNombre() : "" %>">
+            <input type="hidden" name="aerolinea" value="<%= request.getParameter("aerolinea") != null ? request.getParameter("aerolinea") : "" %>">
             <button type="submit" name="rutaId" value="<%= nombreRuta %>" class="btn btn-primary w-full">
-              <%= nombreRuta %>
+                <%= nombreRuta %>
             </button>
-          </form>
+            </form>
+
         </div>
         <div class="card-body">
           <p class="text-sm text-base-content/70">
@@ -157,10 +100,14 @@
 
     <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
 
-          <label class="label"><span class="label-text">Rol </span></label>
-          <select id="selRol" class="input input-bordered w-full bg-base-100">
-              <option value="AEROLINEA" selected>Aerolínea</option>
-          </select>
+      <!-- FILTROS AEROLÍNEA -->
+      <div class="rounded-box border p-4 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div class="form-control">
+            <label class="label"><span class="label-text">Rol </span></label>
+            <select id="selRol" class="input input-bordered w-full bg-base-100">
+                <option value="AEROLINEA" selected>Aerolínea</option>
+            </select>
           </div>
 
           <%
@@ -266,6 +213,5 @@
 
     <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
     <script src="${pageContext.request.contextPath}/js/consultaPaqueteRutaVuelo.js"></script>
-  </form>
 </body>
 </html>

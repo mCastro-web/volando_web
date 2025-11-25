@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="model.PaqueteVuelo" %>
+<%@ page import="publicadores.DtPaqueteVuelo" %>
 <%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
@@ -31,12 +31,12 @@
                 <select name="paquete_seleccionado" class="bg-base-200 select select-bordered w-full" onchange="this.form.submit()">
                     <option value="">Selecciona un paquete</option>
                     <%
-                    List<PaqueteVuelo> paquetes = (List<PaqueteVuelo>) request.getAttribute("paquetes");
+                    List<DtPaqueteVuelo> paquetes = (List<DtPaqueteVuelo>) request.getAttribute("paquetes");
                     if (paquetes != null && !paquetes.isEmpty()) {
-                        for (PaqueteVuelo paquete : paquetes) {
+                        for (DtPaqueteVuelo paquete : paquetes) {
                     %>
                             <option value="<%= paquete.getNombre() %>">
-                            <%= paquete.getNombre() %> - <%= paquete.getCosto() * (1 - paquete.getDescuento()) %> USD
+                            <%= paquete.getNombre() %> - <%= paquete.getCosto() %> USD
                             </option>
                     <%
                         }
@@ -64,7 +64,7 @@
 
    
 <%
-PaqueteVuelo seleccionado = (PaqueteVuelo) request.getAttribute("paqueteSeleccionado");
+DtPaqueteVuelo seleccionado = (DtPaqueteVuelo) request.getAttribute("paqueteSeleccionado");
 if (seleccionado != null) {
 %>
 
@@ -78,7 +78,7 @@ if (seleccionado != null) {
   </figure>
 
   <div class="card-body">
-    <button class="card-title"><%= seleccionado.getCosto() * (1 - seleccionado.getDescuento()) %> USD</button>
+    <button class="card-title"><%= seleccionado.getCosto() %> USD</button>
     <h5 class="card-title"><%= seleccionado.getNombre() %></h5>
     <p class="text-sm text-base-content/80"><%= seleccionado.getDescripcion() %></p>
 

@@ -5,15 +5,18 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import data_types.DtUsuario;
-import data_types.TipoDoc;
-import sistema.*;
+import publicadores.TipoDoc;
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
 
 @WebServlet("/RegisterServlet")
-@MultipartConfig 
+@MultipartConfig
 public class RegisterServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -28,7 +31,8 @@ public class RegisterServlet extends HttpServlet {
         String passcheck = new String(request.getPart("confirmPassword").getInputStream().readAllBytes(), "UTF-8");
         String name = new String(request.getPart("nombreCliente").getInputStream().readAllBytes(), "UTF-8");
         String apellido = new String(request.getPart("apellidoCliente").getInputStream().readAllBytes(), "UTF-8");
-        String nacionalidad = new String(request.getPart("nacionalidadCliente").getInputStream().readAllBytes(), "UTF-8");
+        String nacionalidad = new String(request.getPart("nacionalidadCliente").getInputStream().readAllBytes(),
+                "UTF-8");
         String numeroDoc = new String(request.getPart("documentoCliente").getInputStream().readAllBytes(), "UTF-8");
 
         String tipoDocStr = null;
@@ -41,14 +45,14 @@ public class RegisterServlet extends HttpServlet {
 
         TipoDoc tipoDoc = TipoDoc.valueOf(tipoDocStr);
 
-
         String bdateStr = request.getParameter("fechaNacimientoCliente");
         java.time.LocalDate bdate = null;
         if (bdateStr != null && !bdateStr.isEmpty()) {
             try {
                 bdate = java.time.LocalDate.parse(bdateStr);
             } catch (java.time.format.DateTimeParseException ex) {
-                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                        .ofPattern("MM/dd/yyyy");
                 bdate = java.time.LocalDate.parse(bdateStr, formatter);
             }
         } else {
@@ -56,25 +60,29 @@ public class RegisterServlet extends HttpServlet {
         }
 
         Part filePart = request.getPart("fotoPerfil");
-        String url = s.subirImagen(filePart, "vuy_clientes");
-        
-        try {
+        // WS adaptation: Just get the filename, upload not supported via WS yet
+        String url = filePart.getSubmittedFileName();
 
-            s.altaCliente(user, name, email, pass, url, apellido, bdate, nacionalidad, tipoDoc, numeroDoc);
+        try {
+            ControladorSistemaPublish port = getPort();
+            port.altaCliente(user, name, email, pass, url, apellido, bdate.toString(), nacionalidad, tipoDoc.toString(),
+                    numeroDoc);
 
             request.setAttribute("mensaje", "Registro exitoso");
-            request.setAttribute("tipo", "success"); 
+            request.setAttribute("tipo", "success");
             response.sendRedirect(request.getContextPath() + "/");
 
-
-        } catch (IllegalArgumentException e) {
-
-            request.setAttribute("errorPass", e.getMessage());
-            request.getRequestDispatcher("login").forward(request, response);
+        } catch (IllegalArgumentException e) { // Catching IllegalArgumentException if WS throws it wrapped or directly
+            // Or generic Exception
+            handleException(request, response, e);
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorPass", "Error interno del sistema.");
-            request.getRequestDispatcher("login").forward(request, response);
+            handleException(request, response, e);
         }
+    }
+
+    private void handleException(HttpServletRequest request, HttpServletResponse response, Exception e)
+            throws ServletException, IOException {
+        request.setAttribute("errorPass", e.getMessage());
+        request.getRequestDispatcher("login").forward(request, response);
     }
 }

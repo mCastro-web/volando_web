@@ -7,14 +7,14 @@
         <div class="sm:hide text-left space-y-2 md:space-y-1">
             <div class="flex items-center gap-3">
                 <img src="${pageContext.request.contextPath}/assets/img/logo_utec.png" alt="Logo UTEC" class="h-10 w-auto" />
-                <img src="${pageContext.request.contextPath}/assets/img/logo_tecnologo.png" alt="Logo Tecnólogo" class="h-10 w-auto"/>
+                <img src="${pageContext.request.contextPath}/assets/img/logo_tecnologo.png" alt="Logo Tecnologo" class="h-10 w-auto"/>
             </div>
             <p class="mt-4 text-sm opacity-90 leading-tight">
-                Proyecto académico desarrollado para la materia
-                <strong>Programación de Aplicaciones</strong>
+                Proyecto academico desarrollado para la materia
+                <strong>Programacion de Aplicaciones</strong>
             </p>
             <p class="text-sm opacity-90 leading-tight">
-                UTEC – Universidad Tecnológica del Uruguay · Sede San José de Mayo
+                UTEC – Universidad Tecnologica del Uruguay · Sede San Jose de Mayo
             </p>
         </div>
         <div class="flex flex-col md:items-end items-center gap-2 text-right md:pr-6">
@@ -24,7 +24,7 @@
             </div>
             <div class="text-xs opacity-80">
                 <p>© 2025 VolandoUy · Todos los derechos reservados</p>
-                <p>Desarrollado por estudiantes de UTEC San José</p>
+                <p>Desarrollado por estudiantes de UTEC San Jose</p>
             </div>
         </div>
       </div>

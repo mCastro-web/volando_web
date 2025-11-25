@@ -3,26 +3,28 @@ package org.utec.volandouy.web.servlets;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import sistema.ISistema;
-import sistema.Sistema;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_types.DtDatosVueloR;
-import data_types.DtItemPaquete;
-import data_types.DtPaqueteVuelo;
-import data_types.DtReserva;
-import data_types.DtVuelo;
-import data_types.TipoAsiento;
-import model.ItemPaquete;
+import publicadores.DtDatosVueloR;
+import publicadores.DtItemPaquete;
+import publicadores.DtPaqueteVuelo;
+import publicadores.DtReserva;
+import publicadores.DtVuelo;
+import publicadores.TipoAsiento;
+
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
 
 @WebServlet("/ReservarVueloServlet")
 public class ReservarVueloServlet extends HttpServlet {
 
-    private final ISistema s = Sistema.getInstance();
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -37,37 +39,23 @@ public class ReservarVueloServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect("login");
-            return;
         }
 
-        Object usuario = session.getAttribute("usuario");
-        String nicknameCliente = "";
-
-        try {
-            java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
-            Object tipoObj = getNickname.invoke(usuario);
-            nicknameCliente = (String) tipoObj;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String aerolineaSeleccionada = request.getParameter("aerolinea_seleccionada");
         String rutaSeleccionada = request.getParameter("ruta_seleccionada");
         String vueloSeleccionado = request.getParameter("vuelo_seleccionado");
         String tipo_asiento = request.getParameter("tipo_asiento");
         String metodoPago = request.getParameter("metodo_pago");
-        String paqueteSeleccionado = request.getParameter("paquete_seleccionado");
-
-        Long paqueteSeleccionadoLong = null;
-        if (paqueteSeleccionado != null && !paqueteSeleccionado.isEmpty()) {
-            try {
-                paqueteSeleccionadoLong = Long.valueOf(paqueteSeleccionado);
-            } catch (NumberFormatException ignored) {}
+        Long paqueteSeleccionado = null;
+        String paramPaq = request.getParameter("paquete_seleccionado");
+        if (paramPaq != null && !paramPaq.isBlank()) {
+            paqueteSeleccionado = Long.valueOf(paramPaq);
         }
 
+        ControladorSistemaPublish port = getPort();
         List<DtItemPaquete> itemsPaquete = null;
-        if (paqueteSeleccionadoLong != null) {
-            itemsPaquete = s.listarItemsDePaquete(paqueteSeleccionadoLong);
+
+        if (paqueteSeleccionado != null) {
+            itemsPaquete = port.listarItemsDePaquete(paqueteSeleccionado);
             request.setAttribute("itemsPaquete", itemsPaquete);
             System.out.println("Items del paquete seleccionado: " + itemsPaquete);
         }
@@ -76,16 +64,21 @@ public class ReservarVueloServlet extends HttpServlet {
         TipoAsiento tipoDeAsiento = null;
         Integer cantidadPasajeros = 1;
         String nombreRutaItem = null;
+
         if (itemsPaquete != null) {
             for (DtItemPaquete item : itemsPaquete) {
-                nombreRutaItem = item.getNombreRuta();
+                nombreRutaItem = item.getNombreRutaVuelo();
                 System.out.println("Item de paquete - Ruta: " + nombreRutaItem);
 
-                List<DtDatosVueloR> vuelos = s.listarVuelosDeRuta(nombreRutaItem);
+                List<DtDatosVueloR> vuelos = port.listarVuelosDeRuta(nombreRutaItem);
                 for (DtDatosVueloR vuelo : vuelos) {
                     if (vuelo.getNombre().equalsIgnoreCase(vueloSeleccionado)) {
                         rutaEnPaquete = true;
-                        tipoDeAsiento = item.getTipoAsiento();
+
+                        try {
+                            tipoDeAsiento = TipoAsiento.valueOf(item.getTipoAsiento().toString());
+                        } catch (Exception e) {}
+
                         cantidadPasajeros = item.getCant();
                         break;
                     }
@@ -125,24 +118,29 @@ public class ReservarVueloServlet extends HttpServlet {
 
         LocalDate fecha = LocalDate.now();
 
-        List<String> aerolineas = s.listarNicknamesAerolineas();
+        List<String> aerolineas = port.listarNicknamesAerolineas();
         request.setAttribute("aerolineas", aerolineas);
 
+        String aerolineaSeleccionada = request.getParameter("aerolinea_seleccionada");
         if (aerolineaSeleccionada != null && !aerolineaSeleccionada.isEmpty()) {
             request.setAttribute("aerolineaSeleccionada", aerolineaSeleccionada);
-            List<String> rutas = s.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
+            List<String> rutas = port.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
             request.setAttribute("rutas", rutas);
         }
 
         if (rutaSeleccionada != null && !rutaSeleccionada.isEmpty()) {
             request.setAttribute("rutaSeleccionada", rutaSeleccionada);
-            List<?> vuelos = s.listarVuelosDeRuta(rutaSeleccionada);
+            List<DtDatosVueloR> vuelos = port.listarVuelosDeRuta(rutaSeleccionada);
             request.setAttribute("vuelos", vuelos);
         }
 
         String nombreVuelo = "";
         if (vueloSeleccionado != null && !vueloSeleccionado.isEmpty()) {
-            DtVuelo vuelo = s.obtenerDtVueloPorNombre(vueloSeleccionado);
+            DtVuelo vuelo = null;
+            try {
+                vuelo = port.obtenerDtVueloPorNombre(vueloSeleccionado);
+            } catch (Exception e) {}
+
             if (vuelo != null) {
                 nombreVuelo = vuelo.getNombre();
                 request.setAttribute("dtVuelo", vuelo);
@@ -163,7 +161,18 @@ public class ReservarVueloServlet extends HttpServlet {
         request.setAttribute("pasajerosNombres", pasajerosNombres);
         request.setAttribute("pasajerosApellidos", pasajerosApellidos);
 
-        List<String> paquetes = s.listarPaquetesDeCliente(nicknameCliente);
+        String nicknameCliente = "";
+        Object usuarioObj = session.getAttribute("usuario");
+
+        if (usuarioObj instanceof publicadores.DtCliente cliente) {
+            nicknameCliente = cliente.getNickname();
+        } else if (usuarioObj instanceof String str) {
+            nicknameCliente = str; // por si en algún caso guardás el nick literal
+        } else {
+            throw new IllegalStateException("El atributo 'usuario' no es ni String ni DtCliente");
+        }
+
+        List<String> paquetes = port.listarPaquetesDeCliente(nicknameCliente);
         System.out.println("Paquetes del cliente: " + paquetes);
         request.setAttribute("paquetesCliente", paquetes);
 
@@ -177,21 +186,23 @@ public class ReservarVueloServlet extends HttpServlet {
                 || tipoAsiento == null
                 || cantPasajeros == null || cantPasajeros <= 0
                 || pasajerosNombres.isEmpty() || pasajerosApellidos.isEmpty()) {
-            request.setAttribute("notyf_error", "Completa todos los campos antes de confirmar la reserva.");
+
+            request.setAttribute("notyf_error",
+                    "Completa todos los campos antes de confirmar la reserva.");
             request.getRequestDispatcher("/WEB-INF/reservarVuelo.jsp").forward(request, response);
             return;
         }
 
         try {
             if ("paquete_comprado".equalsIgnoreCase(metodoPago)
-                    && paqueteSeleccionado != null && !paqueteSeleccionado.isEmpty()) {
+                    && paqueteSeleccionado != null) {
 
                 String rutaCoincidente = null;
                 if (itemsPaquete != null && !itemsPaquete.isEmpty()) {
                     for (DtItemPaquete item : itemsPaquete) {
-                        String rutaItem = item.getNombreRuta();
-                        if (rutaItem != null && rutaSeleccionada != null &&
-                            rutaItem.equalsIgnoreCase(rutaSeleccionada)) {
+                        String rutaItem = item.getNombreRutaVuelo();
+                        if (rutaItem != null && rutaSeleccionada != null
+                                && rutaItem.equalsIgnoreCase(rutaSeleccionada)) {
                             rutaCoincidente = rutaItem;
                             break;
                         }
@@ -200,37 +211,55 @@ public class ReservarVueloServlet extends HttpServlet {
 
                 if (rutaCoincidente == null) {
                     request.setAttribute("notyf_error",
-                        "El paquete seleccionado no incluye la ruta del vuelo elegido (" + rutaSeleccionada + ").");
+                            "El paquete seleccionado no incluye la ruta del vuelo elegido (" + rutaSeleccionada + ").");
                     request.getRequestDispatcher("/WEB-INF/reservarVuelo.jsp").forward(request, response);
                     return;
                 }
 
                 request.setAttribute("rutaCoincidente", rutaCoincidente);
-                System.out.println("Ruta coincidente encontrada en el paquete: " + rutaCoincidente);
 
-                s.reservarVuelo(nicknameCliente, nombreVuelo, tipoAsiento, equipaje_extra,
-                        fecha, cantPasajeros, pasajerosNombres, pasajerosApellidos);
+                port.reservarVuelo(
+                        nicknameCliente,
+                        nombreVuelo,
+                        tipoAsiento.toString(),
+                        equipaje_extra,
+                        fecha.toString(),
+                        cantPasajeros,
+                        pasajerosNombres,
+                        pasajerosApellidos
+                );
 
-                s.comprarPaquete(nicknameCliente, paqueteSeleccionado, LocalDate.now());
+                port.comprarPaquete(nicknameCliente, paqueteSeleccionado.toString(), LocalDate.now().toString());
+
                 request.setAttribute("notyf_success",
                         "Reserva realizada utilizando el paquete '" + paqueteSeleccionado +
-                        "' (Ruta: " + rutaCoincidente + ").");
+                                "' (Ruta: " + rutaCoincidente + ").");
 
             } else {
-                s.reservarVuelo(nicknameCliente, nombreVuelo, tipoAsiento, equipaje_extra,
-                        fecha, cantPasajeros, pasajerosNombres, pasajerosApellidos);
+
+                port.reservarVuelo(
+                        nicknameCliente,
+                        nombreVuelo,
+                        tipoAsiento.toString(),
+                        equipaje_extra,
+                        fecha.toString(),
+                        cantPasajeros,
+                        pasajerosNombres,
+                        pasajerosApellidos
+                );
                 request.setAttribute("notyf_success", "Reserva creada correctamente.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("notyf_error", "Error al realizar la reserva: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/reservarVuelo.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/reservarVuelo").forward(request, response);
             return;
         }
 
-        List<DtReserva> reservas = s.listarPaquetesCompradosPorCliente(nicknameCliente);
+        List<DtReserva> reservas = port.listarPaquetesCompradosPorCliente(nicknameCliente);
         request.setAttribute("reservas", reservas);
+
         request.getRequestDispatcher("/WEB-INF/reservarVuelo.jsp").forward(request, response);
     }
 }

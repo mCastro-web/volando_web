@@ -5,14 +5,18 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import sistema.*;
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
 
 @WebServlet("/RegisterAServlet")
 @MultipartConfig
 public class RegisterAServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
-    
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -34,16 +38,18 @@ public class RegisterAServlet extends HttpServlet {
         System.out.println("Archivo recibido: " + filePart.getSubmittedFileName());
         System.out.println("Tamaño: " + filePart.getSize());
 
-        String url = s.subirImagen(filePart, "vuy_aerolineas");
-        System.out.println("URL devuelta por subirImagen(): " + url);
+        // WS adaptation: Just get the filename, upload not supported via WS yet
+        String url = filePart.getSubmittedFileName();
+        System.out.println("URL (filename) seleccionada: " + url);
 
         if (url == null || url.isEmpty()) {
-            response.sendRedirect("error.jsp?message=Error al subir imagen");
+            response.sendRedirect("error.jsp?message=Error al subir imagen (nombre vacío)");
             return;
         }
 
         try {
-            s.altaAerolinea(nicknameAerolinea, nombre, email, password, url, descripcion, sitioWeb);
+            ControladorSistemaPublish port = getPort();
+            port.altaAerolinea(nicknameAerolinea, nombre, email, password, url, descripcion, sitioWeb);
             response.sendRedirect(request.getContextPath() + "/");
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,4 +57,3 @@ public class RegisterAServlet extends HttpServlet {
         }
     }
 }
-

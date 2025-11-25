@@ -3,18 +3,22 @@ package org.utec.volandouy.web.servlets;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import sistema.ISistema;
-import sistema.Sistema;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import data_types.DtRutaVuelo;
-import data_types.DtVuelo;
+import publicadores.DtVuelo;
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
+import publicadores.DtRutaVuelo;
+
 
 @WebServlet("/ConsultaRutaVueloServlet")
 public class ConsultaRutaVueloServlet extends HttpServlet {
 
-    private final ISistema s = Sistema.getInstance();
+    private ControladorSistemaPublish getPort() {
+        ControladorSistemaPublishService service = new ControladorSistemaPublishService();
+        return service.getControladorSistemaPublishPort();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,20 +35,16 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
     private void procesar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("usuario") == null) {
-                response.sendRedirect("login");
-                return;
-            }
+        ControladorSistemaPublish port = getPort();
 
+        try {
             String action = request.getParameter("action"); // listarCategorias | listarAerolineas | listarRutas
             String categoriaSeleccionada = request.getParameter("categoria");
             String aerolineaSeleccionada = request.getParameter("aerolinea");
             String rutaId = request.getParameter("rutaId");
 
             try {
-                List<String> aerolineas = s.listarNicknamesAerolineas();
+                List<String> aerolineas = port.listarNicknamesAerolineas();
                 request.setAttribute("aerolineas", aerolineas);
             } catch (Exception ex) {
                 request.setAttribute("aerolineas", new ArrayList<String>());
@@ -53,18 +53,13 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
 
             if ("listarCategorias".equalsIgnoreCase(action)) {
                 try {
-                    java.lang.reflect.Method m = s.getClass().getMethod("listarNombresCategorias");
-                    Object res = m.invoke(s);
-                    if (res instanceof List) {
-                        request.setAttribute("categorias", (List<?>) res);
-                    }
-                } catch (NoSuchMethodException ns) {
-                    request.setAttribute("categorias", new ArrayList<String>());
+                    List<String> categorias = port.listarNombresCategorias();
+                    request.setAttribute("categorias", categorias);
                 } catch (Exception ex) {
                     request.setAttribute("categorias", new ArrayList<String>());
                 }
                 request.setAttribute("mostrando", "categorias");
-            }
+                }
 
 
             if ("listarAerolineas".equalsIgnoreCase(action)) {
@@ -79,22 +74,19 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
 
                 if (categoriaSeleccionada != null && !categoriaSeleccionada.isBlank()) {
                     try {
-                        java.lang.reflect.Method m = s.getClass().getMethod("listarRutasPorCategoria", String.class);
-                        Object res = m.invoke(s, categoriaSeleccionada);
+                        java.lang.reflect.Method m = port.getClass().getMethod("listarRutasPorCategoria", String.class);
+                        Object res = m.invoke(port, categoriaSeleccionada);
                         if (res instanceof List<?>) rutas = (List<?>) res;
                         request.setAttribute("filtroUsado", "categoria");
                     } catch (Exception ex) {
                         request.setAttribute("mensaje", "Error listando rutas por categoría.");
                     }
-                }
-
-                else if (aerolineaSeleccionada != null && !aerolineaSeleccionada.isBlank()) {
+                } else if (aerolineaSeleccionada != null && !aerolineaSeleccionada.isBlank()) {
                     try {
-                        java.lang.reflect.Method m = s.getClass().getMethod("listarRutasPorAerolinea", String.class);
-                        Object res = m.invoke(s, aerolineaSeleccionada);
-                        if (res instanceof List<?>) rutas = (List<?>) res;
+                        rutas = port.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
                         request.setAttribute("filtroUsado", "aerolinea");
                     } catch (Exception ex) {
+                        ex.printStackTrace();
                         request.setAttribute("mensaje", "Error listando rutas por aerolínea.");
                     }
                 } else {
@@ -102,13 +94,11 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
                 }
 
                 if (rutas != null) {
-                    for (Object r : rutas) {
+                    for (Object objRuta : rutas) {  // usar Object en vez de String
                         try {
-                            String nombreRuta = (r != null) ? r.toString() : null;
-                            if (nombreRuta != null && !nombreRuta.isBlank()) {
-                                DtRutaVuelo dt = s.obtenerDtRutaPorNombre(nombreRuta);
-                                if (dt != null) rutasDt.add(dt);
-                            }
+                            String nombreRuta = (String) objRuta;  // casteo explícito
+                            DtRutaVuelo dt = port.obtenerDtRutaPorNombre(nombreRuta);
+                            if (dt != null) rutasDt.add(dt);
                         } catch (Exception ignored) {}
                     }
                 }
@@ -116,23 +106,33 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
                 request.setAttribute("rutasDt", rutasDt);
             }
 
-            if (rutaId != null && !rutaId.isBlank()) {
-                DtRutaVuelo rutaSeleccionada = s.obtenerDtRutaPorNombre(rutaId);
-                request.setAttribute("ruta", rutaSeleccionada);
-                request.setAttribute("rutaIdSeleccionada", rutaId); // 🔹 guardar solo el nombre como String
 
+            if (rutaId != null && !rutaId.isBlank()) {
+                DtRutaVuelo rutaSeleccionada = port.obtenerDtRutaPorNombre(rutaId);
+                request.setAttribute("ruta", rutaSeleccionada);
+                request.setAttribute("rutaIdSeleccionada", rutaId);
+
+                List<String> nombresVuelos = null;
                 List<DtVuelo> listaDtVuelo = new ArrayList<>();
-                if (rutaSeleccionada != null && rutaSeleccionada.getVuelos() != null) {
-                    for (String nombreVuelo : rutaSeleccionada.getVuelos()) {
+
+                if (rutaSeleccionada != null) {
+                    nombresVuelos = port.listarNombresVuelosPorRuta(rutaId);
+                    request.setAttribute("ListaNombresVuelos", nombresVuelos);
+                }
+
+                if (nombresVuelos != null) {
+                    for (String nombreVuelo : nombresVuelos) {
                         try {
-                            DtVuelo dt = s.obtenerDtVueloPorNombre(nombreVuelo);
+                            DtVuelo dt = port.obtenerDtVueloPorNombre(nombreVuelo);
                             if (dt != null) listaDtVuelo.add(dt);
                         } catch (Exception ex) {
                             System.out.println("Error cargando vuelo: " + ex.getMessage());
                         }
                     }
                 }
+
                 request.setAttribute("ListaDtVuelo", listaDtVuelo);
+
             }
 
             request.setAttribute("categoriaSeleccionada", categoriaSeleccionada);

@@ -3,49 +3,50 @@ package org.utec.volandouy.web.servlets;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import sistema.ISistema;
-import sistema.Sistema;
-import model.Cliente;
 import java.io.IOException;
-import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import data_types.DtReserva;
-import data_types.DtRutaVuelo;
-import data_types.DtVuelo;
+import publicadores.DtReserva;
+import publicadores.DtRutaVuelo;
+import publicadores.DtVuelo;
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
 
 @WebServlet("/ConsultaVueloServlet")
 public class ConsultaVueloServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
-    
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            ControladorSistemaPublish port = getPort();
+
             String aerolineaSeleccionada = request.getParameter("aerolinea");
-            List<String> aerolineas = s.listarNicknamesAerolineas();
+            List<String> aerolineas = port.listarNicknamesAerolineas();
             String rutaId = request.getParameter("rutaId");
             String vueloId = request.getParameter("vueloId");
 
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("usuario") == null) {
-                response.sendRedirect("login");
-                return;
-            }
 
-            Object usuario = session.getAttribute("usuario");
-
+            Object usuarioObj = session.getAttribute("usuario");
             String nickNameAero = "";
-            try {
-                Method getNickname = usuario.getClass().getMethod("getNickname");
-                Object nicknameObj = getNickname.invoke(usuario);
-                if (nicknameObj != null) {
-                    nickNameAero = nicknameObj.toString().toUpperCase();
+            String tipoUsuario = "";
+
+            if (usuarioObj instanceof publicadores.DtUsuario) {
+                publicadores.DtUsuario usuario = (publicadores.DtUsuario) usuarioObj;
+                if (usuario.getNickname() != null) {
+                    nickNameAero = usuario.getNickname().toUpperCase();
                 }
-            } catch (Exception e) {
-                System.out.println("Error obteniendo nickname de la aerolínea: " + e.getMessage());
+                if (usuario.getTipo() != null) {
+                    tipoUsuario = usuario.getTipo().toUpperCase();
+                }
             }
 
             request.setAttribute("nickNameAero", nickNameAero);
@@ -57,17 +58,17 @@ public class ConsultaVueloServlet extends HttpServlet {
             request.setAttribute("aerolineaSeleccionada", aerolineaSeleccionada);
 
             if (aerolineaSeleccionada != null && !aerolineaSeleccionada.isEmpty()) {
-                List<?> rutas = s.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
+                List<String> rutas = port.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
                 request.setAttribute("rutas", rutas);
 
                 List<DtRutaVuelo> rutasDt = new ArrayList<>();
                 if (rutas != null) {
-                    for (Object r : rutas) {
+                    for (String nombreRuta : rutas) {
                         try {
-                            String nombreRuta = (r != null) ? r.toString() : null;
                             if (nombreRuta != null && !nombreRuta.isBlank()) {
-                                DtRutaVuelo dt = s.obtenerDtRutaPorNombre(nombreRuta);
-                                if (dt != null) rutasDt.add(dt);
+                                DtRutaVuelo dt = port.obtenerDtRutaPorNombre(nombreRuta);
+                                if (dt != null)
+                                    rutasDt.add(dt);
                             }
                         } catch (Exception ex) {
                             // log opcional
@@ -78,7 +79,7 @@ public class ConsultaVueloServlet extends HttpServlet {
             }
 
             if (rutaId != null && !rutaId.isEmpty()) {
-                List<?> vuelos = s.listarNombresVuelosPorRuta(rutaId);
+                List<String> vuelos = port.listarNombresVuelosPorRuta(rutaId);
                 request.setAttribute("vuelos", vuelos);
                 request.setAttribute("rutaIdSeleccionada", rutaId);
             }
@@ -86,42 +87,24 @@ public class ConsultaVueloServlet extends HttpServlet {
             if (vueloId != null && !vueloId.isEmpty()) {
                 DtVuelo dtVuelo = null;
                 try {
-                    dtVuelo = s.obtenerDtVueloPorNombre(vueloId);
+                    dtVuelo = port.obtenerDtVueloPorNombre(vueloId);
                 } catch (Exception ex) {
                 }
                 request.setAttribute("dtVuelo", dtVuelo);
                 request.setAttribute("vueloIdSeleccionado", vueloId);
 
-                String tipoUsuario = "";
-                try {
-                    Method getTipo = usuario.getClass().getMethod("getTipo");
-                    Object tipoObj = getTipo.invoke(usuario);
-                    if (tipoObj != null) tipoUsuario = tipoObj.toString().toUpperCase();
-                } catch (Exception e) {
-                    System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
-                }
-
-                boolean esCliente = (usuario instanceof Cliente);
-                if (!esCliente && tipoUsuario != null && tipoUsuario.equalsIgnoreCase("CLIENTE")) {
-                    esCliente = true;
-                }
+                boolean esCliente = "CLIENTE".equalsIgnoreCase(tipoUsuario);
 
                 if (esCliente) {
                     System.out.println("Es cliente, intentando obtener DtReserva...");
-                    String nickNameCliente = "";
-                    try {
-                        Method getNickname = usuario.getClass().getMethod("getNickname");
-                        Object tipoObj = getNickname.invoke(usuario);
-                        if (tipoObj != null) nickNameCliente = tipoObj.toString().toUpperCase();
-                    } catch (Exception e) {
-                        System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
-                    }
+                    String nickNameCliente = nickNameAero; // Reusing the nickname obtained earlier
 
                     DtReserva dtReserva = null;
                     if (nickNameCliente != null && !nickNameCliente.isBlank()) {
                         try {
-                            dtReserva = s.obtenerDtReservaPorClienteVuelo(nickNameCliente.toLowerCase(), vueloId);
-                            System.out.println("DtReserva obtenida para cliente " + nickNameCliente + " y vuelo " + vueloId + ":");
+                            dtReserva = port.obtenerDtReservaPorClienteVuelo(nickNameCliente.toLowerCase(), vueloId);
+                            System.out.println(
+                                    "DtReserva obtenida para cliente " + nickNameCliente + " y vuelo " + vueloId + ":");
                             System.out.println(dtReserva);
                         } catch (Exception ex) {
                         }
@@ -145,11 +128,10 @@ public class ConsultaVueloServlet extends HttpServlet {
 
                 }
 
-
                 if ("AEROLINEA".equalsIgnoreCase(tipoUsuario)) {
                     try {
                         System.out.println("Es aerolínea, listando reservas del vuelo " + vueloId);
-                        List<DtReserva> reservasVuelo = s.listarDtReservasDeVuelo(vueloId);
+                        List<DtReserva> reservasVuelo = port.listarDtReservasDeVuelo(vueloId);
                         if (reservasVuelo != null && !reservasVuelo.isEmpty()) {
                             request.setAttribute("reservasVuelo", reservasVuelo);
                             System.out.println("Se encontraron " + reservasVuelo.size() + " reservas para este vuelo.");
@@ -160,11 +142,11 @@ public class ConsultaVueloServlet extends HttpServlet {
                         System.out.println("Error al listar reservas del vuelo: " + ex.getMessage());
                     }
                 }
- 
+
             }
 
             if (rutaId != null && !rutaId.isEmpty()) {
-                DtRutaVuelo rv = s.obtenerDtRutaPorNombre(rutaId);
+                DtRutaVuelo rv = port.obtenerDtRutaPorNombre(rutaId);
                 request.setAttribute("ruta", rv);
             }
 

@@ -1,11 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="data_types.DtVuelo" %>
-<%@ page import="data_types.DtRutaVuelo" %>
-<%@ page import="data_types.DtReserva" %>
-<%@ page import="data_types.DtDatosVueloR" %>
-<%@ page import="data_types.TipoAsiento" %>
+<%@ page import="publicadores.DtVuelo" %>
+<%@ page import="publicadores.DtRutaVuelo" %>
+<%@ page import="publicadores.DtReserva" %>
+<%@ page import="publicadores.DtDatosVueloR" %>
+<%@ page import="publicadores.TipoAsiento" %>
 
 
 <!DOCTYPE html>
@@ -77,7 +77,7 @@
                 String vueloSel = (String) request.getAttribute("vueloSeleccionado");
                 if (vuelos != null) {
                     for (Object v : vuelos) {
-                        data_types.DtDatosVueloR vueloObj = (data_types.DtDatosVueloR) v;
+                        DtDatosVueloR vueloObj = (DtDatosVueloR) v;
                         String nombre = vueloObj.getNombre();
             %>
                 <option value="<%= nombre %>" <%= (nombre.equals(vueloSel)) ? "selected" : "" %>><%= nombre %></option>
@@ -192,7 +192,7 @@
                    }
 
                    if (lastDigitIndex != -1) {
-                       id = nombrePaq.substring(lastDigitIndex).trim(); // solo el número
+                       id = nombrePaq.replaceAll("\\D", ""); // elimina todo lo NO numérico
                        nombrePaq = nombrePaq.substring(0, lastDigitIndex).trim(); // solo el nombre
                    }
         %>

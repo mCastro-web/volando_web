@@ -92,4 +92,9 @@ public class approuter {
     public String consultaPaqueteRutaVuelo() {
         return "consultaPaqueteRutaVuelo"; 
     }
+
+    @GetMapping("/seguir") 
+    public String seguir() {
+        return "seguir"; 
+    }
 }

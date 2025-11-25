@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, data_types.DtRutaVuelo" %>
-<%@ page import="java.util.List, data_types.DtVuelo" %>
+<%@ page import="java.util.List, publicadores.DtRutaVuelo" %>
+<%@ page import="java.util.List, publicadores.DtVuelo" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.net.URLEncoder" %>
 
@@ -20,28 +20,24 @@
         <!-- FILTROS: aquí va el bloque que pediste (antes 'Rol') -->
         <div class="rounded-box border p-4 space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <!-- Lugar donde estarán los dos botones (Listar categorías / Listar aerolíneas) -->
-                <div class="form-control">
-                    <label class="label"><span class="label-text">Opciones</span></label>
-                    <div class="flex gap-2">
-                        <!-- Botón listar categorías -->
-                        <button type="submit" name="action" value="listarCategorias"
-                                id="btnListarCategorias"
-                                class="btn btn-outline w-full">
-                            Listar categorías
-                        </button>
 
-                        <!-- Botón listar aerolíneas -->
-                        <button type="submit" name="action" value="listarAerolineas"
-                                id="btnListarAerolineas"
-                                class="btn btn-outline w-full">
-                            Listar aerolíneas
-                        </button>
-                    </div>
+                <!-- BLOQUE: Listar categorías -->
+                <div class="form-control flex flex-col gap-4">
+                    <button type="submit" name="action" value="listarCategorias"
+                            id="btnListarCategorias"
+                            class="btn btn-outline w-full">
+                        Listar categorías
+                    </button>
                 </div>
 
-                <!-- Selector de Aerolínea (se muestra cuando el usuario lista aerolineas) -->
-                <div class="form-control">
+                <!-- BLOQUE: Listar aerolíneas + selector -->
+                <div class="form-control flex flex-col gap-2">
+                    <button type="submit" name="action" value="listarAerolineas"
+                            id="btnListarAerolineas"
+                            class="btn btn-outline w-full">
+                        Listar aerolíneas
+                    </button>
+
                     <label class="label"><span class="label-text">Aerolínea</span></label>
                     <select id="selAero" name="aerolinea" class="select select-bordered w-full"
                             <c:if test="${not empty categoriaSeleccionada}">disabled</c:if>>
@@ -64,7 +60,7 @@
                     </select>
                 </div>
 
-                <!-- Botón: Listar rutas confirmadas (este usa la selección de categoría o de aerolínea) -->
+                <!-- BLOQUE: Listar rutas confirmadas -->
                 <div class="form-control">
                     <label class="label"><span class="label-text">&nbsp;</span></label>
                     <div class="flex gap-2">
@@ -72,6 +68,7 @@
                                 class="btn btn-primary w-full">Listar rutas confirmadas</button>
                     </div>
                 </div>
+
             </div>
 
             <!-- Si el servidor indicó "mostrando = categorias", mostramos la lista de categorias -->
@@ -115,9 +112,9 @@
             <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
             <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <%
-                    List<data_types.DtRutaVuelo> rutasDt = (List<data_types.DtRutaVuelo>) request.getAttribute("rutasDt");
+                    List<DtRutaVuelo> rutasDt = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
                     if (rutasDt != null && !rutasDt.isEmpty()) {
-                        for (data_types.DtRutaVuelo ruta : rutasDt) {
+                        for (DtRutaVuelo ruta : rutasDt) {
                             String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                             String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
                 %>
@@ -145,7 +142,7 @@
 
         <!-- Mostrar detalles de la ruta seleccionada -->
 <%
-    data_types.DtRutaVuelo rutaDetalle = (data_types.DtRutaVuelo) request.getAttribute("ruta");
+    DtRutaVuelo rutaDetalle = (DtRutaVuelo) request.getAttribute("ruta");
     if (rutaDetalle != null) {
 %>
     <div class="card mt-6 p-4 rounded-md bg-base-200 shadow">
@@ -167,6 +164,23 @@
             <tr><th class="text-left pr-4">Aerolínea</th><td><%= rutaDetalle.getAerolinea() %></td></tr>
             <tr><th class="text-left pr-4">Categoría</th><td><%= rutaDetalle.getCategoria() %></td></tr>
         </table>
+
+        <%
+            String rawUrl = rutaDetalle.getUrlVideo();
+            String embedUrl = rawUrl;
+
+            if (rawUrl != null && rawUrl.contains("watch?v=")) {
+                embedUrl = rawUrl.replace("watch?v=", "embed/");
+            }
+        %>
+
+        <iframe 
+            src="<%= embedUrl %>" 
+            width="560" height="315" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
 
         <%
           List<DtVuelo> vuelos = (List<DtVuelo>) request.getAttribute("ListaDtVuelo");

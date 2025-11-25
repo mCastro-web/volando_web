@@ -2,9 +2,24 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="java-net" />
+      <option name="name" value="java-net" />
+      <option name="url" value="https://maven.java.net/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2-repository.dev.java.net" />
+      <option name="name" value="Java.net Repository" />
+      <option name="url" value="https://maven.java.net/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-ee4j" />
+      <option name="name" value="eclipse-ee4j" />
+      <option name="url" value="https://repo.eclipse.org/content/groups/ee4j/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

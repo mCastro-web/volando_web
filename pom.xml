@@ -1,101 +1,116 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.2.5</version>
+        <relativePath/>
     </parent>
 
-    <groupId>org.example</groupId>
+    <!-- NO TOCAR ESTO -->
+    <groupId>uy.volandouy</groupId>
     <artifactId>volandouy</artifactId>
-    <version>1.0.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <properties>
-        <java.version>17</java.version>
-
-        <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-        <property name="jakarta.persistence.jdbc.url"
-                value="jdbc:postgresql://db.myzsshgrfrupiwxbsuhr.supabase.co:5432/postgres?sslmode=require"/>
-        <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-        <property name="jakarta.persistence.jdbc.password" value="92izVzgTwCTjFpj8"/>
-
-        <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-        <property name="hibernate.hbm2ddl.auto" value="update"/>
-        <property name="hibernate.show_sql" value="true"/>
-
-        <property name="hibernate.hikari.minimumIdle" value="2"/>
-        <property name="hibernate.hikari.maximumPoolSize" value="5"/>
-        <property name="hibernate.hikari.idleTimeout" value="60000"/>
-        <property name="hibernate.hikari.connectionTimeout" value="30000"/>
-        <property name="hibernate.hikari.maxLifetime" value="1800000"/>
-        <property name="hibernate.hikari.keepaliveTime" value="30000"/>
-    </properties>
-
     <dependencies>
-        <!-- Web -->
+
+        <!-- Lógica -->
+        <dependency>
+            <groupId>uy.volandouy</groupId>
+            <artifactId>volando-uy-logica</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.utec</groupId>
-            <artifactId>volandouy-logica</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <!-- JSP Support -->
+        <!-- JSP -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
-            <version>10.1.24</version>
         </dependency>
 
-        <!-- Jakarta Servlet -->
+        <!-- Servlets -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- JSTL -->
+        <!-- SOAP CLIENT (Metro Jakarta) -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+        <!-- JAXB Jakarta -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+
+        <!-- JSTL Jakarta -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>3.0.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.volandouy</groupId>
-            <artifactId>volandouy-logica</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>   
     </dependencies>
 
     <build>
+        <finalName>volandouy</finalName>
+
         <plugins>
+
+            <!-- ============= 12 WSIMPORTS ============= -->
+
+            <plugin>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>4.0.2</version>
+                <executions>
+
+                    <!-- SISTEMA (NUEVO) -->
+                    <execution>
+                        <id>ws-sistema</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>wsimport</goal></goals>
+                        <configuration>
+                            <wsdlUrls>
+                                <wsdlUrl>http://localhost:8090/ws/sistema?wsdl</wsdlUrl>
+                            </wsdlUrls>
+                            <packageName>publicadores</packageName>
+                            <target>3.0</target>
+                            <extension>true</extension>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
+
 </project>

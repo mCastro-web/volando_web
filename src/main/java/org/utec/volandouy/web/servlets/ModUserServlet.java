@@ -4,20 +4,23 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
-import sistema.ISistema;
-import sistema.Sistema;
 import java.io.IOException;
 import java.time.LocalDate;
 import org.mindrot.jbcrypt.BCrypt;
 import data_types.TipoDoc;
 import java.lang.reflect.Method;
 import java.util.Objects;
+// WS SISTEMA
+import publicadores.ControladorSistemaPublish;
+import publicadores.ControladorSistemaPublishService;
 
 @WebServlet("/ModUserServlet")
-@MultipartConfig(maxFileSize = 10 * 1024 * 1024) 
+@MultipartConfig(maxFileSize = 10 * 1024 * 1024)
 public class ModUserServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
+    private ControladorSistemaPublish getPort() {
+        return new ControladorSistemaPublishService().getControladorSistemaPublishPort();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -49,6 +52,8 @@ public class ModUserServlet extends HttpServlet {
             System.out.println("Error obteniendo atributos del usuario: " + e.getMessage());
         }
 
+        ControladorSistemaPublish port = getPort();
+
         if ("CLIENTE".equals(tipoUsuario)) {
 
             String nombreUser = request.getParameter("nombreUser");
@@ -78,12 +83,14 @@ public class ModUserServlet extends HttpServlet {
             String url = null;
 
             if (fotoPerfilC != null && fotoPerfilC.getSize() > 0) {
-                url = s.subirImagen(fotoPerfilC, nombreUser);
+                // WS adaptation: Just get the filename, upload not supported via WS yet
+                url = fotoPerfilC.getSubmittedFileName();
             } else {
                 try {
                     Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
                     url = Objects.toString(getUrlImagen.invoke(usuario), "");
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             String bdateParam = request.getParameter("bdate");
@@ -96,13 +103,14 @@ public class ModUserServlet extends HttpServlet {
                 }
             }
 
-            s.modificarCliente(
-                nickNameCliente, nombreUser, userEmail, password, url, apellido,
-                bdate, nacionalidad, tipoDoc, numDoc, nickNameCliente
-            );
+            port.modificarCliente(
+                    nickNameCliente, nombreUser, userEmail, password, url, apellido,
+                    bdate != null ? bdate.toString() : null, nacionalidad, tipoDoc != null ? tipoDoc.toString() : null,
+                    numDoc, nickNameCliente);
 
-            Object usuarioActualizado = s.buscarPorNick(nickNameCliente);
-            session.setAttribute("usuario", usuarioActualizado);
+            // Update session object
+            publicadores.DtUsuario usuarioActualizadoWS = port.buscarPorNick(nickNameCliente);
+            session.setAttribute("usuario", usuarioActualizadoWS);
         }
 
         else if ("AEROLINEA".equals(tipoUsuario)) {
@@ -122,21 +130,22 @@ public class ModUserServlet extends HttpServlet {
             String urlFoto = null;
 
             if (fotoPerfilA != null && fotoPerfilA.getSize() > 0) {
-                urlFoto = s.subirImagen(fotoPerfilA, nombreA);
+                // WS adaptation: Just get the filename
+                urlFoto = fotoPerfilA.getSubmittedFileName();
             } else {
                 try {
                     Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
                     urlFoto = Objects.toString(getUrlImagen.invoke(usuario), "");
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
-            s.modificarAerolinea(
-                nickNameCliente, nombreA, userEmail, passwordA,
-                urlFoto, descripcion, web, nickNameCliente
-            );
+            port.modificarAerolinea(
+                    nickNameCliente, nombreA, userEmail, passwordA,
+                    urlFoto, descripcion, web, nickNameCliente);
 
-            Object usuarioActualizado = s.buscarPorNick(nickNameCliente);
-            session.setAttribute("usuario", usuarioActualizado);
+            publicadores.DtUsuario usuarioActualizadoWS = port.buscarPorNick(nickNameCliente);
+            session.setAttribute("usuario", usuarioActualizadoWS);
         }
 
         else {

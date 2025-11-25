@@ -46,8 +46,16 @@
           <span class="label-text-alt text-xs opacity-70">Descripción completa de la ruta (máx. 500 caracteres recomendado).</span>
         </label>
 
+          <label class="mt-2 form-control w-full">
+              <div class="label">
+                  <span class="label-text font-medium">URL del video promocional</span>
+              </div>
+              <input id="urlVideo" name="urlVideo" type="text" placeholder="https://youtube.com/..."
+                     class="input input-bordered w-full bg-base-200" />
+              <span class="label-text-alt text-xs opacity-70">URL opcional de un video explicativo o promocional.</span>
+          </label>
 
-        <label class="mt-2 form-control w-full">
+          <label class="mt-2 form-control w-full">
           <div class="label">
             <span class="label-text font-medium">Costo turista</span>
           </div>

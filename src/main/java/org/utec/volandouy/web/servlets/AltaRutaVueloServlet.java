@@ -6,31 +6,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDate;
-import sistema.ISistema;
-import sistema.Sistema;
 import java.util.List;
 
-import data_types.DtUsuario;
+import publicadores.ControladorSistemaPublishService;
+import publicadores.ControladorSistemaPublish;
+import publicadores.DtUsuario;
 
 @WebServlet("/AltaRutaVueloServlet")
 @MultipartConfig
 public class AltaRutaVueloServlet extends HttpServlet {
 
-    ISistema s = Sistema.getInstance();
-    
+    // Creamos el port del WS
+    ControladorSistemaPublishService service = new ControladorSistemaPublishService();
+    ControladorSistemaPublish port = service.getControladorSistemaPublishPort();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-                
-        List<String> categorias = s.listarNombresCategorias();
-        List<String> ciudades = s.listarNombresCiudades();
+        List<String> categorias = port.listarNombresCategorias();
+        List<String> ciudades = port.listarNombresCiudades();
 
         request.setAttribute("categorias", categorias);
         request.setAttribute("ciudades", ciudades);
 
         request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,6 +41,7 @@ public class AltaRutaVueloServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
 
         try {
+            // === Capturar parámetros del formulario ===
             String nombre = request.getParameter("nombreRuta");
             String descripcionCorta = request.getParameter("descripcionCorta");
             String descripcion = request.getParameter("descripcion");
@@ -55,27 +58,33 @@ public class AltaRutaVueloServlet extends HttpServlet {
                 nombreArchivo = imagen.getSubmittedFileName();
             }
 
+            String urlVideo = request.getParameter("urlVideo");
+
+            // === Convertir tipos ===
             float costoTurista = Float.parseFloat(costoTuristaStr);
             float costoEjecutivo = Float.parseFloat(costoEjecutivoStr);
             float costoEquipajeExtra = Float.parseFloat(costoEquipajeExtraStr);
-            LocalDate fechaAlta = LocalDate.now();
+            String fechaAlta = LocalDate.now().toString();
+
             DtUsuario usuario = (DtUsuario) request.getSession().getAttribute("usuario");
-            String nickAerolinea = usuario.getNickname(); // o el método correcto
+            String nickAerolinea = usuario.getNickname();
 
-            
-            s.altaRutaVuelo(nombre, descripcion, fechaAlta, costoTurista, costoEjecutivo,
-                    costoEquipajeExtra, nickAerolinea, ciudadOrigen, ciudadDestino, categoria, nombreArchivo, descripcionCorta);
+            // === Llamada al WS ===
+            port.altaRutaVuelo(nombre, descripcion, fechaAlta, costoTurista, costoEjecutivo,
+                    costoEquipajeExtra, nickAerolinea, ciudadOrigen, ciudadDestino, categoria,
+                    nombreArchivo, urlVideo, descripcionCorta);
 
-        request.setAttribute("notyf_success_ARV", "Vuelo creado correctamente");
-        request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
+            // === Forward con mensaje de éxito ===
+            request.setAttribute("notyf_success_ARV", "Ruta de vuelo creada correctamente");
+            request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
 
         } catch (IllegalArgumentException e) {
             request.setAttribute("notyf_error_ARV", e.getMessage());
-            request.getRequestDispatcher("altaRutaVuelo").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("notyf_error_ARV", "Error interno del sistema.");
-            request.getRequestDispatcher("altaRutaVuelo").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/altaRutaVuelo.jsp").forward(request, response);
         }
     }
 }

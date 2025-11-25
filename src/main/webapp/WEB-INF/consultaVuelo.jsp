@@ -1,8 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="data_types.DtRutaVuelo" %>
-<%@ page import="data_types.DtVuelo" %>
-<%@ page import="data_types.DtReserva" %>
+<%@ page import="publicadores.DtRutaVuelo" %>
+<%@ page import="publicadores.DtVuelo" %>
+<%@ page import="publicadores.DtReserva" %>
+
 
 <!DOCTYPE html>
 <jsp:include page="includes/head.jsp" />
@@ -12,7 +13,8 @@
 
     <%
         Object usuario = session.getAttribute("usuario");
-        String tipoCuenta = "usuario";
+        String tipoCuenta = "PUBLICO"; // valor por defecto para visitantes
+
         try {
             if (usuario != null) {
                 java.lang.reflect.Method getTipo = usuario.getClass().getMethod("getTipo");
@@ -20,14 +22,13 @@
                 if (tipoObj != null) tipoCuenta = tipoObj.toString().toUpperCase();
             }
         } catch (Exception ex) { }
-        String tipo = (String) session.getAttribute("tipoUsuario");
     %>
 
     <main class="flex flex-1 p-4 gap-4">
         <section class="flex-1 bg-base-100 p-4 rounded-lg shadow-md space-y-6">
             <h2 class="text-2xl font-bold mb-4">Consulta de Vuelo</h2>
 
-<% if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) { %>
+<% if ("CLIENTE".equalsIgnoreCase(tipoCuenta) || "PUBLICO".equalsIgnoreCase(tipoCuenta)) { %>
 
 <!-- FILTROS -->
 <div class="rounded-box border p-4 space-y-4">
@@ -35,11 +36,16 @@
 
         <!-- Rol -->
         <div class="form-control">
-            <label class="label"><span class="label-text">Rol </span></label>
-            <select id="selRol" class="input input-bordered w-full bg-base-100">
-                <option value="CLIENTE" selected>Cliente</option>
+            <label class="label"><span class="label-text">Rol</span></label>
+            <select id="selRol" class="input input-bordered w-full bg-base-100" disabled>
+                <% if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) { %>
+                    <option value="CLIENTE" selected>Cliente</option>
+                <% } else if ("PUBLICO".equalsIgnoreCase(tipoCuenta)) { %>
+                    <option value="PUBLICO" selected>Visitante</option>
+                <% } %>
             </select>
         </div>
+
 
         <!-- Aerolínea -->
         <div class="form-control">
@@ -142,14 +148,6 @@
                         </button>
                     </form>
 
-                    <!-- Si el cliente logueado tiene reserva para ese vuelo -->
-                    <% if (tieneReserva && nickClienteLogueado != null && 
-                           dtReserva.getCliente().getNickname().equalsIgnoreCase(nickClienteLogueado)) { %>
-                        <a href="http://localhost:8080/ConsultaReservaVueloServlet?aerolinea=<%= aerolineaSeleccionada.toLowerCase() %>&vueloId=<%= vNombre %>&reservaIndex=<%= dtReserva.getId() %>"
-                           class="btn btn-primary w-full mt-2">
-                            Ver mi reserva
-                        </a>
-                    <% } %>
 
                 </div>
             </div>
@@ -219,9 +217,9 @@
         <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
             <%
-                List<data_types.DtRutaVuelo> rutasDt = (List<data_types.DtRutaVuelo>) request.getAttribute("rutasDt");
+                List<DtRutaVuelo> rutasDt = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
                 if (rutasDt != null && !rutasDt.isEmpty()) {
-                    for (data_types.DtRutaVuelo ruta : rutasDt) {
+                    for (DtRutaVuelo ruta : rutasDt) {
                         String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                         String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
             %>
@@ -361,16 +359,16 @@
         <div class="mt-4 card bg-base-100 shadow">
             <div class="card-body">
                 <h4 class="font-semibold">Detalle de la reserva</h4>
-                <p><strong>Código reserva:</strong> ${dtReserva.getId}</p>
-                <p><strong>Fecha reserva:</strong> ${dtReserva.getFecha}</p>
-                <p><strong>Asiento:</strong> ${dtReserva.getTipoAsiento}</p>
-                <p><strong>Equipaje Extra:</strong> ${dtReserva.getEquipajeExtra}</p>
-                <p><strong>Costo:</strong> ${dtReserva.getCosto}</p>
+                <p><strong>Código reserva:</strong> ${dtReserva.getId()}</p>
+                <p><strong>Fecha reserva:</strong> ${dtReserva.getFecha()}</p>
+                <p><strong>Asiento:</strong> ${dtReserva.getTipoAsiento()}</p>
+                <p><strong>Equipaje Extra:</strong> ${dtReserva.getEquipajeExtra()}</p>
+                <p><strong>Costo:</strong> ${dtReserva.getCosto()}</p>
 
-                <c:forEach var="pasaje" items="${dtReserva.getPasajes}">
+                <c:forEach var="pasaje" items="${dtReserva.getPasajes()}">
                     <p><strong>Pasaje:</strong> ${pasaje}</p>
-                    <p><strong>Nombre:</strong> ${pasaje.getNombre}</p>
-                    <p><strong>Apellido:</strong> ${pasaje.getApellido}</p>
+                    <p><strong>Nombre:</strong> ${pasaje.getNombre()}</p>
+                    <p><strong>Apellido:</strong> ${pasaje.getApellido()}</p>
                 </c:forEach>
             </div>
         </div>
