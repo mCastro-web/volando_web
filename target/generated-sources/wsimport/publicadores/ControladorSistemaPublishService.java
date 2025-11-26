@@ -17,7 +17,7 @@ import jakarta.xml.ws.WebServiceFeature;
  * Generated source version: 3.0
  * 
  */
-@WebServiceClient(name = "ControladorSistemaPublishService", targetNamespace = "http://publishers/", wsdlLocation = "http://localhost:8090/ws/sistema?wsdl")
+@WebServiceClient(name = "ControladorSistemaPublishService", targetNamespace = "http://publishers/", wsdlLocation = "http://localhost:8090/Sistema?wsdl")
 public class ControladorSistemaPublishService
     extends Service
 {
@@ -30,7 +30,7 @@ public class ControladorSistemaPublishService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8090/ws/sistema?wsdl");
+            url = new URL("http://localhost:8090/Sistema?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

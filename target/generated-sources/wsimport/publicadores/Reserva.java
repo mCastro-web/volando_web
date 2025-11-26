@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *         <element name="costo" type="{http://www.w3.org/2001/XMLSchema}float"/>
  *         <element name="equipajeExtra" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         <element name="fecha" type="{http://publishers/}localDate" minOccurs="0"/>
+ *         <element name="horaInicioEmbarque" type="{http://publishers/}localDateTime" minOccurs="0"/>
  *         <element name="identificador" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         <element name="paquete" type="{http://publishers/}paqueteVuelo" minOccurs="0"/>
  *         <element name="pasajes" type="{http://publishers/}pasaje" maxOccurs="unbounded" minOccurs="0"/>
@@ -46,6 +47,7 @@ import jakarta.xml.bind.annotation.XmlType;
     "costo",
     "equipajeExtra",
     "fecha",
+    "horaInicioEmbarque",
     "identificador",
     "paquete",
     "pasajes",
@@ -60,6 +62,7 @@ public class Reserva {
     protected float costo;
     protected int equipajeExtra;
     protected LocalDate fecha;
+    protected LocalDateTime horaInicioEmbarque;
     protected Long identificador;
     protected PaqueteVuelo paquete;
     @XmlElement(nillable = true)
@@ -163,6 +166,30 @@ public class Reserva {
      */
     public void setFecha(LocalDate value) {
         this.fecha = value;
+    }
+
+    /**
+     * Gets the value of the horaInicioEmbarque property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link LocalDateTime }
+     *     
+     */
+    public LocalDateTime getHoraInicioEmbarque() {
+        return horaInicioEmbarque;
+    }
+
+    /**
+     * Sets the value of the horaInicioEmbarque property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link LocalDateTime }
+     *     
+     */
+    public void setHoraInicioEmbarque(LocalDateTime value) {
+        this.horaInicioEmbarque = value;
     }
 
     /**

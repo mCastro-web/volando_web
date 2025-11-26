@@ -6,9 +6,10 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-import publicadores.DtUsuario;
 import publicadores.ControladorSistemaPublish;
 import publicadores.ControladorSistemaPublishService;
+import publicadores.DtUsuario;
+
 
 @WebServlet("/SeguirServlet")
 public class SeguirServlet extends HttpServlet {

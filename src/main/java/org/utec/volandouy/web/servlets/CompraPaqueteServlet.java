@@ -24,7 +24,7 @@ public class CompraPaqueteServlet extends HttpServlet {
             throws ServletException, IOException {
 
         ControladorSistemaPublish port = getPort();
-        List<DtPaqueteVuelo> paquetes = port.listarPaquetes();
+        List<String> paquetes = port.listarNombresPaquetesConRutas();
 
         if (paquetes == null) {
             System.out.println("Error: La lista de paquetes es nula.");
@@ -32,8 +32,18 @@ public class CompraPaqueteServlet extends HttpServlet {
         }
 
         request.setAttribute("paquetes", paquetes);
+
+        // Obtener paquete seleccionado (si existe)
+        String seleccionado = request.getParameter("paquete_seleccionado");
+        if (seleccionado != null && !seleccionado.isEmpty()) {
+            DtPaqueteVuelo dto = port.obtenerDtPaquetePorNombre(seleccionado);
+            request.setAttribute("paqueteSeleccionado", dto);
+        }
+
+
         request.getRequestDispatcher("/WEB-INF/compraPaquete.jsp").forward(request, response);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -54,7 +64,7 @@ public class CompraPaqueteServlet extends HttpServlet {
             java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
             Object tipoObj = getNickname.invoke(usuario);
             if (tipoObj != null)
-                nickNameCliente = tipoObj.toString().toUpperCase();
+                nickNameCliente = tipoObj.toString();
         } catch (Exception e) {
             System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
         }
@@ -68,17 +78,24 @@ public class CompraPaqueteServlet extends HttpServlet {
             if (paquete != null) {
                 LocalDate hoy = LocalDate.now();
                 try {
-                    port.comprarPaquete(nickNameCliente.toLowerCase(), paquete.getNombre(), hoy.toString());
+                    port.comprarPaquete(nickNameCliente, paquete.getNombre(), hoy.toString());
                     request.setAttribute("notyf_success",
                             "Paquete '" + paquete.getNombre() + "' comprado correctamente.");
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                    // Cliente ya compró este paquete
+                    request.setAttribute("errorMsg", e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    // Cliente no encontrado
+                    request.setAttribute("errorMsg", "Cliente no encontrado. Por favor, logueate nuevamente.");
                 } catch (Exception e) {
                     request.setAttribute("errorMsg", e.getMessage());
                 }
             }
         }
 
-        List<DtPaqueteVuelo> paquetes = port.listarPaquetes();
-        request.setAttribute("paquetes", paquetes);
+        List<String> nombres = port.listarNombresPaquetesConRutas();
+        request.setAttribute("paquetes", nombres);
 
         request.getRequestDispatcher("/WEB-INF/compraPaquete.jsp").forward(request, response);
     }

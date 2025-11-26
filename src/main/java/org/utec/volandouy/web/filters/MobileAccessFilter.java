@@ -17,48 +17,77 @@ public class MobileAccessFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String userAgent = req.getHeader("User-Agent");
-        boolean isMobile = userAgent != null && userAgent.toLowerCase().contains("mobile");
-
         String path = req.getRequestURI().toLowerCase();
 
-        // DEBUG: imprimir User-Agent y la ruta
         System.out.println("[MobileFilter] User-Agent: " + userAgent);
         System.out.println("[MobileFilter] Path solicitado: " + path);
 
-        // Recursos estáticos siempre permitidos
-        if (path.endsWith(".css") || path.endsWith(".js") || path.endsWith(".png") || path.endsWith(".jpg")) {
+        // ---------------------------
+        // 1) Detectar móvil correctamente
+        // ---------------------------
+        boolean isMobile = false;
+        if (userAgent != null) {
+            String ua = userAgent.toLowerCase();
+            isMobile =
+                    ua.contains("iphone") ||
+                            ua.contains("android") ||
+                            ua.contains("ipad") ||
+                            ua.contains("ipod") ||
+                            ua.contains("windows phone") ||
+                            ua.contains("mobile");
+        }
+
+        // ---------------------------
+        // 2) Recursos públicos SIEMPRE permitidos (para evitar loops)
+        // ---------------------------
+        boolean esRecursoPublico =
+                path.endsWith(".css") ||
+                        path.endsWith(".js") ||
+                        path.endsWith(".png") ||
+                        path.endsWith(".jpg") ||
+                        path.endsWith(".jpeg") ||
+                        path.endsWith(".svg") ||
+                        path.contains("/assets/") ||
+                        path.contains("/login") ||
+                        path.contains("/logoutservlet");
+
+        if (esRecursoPublico) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Si no es móvil, dejamos pasar todo
+        // ---------------------------
+        // 3) Si NO es móvil → dejar pasar todo
+        // ---------------------------
         if (!isMobile) {
             chain.doFilter(request, response);
             return;
         }
-        // Obtener sesión y usuario
-        
+
+        // ---------------------------
+        // 4) Validar sesión SOLO para móviles
+        // ---------------------------
         HttpSession session = req.getSession(false);
         Object usuario = (session != null) ? session.getAttribute("usuario") : null;
 
-        // Si es móvil y no hay usuario y no está intentando ir al login, redirigir al login
-        if (isMobile && usuario == null && !path.contains("/login")) {
-            System.out.println("[MobileFilter] Móvil sin sesión, redirigiendo a login...");
+        if (usuario == null) {
+            System.out.println("[MobileFilter] Móvil sin sesión. Redirigiendo a login...");
             res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        // Rutas permitidas para móviles (en minúsculas)
+        // ---------------------------
+        // 5) Rutas permitidas para móvil estando logueado
+        // ---------------------------
         boolean permitido =
                 path.equals("/") ||
-                path.endsWith("/index") ||
-                path.contains("/login") ||
-                path.contains("/logoutservlet") ||
-                path.contains("/consultarutavuelo") || path.contains("/consultarutavueloservlet") ||
-                path.contains("/mobilenodisponible");
+                        path.endsWith("/index") ||
+                        path.contains("/consultarutavuelo") ||
+                        path.contains("/consultarutavueloservlet") ||
+                        path.contains("/mobilenodisponible");
 
         if (!permitido) {
-            System.out.println("[MobileFilter] Ruta NO permitida para móvil, redirigiendo...");
+            System.out.println("[MobileFilter] Ruta NO permitida para móvil. Redirigiendo...");
             res.sendRedirect(req.getContextPath() + "/MobileNoDisponible");
             return;
         }

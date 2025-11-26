@@ -114,10 +114,14 @@ public class ObjectFactory {
     private static final QName _ListarPaquetesResponse_QNAME = new QName("http://publishers/", "listarPaquetesResponse");
     private static final QName _ListarPasajesReservasDeVuelo_QNAME = new QName("http://publishers/", "listarPasajesReservasDeVuelo");
     private static final QName _ListarPasajesReservasDeVueloResponse_QNAME = new QName("http://publishers/", "listarPasajesReservasDeVueloResponse");
+    private static final QName _ListarReservasConCheckin_QNAME = new QName("http://publishers/", "listarReservasConCheckin");
+    private static final QName _ListarReservasConCheckinResponse_QNAME = new QName("http://publishers/", "listarReservasConCheckinResponse");
     private static final QName _ListarReservasDeCliente_QNAME = new QName("http://publishers/", "listarReservasDeCliente");
     private static final QName _ListarReservasDeClienteResponse_QNAME = new QName("http://publishers/", "listarReservasDeClienteResponse");
     private static final QName _ListarReservasDeVuelo_QNAME = new QName("http://publishers/", "listarReservasDeVuelo");
     private static final QName _ListarReservasDeVueloResponse_QNAME = new QName("http://publishers/", "listarReservasDeVueloResponse");
+    private static final QName _ListarReservasPendientesCheckin_QNAME = new QName("http://publishers/", "listarReservasPendientesCheckin");
+    private static final QName _ListarReservasPendientesCheckinResponse_QNAME = new QName("http://publishers/", "listarReservasPendientesCheckinResponse");
     private static final QName _ListarRutasConfirmadasAerolinea_QNAME = new QName("http://publishers/", "listarRutasConfirmadasAerolinea");
     private static final QName _ListarRutasConfirmadasAerolineaResponse_QNAME = new QName("http://publishers/", "listarRutasConfirmadasAerolineaResponse");
     private static final QName _ListarRutasConfirmadasPorCategoria_QNAME = new QName("http://publishers/", "listarRutasConfirmadasPorCategoria");
@@ -134,6 +138,8 @@ public class ObjectFactory {
     private static final QName _ModificarAerolineaResponse_QNAME = new QName("http://publishers/", "modificarAerolineaResponse");
     private static final QName _ModificarCliente_QNAME = new QName("http://publishers/", "modificarCliente");
     private static final QName _ModificarClienteResponse_QNAME = new QName("http://publishers/", "modificarClienteResponse");
+    private static final QName _ObtenerCheckinPorReserva_QNAME = new QName("http://publishers/", "obtenerCheckinPorReserva");
+    private static final QName _ObtenerCheckinPorReservaResponse_QNAME = new QName("http://publishers/", "obtenerCheckinPorReservaResponse");
     private static final QName _ObtenerDtPaquetePorNombre_QNAME = new QName("http://publishers/", "obtenerDtPaquetePorNombre");
     private static final QName _ObtenerDtPaquetePorNombreResponse_QNAME = new QName("http://publishers/", "obtenerDtPaquetePorNombreResponse");
     private static final QName _ObtenerDtReservaPorClienteVuelo_QNAME = new QName("http://publishers/", "obtenerDtReservaPorClienteVuelo");
@@ -144,8 +150,12 @@ public class ObjectFactory {
     private static final QName _ObtenerDtVueloPorNombreResponse_QNAME = new QName("http://publishers/", "obtenerDtVueloPorNombreResponse");
     private static final QName _ObtenerListaNombresRutasPorPaquete_QNAME = new QName("http://publishers/", "obtenerListaNombresRutasPorPaquete");
     private static final QName _ObtenerListaNombresRutasPorPaqueteResponse_QNAME = new QName("http://publishers/", "obtenerListaNombresRutasPorPaqueteResponse");
+    private static final QName _ObtenerReservaCheckin_QNAME = new QName("http://publishers/", "obtenerReservaCheckin");
+    private static final QName _ObtenerReservaCheckinResponse_QNAME = new QName("http://publishers/", "obtenerReservaCheckinResponse");
     private static final QName _ObtenerReservasPorClienteVuelo_QNAME = new QName("http://publishers/", "obtenerReservasPorClienteVuelo");
     private static final QName _ObtenerReservasPorClienteVueloResponse_QNAME = new QName("http://publishers/", "obtenerReservasPorClienteVueloResponse");
+    private static final QName _RealizarCheckin_QNAME = new QName("http://publishers/", "realizarCheckin");
+    private static final QName _RealizarCheckinResponse_QNAME = new QName("http://publishers/", "realizarCheckinResponse");
     private static final QName _ReservarVuelo_QNAME = new QName("http://publishers/", "reservarVuelo");
     private static final QName _ReservarVueloConPaquete_QNAME = new QName("http://publishers/", "reservarVueloConPaquete");
     private static final QName _ReservarVueloConPaqueteResponse_QNAME = new QName("http://publishers/", "reservarVueloConPaqueteResponse");
@@ -162,6 +172,16 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link DtCheckin }
+     * 
+     * @return
+     *     the new instance of {@link DtCheckin }
+     */
+    public DtCheckin createDtCheckin() {
+        return new DtCheckin();
     }
 
     /**
@@ -1065,6 +1085,26 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ListarReservasConCheckin }
+     * 
+     * @return
+     *     the new instance of {@link ListarReservasConCheckin }
+     */
+    public ListarReservasConCheckin createListarReservasConCheckin() {
+        return new ListarReservasConCheckin();
+    }
+
+    /**
+     * Create an instance of {@link ListarReservasConCheckinResponse }
+     * 
+     * @return
+     *     the new instance of {@link ListarReservasConCheckinResponse }
+     */
+    public ListarReservasConCheckinResponse createListarReservasConCheckinResponse() {
+        return new ListarReservasConCheckinResponse();
+    }
+
+    /**
      * Create an instance of {@link ListarReservasDeCliente }
      * 
      * @return
@@ -1102,6 +1142,26 @@ public class ObjectFactory {
      */
     public ListarReservasDeVueloResponse createListarReservasDeVueloResponse() {
         return new ListarReservasDeVueloResponse();
+    }
+
+    /**
+     * Create an instance of {@link ListarReservasPendientesCheckin }
+     * 
+     * @return
+     *     the new instance of {@link ListarReservasPendientesCheckin }
+     */
+    public ListarReservasPendientesCheckin createListarReservasPendientesCheckin() {
+        return new ListarReservasPendientesCheckin();
+    }
+
+    /**
+     * Create an instance of {@link ListarReservasPendientesCheckinResponse }
+     * 
+     * @return
+     *     the new instance of {@link ListarReservasPendientesCheckinResponse }
+     */
+    public ListarReservasPendientesCheckinResponse createListarReservasPendientesCheckinResponse() {
+        return new ListarReservasPendientesCheckinResponse();
     }
 
     /**
@@ -1265,6 +1325,26 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ObtenerCheckinPorReserva }
+     * 
+     * @return
+     *     the new instance of {@link ObtenerCheckinPorReserva }
+     */
+    public ObtenerCheckinPorReserva createObtenerCheckinPorReserva() {
+        return new ObtenerCheckinPorReserva();
+    }
+
+    /**
+     * Create an instance of {@link ObtenerCheckinPorReservaResponse }
+     * 
+     * @return
+     *     the new instance of {@link ObtenerCheckinPorReservaResponse }
+     */
+    public ObtenerCheckinPorReservaResponse createObtenerCheckinPorReservaResponse() {
+        return new ObtenerCheckinPorReservaResponse();
+    }
+
+    /**
      * Create an instance of {@link ObtenerDtPaquetePorNombre }
      * 
      * @return
@@ -1365,6 +1445,26 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ObtenerReservaCheckin }
+     * 
+     * @return
+     *     the new instance of {@link ObtenerReservaCheckin }
+     */
+    public ObtenerReservaCheckin createObtenerReservaCheckin() {
+        return new ObtenerReservaCheckin();
+    }
+
+    /**
+     * Create an instance of {@link ObtenerReservaCheckinResponse }
+     * 
+     * @return
+     *     the new instance of {@link ObtenerReservaCheckinResponse }
+     */
+    public ObtenerReservaCheckinResponse createObtenerReservaCheckinResponse() {
+        return new ObtenerReservaCheckinResponse();
+    }
+
+    /**
      * Create an instance of {@link ObtenerReservasPorClienteVuelo }
      * 
      * @return
@@ -1382,6 +1482,26 @@ public class ObjectFactory {
      */
     public ObtenerReservasPorClienteVueloResponse createObtenerReservasPorClienteVueloResponse() {
         return new ObtenerReservasPorClienteVueloResponse();
+    }
+
+    /**
+     * Create an instance of {@link RealizarCheckin }
+     * 
+     * @return
+     *     the new instance of {@link RealizarCheckin }
+     */
+    public RealizarCheckin createRealizarCheckin() {
+        return new RealizarCheckin();
+    }
+
+    /**
+     * Create an instance of {@link RealizarCheckinResponse }
+     * 
+     * @return
+     *     the new instance of {@link RealizarCheckinResponse }
+     */
+    public RealizarCheckinResponse createRealizarCheckinResponse() {
+        return new RealizarCheckinResponse();
     }
 
     /**
@@ -1595,6 +1715,16 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LocalDateTime }
+     * 
+     * @return
+     *     the new instance of {@link LocalDateTime }
+     */
+    public LocalDateTime createLocalDateTime() {
+        return new LocalDateTime();
+    }
+
+    /**
      * Create an instance of {@link Pasaje }
      * 
      * @return
@@ -1632,6 +1762,26 @@ public class ObjectFactory {
      */
     public DtCliente createDtCliente() {
         return new DtCliente();
+    }
+
+    /**
+     * Create an instance of {@link DtPasajeCheckin }
+     * 
+     * @return
+     *     the new instance of {@link DtPasajeCheckin }
+     */
+    public DtPasajeCheckin createDtPasajeCheckin() {
+        return new DtPasajeCheckin();
+    }
+
+    /**
+     * Create an instance of {@link DtCheckin.Pasajeros }
+     * 
+     * @return
+     *     the new instance of {@link DtCheckin.Pasajeros }
+     */
+    public DtCheckin.Pasajeros createDtCheckinPasajeros() {
+        return new DtCheckin.Pasajeros();
     }
 
     /**
@@ -2805,6 +2955,32 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListarReservasConCheckin }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ListarReservasConCheckin }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "listarReservasConCheckin")
+    public JAXBElement<ListarReservasConCheckin> createListarReservasConCheckin(ListarReservasConCheckin value) {
+        return new JAXBElement<>(_ListarReservasConCheckin_QNAME, ListarReservasConCheckin.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListarReservasConCheckinResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ListarReservasConCheckinResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "listarReservasConCheckinResponse")
+    public JAXBElement<ListarReservasConCheckinResponse> createListarReservasConCheckinResponse(ListarReservasConCheckinResponse value) {
+        return new JAXBElement<>(_ListarReservasConCheckinResponse_QNAME, ListarReservasConCheckinResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ListarReservasDeCliente }{@code >}
      * 
      * @param value
@@ -2854,6 +3030,32 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://publishers/", name = "listarReservasDeVueloResponse")
     public JAXBElement<ListarReservasDeVueloResponse> createListarReservasDeVueloResponse(ListarReservasDeVueloResponse value) {
         return new JAXBElement<>(_ListarReservasDeVueloResponse_QNAME, ListarReservasDeVueloResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListarReservasPendientesCheckin }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ListarReservasPendientesCheckin }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "listarReservasPendientesCheckin")
+    public JAXBElement<ListarReservasPendientesCheckin> createListarReservasPendientesCheckin(ListarReservasPendientesCheckin value) {
+        return new JAXBElement<>(_ListarReservasPendientesCheckin_QNAME, ListarReservasPendientesCheckin.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListarReservasPendientesCheckinResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ListarReservasPendientesCheckinResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "listarReservasPendientesCheckinResponse")
+    public JAXBElement<ListarReservasPendientesCheckinResponse> createListarReservasPendientesCheckinResponse(ListarReservasPendientesCheckinResponse value) {
+        return new JAXBElement<>(_ListarReservasPendientesCheckinResponse_QNAME, ListarReservasPendientesCheckinResponse.class, null, value);
     }
 
     /**
@@ -3065,6 +3267,32 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerCheckinPorReserva }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ObtenerCheckinPorReserva }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "obtenerCheckinPorReserva")
+    public JAXBElement<ObtenerCheckinPorReserva> createObtenerCheckinPorReserva(ObtenerCheckinPorReserva value) {
+        return new JAXBElement<>(_ObtenerCheckinPorReserva_QNAME, ObtenerCheckinPorReserva.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerCheckinPorReservaResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ObtenerCheckinPorReservaResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "obtenerCheckinPorReservaResponse")
+    public JAXBElement<ObtenerCheckinPorReservaResponse> createObtenerCheckinPorReservaResponse(ObtenerCheckinPorReservaResponse value) {
+        return new JAXBElement<>(_ObtenerCheckinPorReservaResponse_QNAME, ObtenerCheckinPorReservaResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerDtPaquetePorNombre }{@code >}
      * 
      * @param value
@@ -3195,6 +3423,32 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerReservaCheckin }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ObtenerReservaCheckin }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "obtenerReservaCheckin")
+    public JAXBElement<ObtenerReservaCheckin> createObtenerReservaCheckin(ObtenerReservaCheckin value) {
+        return new JAXBElement<>(_ObtenerReservaCheckin_QNAME, ObtenerReservaCheckin.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerReservaCheckinResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link ObtenerReservaCheckinResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "obtenerReservaCheckinResponse")
+    public JAXBElement<ObtenerReservaCheckinResponse> createObtenerReservaCheckinResponse(ObtenerReservaCheckinResponse value) {
+        return new JAXBElement<>(_ObtenerReservaCheckinResponse_QNAME, ObtenerReservaCheckinResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ObtenerReservasPorClienteVuelo }{@code >}
      * 
      * @param value
@@ -3218,6 +3472,32 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://publishers/", name = "obtenerReservasPorClienteVueloResponse")
     public JAXBElement<ObtenerReservasPorClienteVueloResponse> createObtenerReservasPorClienteVueloResponse(ObtenerReservasPorClienteVueloResponse value) {
         return new JAXBElement<>(_ObtenerReservasPorClienteVueloResponse_QNAME, ObtenerReservasPorClienteVueloResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RealizarCheckin }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RealizarCheckin }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "realizarCheckin")
+    public JAXBElement<RealizarCheckin> createRealizarCheckin(RealizarCheckin value) {
+        return new JAXBElement<>(_RealizarCheckin_QNAME, RealizarCheckin.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RealizarCheckinResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link RealizarCheckinResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://publishers/", name = "realizarCheckinResponse")
+    public JAXBElement<RealizarCheckinResponse> createRealizarCheckinResponse(RealizarCheckinResponse value) {
+        return new JAXBElement<>(_RealizarCheckinResponse_QNAME, RealizarCheckinResponse.class, null, value);
     }
 
     /**

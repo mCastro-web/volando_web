@@ -7,7 +7,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import org.mindrot.jbcrypt.BCrypt;
-import data_types.TipoDoc;
+import publicadores.TipoDoc;
 import java.lang.reflect.Method;
 import java.util.Objects;
 // WS SISTEMA

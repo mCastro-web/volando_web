@@ -11,30 +11,63 @@
     <jsp:include page="/WEB-INF/includes/nav.jsp" />
 
     <main class="flex-grow container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6">Resultados de búsqueda para: "${query}"</h1>
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold mb-2">Resultados de búsqueda</h1>
+            <c:if test="${not empty query}">
+                <p class="text-lg text-base-content/70">Mostrando resultados para: "<span class="font-semibold">${query}</span>"</p>
+            </c:if>
+        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Controles de Filtrado y Ordenamiento -->
+        <div class="bg-base-100 rounded-lg shadow-md p-4 mb-6">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="icon-[tabler--arrows-sort] size-5"></span>
+                    <span class="font-semibold text-sm">Ordenar:</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="ordenarResultados('fecha')" class="btn btn-sm btn-outline" id="btn-fecha">
+                        <span class="icon-[tabler--calendar] size-4"></span>
+                        Por Fecha (Descendente)
+                    </button>
+                    <button onclick="ordenarResultados('alfabetico')" class="btn btn-sm btn-outline" id="btn-alfabetico">
+                        <span class="icon-[tabler--sort-ascending-letters] size-4"></span>
+                        Alfabéticamente (A-Z)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4">
             <!-- Rutas de Vuelo -->
             <div>
-                <h2 class=" font-semibold mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <span class="icon-[tabler--route] size-5"></span>
                     Rutas de Vuelo
+                    <span class="badge badge-primary badge-sm">${not empty rutas ? rutas.size() : 0}</span>
                 </h2>
                 <c:if test="${empty rutas}">
-                    <div class="alert alert-info">No se encontraron rutas.</div>
+                    <div class="alert alert-info shadow-lg">
+                        <span class="icon-[tabler--info-circle] size-5"></span>
+                        <span>No se encontraron rutas de vuelo.</span>
+                    </div>
                 </c:if>
-                <div class="grid gap-4">
+                <div class="grid gap-4" id="rutas-container">
                     <c:forEach var="ruta" items="${rutas}">
-                        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+                        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow ruta-item" data-nombre="${ruta.nombre}" data-fecha="${ruta.fechaAlta}">
                             <div class="card-body">
-                                <h3 class="card-title">
-                                    <a href="ConsultaRutaVueloServlet?rutaId=${ruta.nombre}" class="hover:underline text-primary">
+                                <h3 class="card-title text-lg">
+                                    <a href="ConsultaRutaVueloServlet?rutaId=${ruta.nombre}" class="hover:underline font-bold">
                                         ${ruta.nombre}
                                     </a>
                                 </h3>
-                                <p class="text-sm text-gray-500">${ruta.descripcionCorta}</p>
-                                <div class="card-actions justify-end mt-2">
-                                    <div class="badge badge-outline">${ruta.fechaAlta}</div>
+                                <p class="text-sm text-base-content/70">${ruta.descripcionCorta}</p>
+                                <div class="card-actions justify-between items-center mt-2">
+                                    <div class="badge badge-outline gap-1">
+                                        <span class="icon-[tabler--calendar] size-3"></span>
+                                        ${ruta.fechaAlta}
+                                    </div>
+                                    <a href="ConsultaRutaVueloServlet?rutaId=${ruta.nombre}" class="btn btn-primary btn-xs">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -44,25 +77,33 @@
 
             <!-- Paquetes -->
             <div>
-                <h2 class="font-semibold mb-4 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                <h2 class="text-2xl font-semibold mb-4 flex items-center gap-2 mt-4">
+                    <span class="icon-[tabler--packages] size-5"></span>
                     Paquetes
+                    <span class="badge badge-secondary badge-sm">${not empty paquetes ? paquetes.size() : 0}</span>
                 </h2>
                 <c:if test="${empty paquetes}">
-                    <div class="alert alert-info">No se encontraron paquetes.</div>
+                    <div class="alert alert-info shadow-lg">
+                        <span class="icon-[tabler--info-circle] size-5"></span>
+                        <span>No se encontraron paquetes.</span>
+                    </div>
                 </c:if>
-                <div class="grid gap-4">
+                <div class="grid gap-4" id="paquetes-container">
                     <c:forEach var="paquete" items="${paquetes}">
-                        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+                        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow paquete-item" data-nombre="${paquete.nombre}" data-fecha="${paquete.altaFecha}">
                             <div class="card-body">
-                                <h3 class="card-title">
-                                    <a href="ConsultaPaqueteRutaVueloServlet?paquete=${paquete.nombre}" class="hover:underline text-secondary">
+                                <h3 class="card-title text-lg">
+                                    <a href="ConsultaPaqueteRutaVueloServlet?paquete=${paquete.nombre}" class="hover:underline font-bold">
                                         ${paquete.nombre}
                                     </a>
                                 </h3>
-                                <p class="text-sm text-gray-500">${paquete.descripcion}</p>
-                                <div class="card-actions justify-end mt-2">
-                                    <div class="badge badge-outline">${paquete.altaFecha}</div>
+                                <p class="text-sm text-base-content/70">${paquete.descripcion}</p>
+                                <div class="card-actions justify-between items-center mt-2">
+                                    <div class="badge badge-outline gap-1">
+                                        <span class="icon-[tabler--calendar] size-3"></span>
+                                        ${paquete.altaFecha}
+                                    </div>
+                                    <a href="ConsultaPaqueteRutaVueloServlet?paquete=${paquete.nombre}" class="btn btn-secondary btn-xs">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -73,5 +114,50 @@
     </main>
 
     <jsp:include page="/WEB-INF/includes/footer.jsp" />
+
+    <script>
+        let ordenActual = 'fecha'; // Por defecto: fecha descendente
+
+        function ordenarResultados(tipo) {
+            ordenActual = tipo;
+            
+            // Actualizar botones activos
+            document.getElementById('btn-fecha').classList.toggle('btn-active', tipo === 'fecha');
+            document.getElementById('btn-alfabetico').classList.toggle('btn-active', tipo === 'alfabetico');
+
+            // Ordenar rutas
+            ordenarItems('rutas-container', '.ruta-item', tipo);
+            
+            // Ordenar paquetes
+            ordenarItems('paquetes-container', '.paquete-item', tipo);
+        }
+
+        function ordenarItems(containerId, itemSelector, tipo) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const items = Array.from(container.querySelectorAll(itemSelector));
+            
+            items.sort((a, b) => {
+                if (tipo === 'alfabetico') {
+                    const nombreA = a.dataset.nombre.toLowerCase();
+                    const nombreB = b.dataset.nombre.toLowerCase();
+                    return nombreA.localeCompare(nombreB);
+                } else { // fecha descendente
+                    const fechaA = new Date(a.dataset.fecha);
+                    const fechaB = new Date(b.dataset.fecha);
+                    return fechaB - fechaA; // Descendente (más reciente primero)
+                }
+            });
+
+            // Reordenar en el DOM
+            items.forEach(item => container.appendChild(item));
+        }
+
+        // Inicializar con ordenamiento por fecha (descendente) al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            ordenarResultados('fecha');
+        });
+    </script>
 </body>
 </html>
