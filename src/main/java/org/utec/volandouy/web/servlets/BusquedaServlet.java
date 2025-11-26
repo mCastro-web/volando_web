@@ -22,20 +22,20 @@ public class BusquedaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String query = request.getParameter("query");
+        String queryBusqueda = request.getParameter("queryBusqueda");
 
-        if (query == null) {
-            query = "";
+        if (queryBusqueda == null) {
+            queryBusqueda = "";
         }
 
         try {
             ControladorSistemaPublish port = getPort();
-            List<DtRutaVuelo> rutas = port.buscarRutas(query);
-            List<DtPaqueteVuelo> paquetes = port.buscarPaquetes(query);
+            List<DtRutaVuelo> rutas = port.buscarRutas(queryBusqueda);
+            List<DtPaqueteVuelo> paquetes = port.buscarPaquetes(queryBusqueda);
 
             request.setAttribute("rutas", rutas);
             request.setAttribute("paquetes", paquetes);
-            request.setAttribute("query", query);
+            request.setAttribute("query", queryBusqueda);
 
             request.getRequestDispatcher("/WEB-INF/busqueda.jsp").forward(request, response);
 

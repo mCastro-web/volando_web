@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.lang.Exception;
 import java.util.List;
 
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import publicadores.*;

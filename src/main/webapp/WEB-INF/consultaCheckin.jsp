@@ -65,7 +65,8 @@
 
                 <h3 class="font-semibold">Pasajeros:</h3>
                 <ul>
-                    <c:forEach var="p" items="${dtCheckin.pasajeros}">
+                    <!-- *** CORRECCIÓN IMPORTANTE AQUÍ *** -->
+                    <c:forEach var="p" items="${dtCheckin.pasajeros.pasajero}">
                         <li>${p.nombre} ${p.apellido} - ${p.tipoAsiento}</li>
                     </c:forEach>
                 </ul>
@@ -95,6 +96,4 @@
     <% } %>
 </script>
 
-<script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
-</body>
-</html>
+<script src="${pageContext.request.contextPath}/js/flyon

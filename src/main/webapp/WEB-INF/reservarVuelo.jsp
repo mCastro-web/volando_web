@@ -22,7 +22,7 @@
         </div>
 
         <div class="max-w-4xl w-full mx-auto gap-4">
-<form method="post" action="${pageContext.request.contextPath}/ReservarVueloServlet" class="grid gap-6">
+<form id="frmReserva" method="post" action="${pageContext.request.contextPath}/ReservarVueloServlet" class="grid gap-6">
 
     <!-- Aerolínea -->
     <div>
@@ -284,14 +284,15 @@ if (rutaEnPaquete != null && rutaEnPaquete) {
 
     <script>
 function refrescar(param, valor) {
-    const form = document.querySelector("form");
+    const form = document.getElementById("frmReserva");  // <--- ¡form correcto!
     const input = document.createElement("input");
     input.type = "hidden";
     input.name = param;
     input.value = valor;
     form.appendChild(input);
-    form.submit(); // envía el formulario con todos los datos actuales
+    form.submit();
 }
+
 
     const notyf = new Notyf({ duration: 2000, position: { x: 'right', y: 'bottom' } });
     <% String ok = (String) request.getAttribute("notyf_success");

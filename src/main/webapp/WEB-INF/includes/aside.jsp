@@ -91,7 +91,7 @@
                 </a>
             </li>
             <li>
-                <a href=${pageContext.request.contextPath}/ConsultaRutaVueloServlet" class="flex items-center gap-2">
+                <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" class="flex items-center gap-2">
                     <span class="material-icons-outlined">route</span>
                     Rutas de Vuelo
                 </a>

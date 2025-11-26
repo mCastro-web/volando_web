@@ -114,6 +114,10 @@
     </main>
 
     <jsp:include page="/WEB-INF/includes/footer.jsp" />
+    
+    <!-- Menu Hamburguesa-->
+    <jsp:include page="includes/aside.jsp" />
+    <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
 
     <script>
         let ordenActual = 'fecha'; // Por defecto: fecha descendente

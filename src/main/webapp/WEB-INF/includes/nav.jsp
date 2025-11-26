@@ -29,7 +29,7 @@
         <div class="navbar-center w-full max-w-md mx-4">
             <form action="BusquedaServlet" method="GET" class="w-full">
                 <div class="relative w-full">
-                    <input type="text" name="query" placeholder="Buscar rutas, paquetes..." class="input input-sm input-bordered w-full pr-10 bg-base-100 text-base-content rounded-full" />
+                    <input type="text" name="queryBusqueda" placeholder="Buscar rutas, paquetes..." class="input input-sm input-bordered w-full pr-10 bg-base-100 text-base-content rounded-full" />
                     <button type="submit" class="absolute right-0 top-0 bottom-0 px-3 text-base-content/70 hover:text-primary flex items-center">
                         <span class="icon-[tabler--search] size-4"></span>
                     </button>
