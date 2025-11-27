@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://ibb.co/N6yJdtjZ" alt="Volando.uy Logo" width="300"/>
+  <img src="https://i.ibb.co/QFKT3pNr/favicon.png" alt="Volando.uy Logo" width="300"/>
   
   # VolandoUy - Plataforma de Gestión de Vuelos
   
