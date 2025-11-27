@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://i.ibb.co/QFKT3pNr/favicon.png" alt="Volando.uy Logo" width="300"/>
+  <img src="https://ibb.co/N6yJdtjZ" alt="Volando.uy Logo" width="300"/>
   
-  # Volando.uy - Plataforma de Gestión de Vuelos
+  # VolandoUy - Plataforma de Gestión de Vuelos
   
   ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk&logoColor=white)
   ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
