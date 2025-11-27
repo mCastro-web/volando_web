@@ -4,13 +4,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.List;
-import publicadores.DtRutaVuelo;
+
+import publicadores.*;
 // WS SISTEMA
-import publicadores.ControladorSistemaPublish;
-import publicadores.ControladorSistemaPublishService;
-import publicadores.DtUsuario;
+
 
 @WebServlet("/ConsultaReservaVueloServlet")
 public class ConsultaReservaVueloServlet extends HttpServlet {
@@ -40,11 +40,13 @@ public class ConsultaReservaVueloServlet extends HttpServlet {
 
             Object usuarioObj = session.getAttribute("usuario");
             String nickNameAero = "";
+            String tipoCuenta = "";
 
             if (usuarioObj instanceof DtUsuario) {
                 DtUsuario usuario = (DtUsuario) usuarioObj;
                 if (usuario.getNickname() != null) {
                     nickNameAero = usuario.getNickname().toUpperCase();
+                    tipoCuenta = usuario.getTipo();
                 }
             }
 
@@ -90,6 +92,12 @@ public class ConsultaReservaVueloServlet extends HttpServlet {
             List<String> reservas = null;
             if (vueloId != null && !vueloId.isEmpty()) {
                 request.setAttribute("vueloIdSeleccionado", vueloId);
+                DtReserva dtReserva = null;
+                if (usuarioObj instanceof DtUsuario && "CLIENTE".equalsIgnoreCase(tipoCuenta) && vueloId != null && !vueloId.isEmpty()) {
+                    DtUsuario usuario = (DtUsuario) usuarioObj;
+                    dtReserva = port.obtenerDtReservaPorClienteVuelo(usuario.getNickname(), vueloId);
+                }
+                request.setAttribute("dtReserva", dtReserva);
 
                 try {
                     reservas = port.listarReservasDeVuelo(vueloId);

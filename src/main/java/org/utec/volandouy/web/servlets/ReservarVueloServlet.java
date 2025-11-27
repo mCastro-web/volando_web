@@ -39,8 +39,12 @@ public class ReservarVueloServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuario") == null) {
             response.sendRedirect("login");
+            return;
         }
 
+        ControladorSistemaPublish port = getPort();
+
+        String aerolineaSeleccionada = request.getParameter("aerolinea_seleccionada");
         String rutaSeleccionada = request.getParameter("ruta_seleccionada");
         String vueloSeleccionado = request.getParameter("vuelo_seleccionado");
         String tipo_asiento = request.getParameter("tipo_asiento");
@@ -51,9 +55,7 @@ public class ReservarVueloServlet extends HttpServlet {
             paqueteSeleccionado = Long.valueOf(paramPaq);
         }
 
-        ControladorSistemaPublish port = getPort();
         List<DtItemPaquete> itemsPaquete = null;
-
         if (paqueteSeleccionado != null) {
             itemsPaquete = port.listarItemsDePaquete(paqueteSeleccionado);
             request.setAttribute("itemsPaquete", itemsPaquete);
@@ -121,7 +123,6 @@ public class ReservarVueloServlet extends HttpServlet {
         List<String> aerolineas = port.listarNicknamesAerolineas();
         request.setAttribute("aerolineas", aerolineas);
 
-        String aerolineaSeleccionada = request.getParameter("aerolinea_seleccionada");
         if (aerolineaSeleccionada != null && !aerolineaSeleccionada.isEmpty()) {
             request.setAttribute("aerolineaSeleccionada", aerolineaSeleccionada);
             List<String> rutas = port.listarRutasConfirmadasAerolinea(aerolineaSeleccionada);
@@ -197,7 +198,7 @@ public class ReservarVueloServlet extends HttpServlet {
             if ("paquete_comprado".equalsIgnoreCase(metodoPago)
                     && paqueteSeleccionado != null) {
 
-                String rutaCoincidente = null;
+              /*  String rutaCoincidente = null;
                 if (itemsPaquete != null && !itemsPaquete.isEmpty()) {
                     for (DtItemPaquete item : itemsPaquete) {
                         String rutaItem = item.getNombreRutaVuelo();
@@ -216,9 +217,9 @@ public class ReservarVueloServlet extends HttpServlet {
                     return;
                 }
 
-                request.setAttribute("rutaCoincidente", rutaCoincidente);
+                request.setAttribute("rutaCoincidente", rutaCoincidente);*/
 
-                port.reservarVuelo(
+                port.reservarVueloConPaquete(
                         nicknameCliente,
                         nombreVuelo,
                         tipoAsiento.toString(),
@@ -229,11 +230,9 @@ public class ReservarVueloServlet extends HttpServlet {
                         pasajerosApellidos
                 );
 
-                port.comprarPaquete(nicknameCliente, paqueteSeleccionado.toString(), LocalDate.now().toString());
-
                 request.setAttribute("notyf_success",
                         "Reserva realizada utilizando el paquete '" + paqueteSeleccionado +
-                                "' (Ruta: " + rutaCoincidente + ").");
+                                "'.");
 
             } else {
 
@@ -253,7 +252,7 @@ public class ReservarVueloServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("notyf_error", "Error al realizar la reserva: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/reservarVuelo").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/reservarVuelo.jsp").forward(request, response);
             return;
         }
 

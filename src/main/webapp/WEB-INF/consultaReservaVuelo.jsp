@@ -471,6 +471,7 @@
 
     <!-- Footer -->
     <jsp:include page="includes/footer.jsp" />
+<script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
 
     <!-- Aside -->
     <jsp:include page="includes/aside.jsp" />

@@ -15,6 +15,7 @@ import publicadores.ControladorSistemaPublishService;
 import publicadores.DtCliente;
 import publicadores.Aerolinea;
 
+
 @WebServlet("/ListUserServlet")
 public class ListUserServlet extends HttpServlet {
 
@@ -29,45 +30,40 @@ public class ListUserServlet extends HttpServlet {
         try {
             ControladorSistemaPublish port = getPort();
 
-            // ============ CLIENTES ============
-            List<DtCliente> clientes = port.listarClientes();
+            // Nickname del usuario logueado (si existe)
+            HttpSession session = request.getSession(false);
+            String nicknameLogueado = null;
+            if (session != null) {
+                nicknameLogueado = (String) session.getAttribute("nickname");
+            }
 
-            // ============ AEROLINEAS ============
-            List<Aerolinea> aerolineas = port.listarAerolineas();
+            // ======= LISTADO DE USUARIOS (clientes + aerolíneas) =======
+            List<String> nicknames = port.listarNicknames();
 
-            // ============ RUTAS CONFIRMADAS POR AEROLINEA ============
-            Map<String, List<String>> rutasConfirmadas = new HashMap<>();
-            for (Aerolinea a : aerolineas) {
+            Map<String, publicadores.DtUsuarioExtendido> usuarios = new HashMap<>();
+
+            for (String nick : nicknames) {
                 try {
-                    List<String> rutas = port.listarRutasConfirmadasAerolinea(a.getNickname());
-                    rutasConfirmadas.put(a.getNickname(), rutas);
-                } catch (Exception ignored) {
-                    rutasConfirmadas.put(a.getNickname(), List.of());
+                    publicadores.DtUsuarioExtendido dto =
+                            port.consultaUsuarioExtendido(nick, nicknameLogueado);
+
+                    usuarios.put(nick, dto);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
-            // ============ TODAS LAS RUTAS POR AEROLINEA ============
-            Map<String, List<String>> rutasAll = new HashMap<>();
-            for (Aerolinea a : aerolineas) {
-                try {
-                    List<String> rutas = port.listarRutasPorAerolinea(a.getNickname());
-                    rutasAll.put(a.getNickname(), rutas);
-                } catch (Exception ignored) {
-                    rutasAll.put(a.getNickname(), List.of());
-                }
-            }
-
-            // ============ SETEAR ATRIBUTOS ============
-            request.setAttribute("clientes", clientes);
-            request.setAttribute("aerolineas", aerolineas);
-            request.setAttribute("rutasPorAerolinea", rutasConfirmadas);
-            request.setAttribute("rutasPorAerolineaAll", rutasAll);
+            // ======= ENVIAR AL JSP =======
+            request.setAttribute("usuarios", usuarios);
+            request.setAttribute("nicknameLogueado", nicknameLogueado);
 
             request.getRequestDispatcher("/WEB-INF/listUser.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error obteniendo datos desde los WS: " + e.getMessage());
+            request.setAttribute("error",
+                    "Error obteniendo datos desde los WS: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/listUser.jsp").forward(request, response);
         }
     }

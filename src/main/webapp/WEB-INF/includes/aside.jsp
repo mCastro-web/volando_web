@@ -69,7 +69,7 @@
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaReservaVueloServlet">
                     <span class="material-icons-outlined">manage_search</span>
-                    Consultar Reservas
+                    Reservas
                 </a>
             </li>
             <li>
@@ -81,7 +81,7 @@
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
                     <span class="icon-[tabler--packages] size-5"></span>
-                    Consultar Paquetes
+                    Paquetes
                 </a>
             </li>
             <li>
@@ -98,13 +98,13 @@
             </li>
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaCheckinServlet" class="flex items-center gap-2">
-                    <span class="material-icons-outlined">travel_explore</span>
+                    <span class="material-icons-outlined">check_circle</span>
                     Checkin
                 </a>
             </li>
             <li>
                 <a href="${pageContext.request.contextPath}/SeguirServlet" class="flex items-center gap-2">
-                    <span class="material-icons-outlined">group</span>
+                    <span class="material-icons-outlined">person_add</span>
                     Seguir Usuarios
                 </a>
             </li>
@@ -135,19 +135,19 @@
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaReservaVueloServlet">
                     <span class="material-icons-outlined">manage_search</span>
-                    Consultar Reservas
+                    Reservas
                 </a>
             </li>
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
                     <span class="icon-[tabler--packages] size-5"></span>
-                    Consultar Paquetes
+                    Paquetes
                 </a>
             </li>
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet">
                     <span class="icon-[tabler--map-search] size-5"></span>
-                    Consultar Rutas
+                    Rutas
                 </a>
             </li>
             <li>
@@ -159,12 +159,12 @@
             <li>
                 <a href="${pageContext.request.contextPath}/ListUserServlet" class="flex items-center gap-2">
                     <span class="icon-[tabler--users] size-5"></span>
-                    Consultar Usuarios
+                    Usuarios
                 </a>
             </li>
             <li>
                 <a href="${pageContext.request.contextPath}/SeguirServlet" class="flex items-center gap-2">
-                    <span class="material-icons-outlined">travel_explore</span>
+                    <span class="material-icons-outlined">check_circle</span>
                     Seguir Usuarios
                 </a>
             </li>
@@ -183,7 +183,7 @@
             <li>
                 <a href="${pageContext.request.contextPath}/ConsultaPaqueteRutaVueloServlet">
                     <span class="icon-[tabler--packages] size-5"></span>
-                    Consultar Paquetes
+                    Paquetes
                 </a>
             </li>
             <li>

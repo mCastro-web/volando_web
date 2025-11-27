@@ -10,38 +10,56 @@
     <jsp:include page="includes/nav.jsp" />
 
     <main class="flex flex-1 p-4 gap-4">
-       <section class="flex-1 bg-base-100 p-4 rounded-lg shadow-md space-y-6">
+<section class="flex-1 bg-base-200 p-4  space-y-6 flex flex-col items-center align-center">
 
-      <h2 class="text-2xl font-bold mb-4">Consulta de Rutas</h2>
+    <div class="w-full max-w-4xl mx-auto flex flex-col items-center text-start">
+        <h1 class="text-3xl mb-2 text-start">Consulta de Rutas</h1>
+        <p class="text-sm mb-6 text-start">
+            Bienvenido a la sección de consulta de rutas. Aquí podrás buscar y seleccionar las rutas que mejor se adapten a tus necesidades.
+        </p>
+    </div>
 
-      <!-- Form principal: usamos GET para facilitar bookmark / navegación -->
-      <form action="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" method="get" id="formConsulta">
+    <!-- Form principal: usamos GET para facilitar bookmark / navegación -->
+    <form action="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" method="get" id="formConsulta" class="w-full max-w-4xl mx-auto flex flex-col items-center">
 
         <!-- FILTROS: aquí va el bloque que pediste (antes 'Rol') -->
-        <div class="rounded-box border p-4 space-y-4">
+        <div class="rounded-box p-4 space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
                 <!-- BLOQUE: Listar categorías -->
                 <div class="form-control flex flex-col gap-4">
-                    <button type="submit" name="action" value="listarCategorias"
-                            id="btnListarCategorias"
-                            class="btn btn-outline w-full">
-                        Listar categorías
-                    </button>
+                    <label class="label"><span class="label-text font-bold">Categorías</span></label>
+<select id="selCatList" name="categoria"
+        class="select select-bordered w-full bg-base-200"
+        <c:if test="${not empty aerolineaSeleccionada}">disabled</c:if>>
+
+                        <option value="">Seleccione una Categoría</option>
+                        <%
+                            List<String> categorias = (List<String>) request.getAttribute("categorias");
+                            String catSel = (String) request.getAttribute("categoriaSeleccionada");
+                            if (categorias != null && !categorias.isEmpty()) {
+                                for (String c : categorias) {
+                        %>
+                            <option value="<%= c %>" <%= c.equals(catSel) ? "selected" : "" %>><%= c %></option>
+                        <%
+                                }
+                            } else {
+                        %>
+                            <option value="">No hay categorías disponibles</option>
+                        <%
+                            }
+                        %>
+                    </select>
                 </div>
 
                 <!-- BLOQUE: Listar aerolíneas + selector -->
                 <div class="form-control flex flex-col gap-2">
-                    <button type="submit" name="action" value="listarAerolineas"
-                            id="btnListarAerolineas"
-                            class="btn btn-outline w-full">
-                        Listar aerolíneas
-                    </button>
+                    <label class="label"><span class="label-text font-bold">Aerolínea</span></label>
+<select id="selAero" name="aerolinea"
+        class="select select-bordered w-full bg-base-200"
+        <c:if test="${not empty categoriaSeleccionada}">disabled</c:if>>
 
-                    <label class="label"><span class="label-text">Aerolínea</span></label>
-                    <select id="selAero" name="aerolinea" class="select select-bordered w-full"
-                            <c:if test="${not empty categoriaSeleccionada}">disabled</c:if>>
-                        <option value="">-- Seleccione --</option>
+                        <option value="">Seleccione una Aerolínea</option>
                         <%
                             List<String> aerolineas = (List<String>) request.getAttribute("aerolineas");
                             String aeroSel = (String) request.getAttribute("aerolineaSeleccionada");
@@ -65,51 +83,16 @@
                     <label class="label"><span class="label-text">&nbsp;</span></label>
                     <div class="flex gap-2">
                         <button type="submit" name="action" value="listarRutas" id="btnListarRutas"
-                                class="btn btn-primary w-full">Listar rutas confirmadas</button>
+                                class="btn btn-primary w-full">Listar Rutas Confirmadas</button>
                     </div>
                 </div>
 
             </div>
-
-            <!-- Si el servidor indicó "mostrando = categorias", mostramos la lista de categorias -->
-            <c:if test="${not empty mostrando and mostrando == 'categorias'}">
-                <div class="mt-4">
-                    <h3 class="font-semibold mb-2">Categorías</h3>
-                    <div>
-                        <%
-                            List<String> categorias = (List<String>) request.getAttribute("categorias");
-                            String catSel = (String) request.getAttribute("categoriaSeleccionada");
-                            if (categorias != null && !categorias.isEmpty()) {
-                        %>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                <% for (String c : categorias) { %>
-                                    <div class="card bg-base-100 shadow">
-                                        <div class="card-body">
-                                            <p class="font-medium mb-2"><%= c %></p>
-                                            <!-- al hacer click enviamos categoria al servlet -->
-                                            <button type="submit" name="categoria" value="<%= c %>" class="btn btn-outline w-full">
-                                                Seleccionar categoría
-                                            </button>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                        <%
-                            } else {
-                        %>
-                            <p class="text-base-content/70">No hay categorías disponibles.</p>
-                        <%
-                            }
-                        %>
-                    </div>
-                </div>
-            </c:if>
-
-        </div> <!-- /filtros -->
+        </div>  
 
         <!-- Mostrar rutas confirmadas (resultado de listarRutas) -->
         <div class="mt-6">
-            <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
+            <h3 class="font-semibold mb-2">Rutas Confirmadas</h3>
             <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <%
                     List<DtRutaVuelo> rutasDt = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
@@ -224,8 +207,10 @@
         <input type="hidden" name="aerolinea" id="hiddenAerolinea" value="<%= request.getAttribute("aerolineaSeleccionada") != null ? request.getAttribute("aerolineaSeleccionada") : "" %>"/>
 
       </form>
-
-      <button class="btn btn-secondary" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
+    
+    <div class="flex justify-start mt-10">
+    <button id="btnVolver" class="btn btn-outline rounded-full">Realizar Nueva Consulta</button>
+    </div>
 
     </section>
    </main>
@@ -233,49 +218,69 @@
     <jsp:include page="includes/footer.jsp" />
     <jsp:include page="includes/aside.jsp" />
 
-    <script>
-        // Pequeña ayuda cliente: deshabilitar select aerolinea si se seleccionó category y viceversa
-        (function(){
-            const form = document.getElementById('formConsulta');
-            const btnCategorias = document.getElementById('btnListarCategorias');
-            const btnAerolineas = document.getElementById('btnListarAerolineas');
-            const selAero = document.getElementById('selAero');
-            const hiddenCat = document.getElementById('hiddenCategoria');
-            const hiddenAero = document.getElementById('hiddenAerolinea');
+ <script>
+(function () {
+    const selAero = document.getElementById("selAero");
+    const selCat = document.getElementById("selCatList");
 
-            // Si hay una categoria seleccionada en el servidor, deshabilitar select de aerolinea
-            if (hiddenCat && hiddenCat.value && hiddenCat.value.trim() !== "") {
-                if (selAero) selAero.disabled = true;
-            }
-            if (hiddenAero && hiddenAero.value && hiddenAero.value.trim() !== "") {
-                // si viene aerolinea seleccionada, no permitimos listar categorias sin resetear
-            }
+    const hiddenCat = document.getElementById("hiddenCategoria");
+    const hiddenAero = document.getElementById("hiddenAerolinea");
 
-            // Al cambiar el select de aerolinea, colocamos el valor en hidden aerolinea
-            if (selAero) {
-                selAero.addEventListener('change', function(){
-                    if (hiddenAero) hiddenAero.value = selAero.value;
-                    // al elegir aerolinea, limpiar categoria para que no haya conflicto
-                    if (hiddenCat) hiddenCat.value = "";
-                });
-            }
-            // Si el usuario hace click en "Listar categorías" queremos que se borre la aerolinea seleccionada
-            btnCategorias && btnCategorias.addEventListener('click', function(){
-                if (selAero) selAero.value = "";
-                if (hiddenAero) hiddenAero.value = "";
-            });
-            // Si hace click en "Listar aerolíneas" borramos la categoría
-            btnAerolineas && btnAerolineas.addEventListener('click', function(){
-                if (hiddenCat) hiddenCat.value = "";
-            });
+    const btnListar = document.getElementById("btnListarRutas");
+    const form = document.getElementById("formConsulta");
 
-            // Cuando se envíe el form para listarRutas, aseguramos que si hay categoria en hidden lo priorizamos
-            form && form.addEventListener('submit', function(e){
-                // nada crítico — el servidor hace la validación — esto es solo UX ligera
-            });
+    // CUANDO CAMBIA AEROLÍNEA → bloquear categoría
+    if (selAero) {
+        selAero.addEventListener("change", () => {
+            hiddenAero.value = selAero.value;
+            hiddenCat.value = "";
 
-        })();
-    </script>
+            selCat.disabled = selAero.value.trim() !== "";
+        });
+    }
+
+    // CUANDO CAMBIA CATEGORÍA → bloquear aerolínea
+    if (selCat) {
+        selCat.addEventListener("change", () => {
+            hiddenCat.value = selCat.value;
+            hiddenAero.value = "";
+
+            selAero.disabled = selCat.value.trim() !== "";
+        });
+    }
+
+    // Estado inicial basado en hidden
+    if (hiddenAero.value && hiddenAero.value.trim() !== "") {
+        selCat.disabled = true;
+    }
+    if (hiddenCat.value && hiddenCat.value.trim() !== "") {
+        selAero.disabled = true;
+    }
+
+if (btnVolver) {
+    btnVolver.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // Limpiar selects
+        selAero.value = "";
+        selCat.value = "";
+
+        // Limpiar hidden fields
+        hiddenAero.value = "";
+        hiddenCat.value = "";
+
+        // Desbloquear ambos
+        selAero.disabled = false;
+        selCat.disabled = false;
+
+        // Redirigir
+        window.location.href = `${pageContext.request.contextPath}/ConsultaRutaVueloServlet`;
+    });
+}
+
+})();
+</script>
+
 
 </body>
 </html>

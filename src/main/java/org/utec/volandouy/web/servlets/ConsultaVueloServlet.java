@@ -34,14 +34,15 @@ public class ConsultaVueloServlet extends HttpServlet {
             String vueloId = request.getParameter("vueloId");
 
             HttpSession session = request.getSession(false);
-
             Object usuarioObj = session.getAttribute("usuario");
             String nickNameAero = "";
             String tipoUsuario = "";
+            String nickNameCliente = "";
 
             if (usuarioObj instanceof publicadores.DtUsuario) {
                 publicadores.DtUsuario usuario = (publicadores.DtUsuario) usuarioObj;
                 if (usuario.getNickname() != null) {
+                    nickNameCliente = usuario.getNickname();
                     nickNameAero = usuario.getNickname().toUpperCase();
                 }
                 if (usuario.getTipo() != null) {
@@ -51,9 +52,6 @@ public class ConsultaVueloServlet extends HttpServlet {
 
             request.setAttribute("nickNameAero", nickNameAero);
 
-            if (aerolineas == null || aerolineas.isEmpty()) {
-                request.setAttribute("mensaje", "No hay aerolíneas disponibles");
-            }
             request.setAttribute("aerolineas", aerolineas);
             request.setAttribute("aerolineaSeleccionada", aerolineaSeleccionada);
 
@@ -70,9 +68,7 @@ public class ConsultaVueloServlet extends HttpServlet {
                                 if (dt != null)
                                     rutasDt.add(dt);
                             }
-                        } catch (Exception ex) {
-                            // log opcional
-                        }
+                        } catch (Exception ex) { }
                     }
                 }
                 request.setAttribute("rutasDt", rutasDt);
@@ -85,64 +81,26 @@ public class ConsultaVueloServlet extends HttpServlet {
             }
 
             if (vueloId != null && !vueloId.isEmpty()) {
-                DtVuelo dtVuelo = null;
-                try {
-                    dtVuelo = port.obtenerDtVueloPorNombre(vueloId);
-                } catch (Exception ex) {
-                }
+                DtVuelo dtVuelo = port.obtenerDtVueloPorNombre(vueloId);
                 request.setAttribute("dtVuelo", dtVuelo);
                 request.setAttribute("vueloIdSeleccionado", vueloId);
 
                 boolean esCliente = "CLIENTE".equalsIgnoreCase(tipoUsuario);
 
                 if (esCliente) {
-                    System.out.println("Es cliente, intentando obtener DtReserva...");
-                    String nickNameCliente = nickNameAero; // Reusing the nickname obtained earlier
-
-                    DtReserva dtReserva = null;
-                    if (nickNameCliente != null && !nickNameCliente.isBlank()) {
-                        try {
-                            dtReserva = port.obtenerDtReservaPorClienteVuelo(nickNameCliente.toLowerCase(), vueloId);
-                            System.out.println(
-                                    "DtReserva obtenida para cliente " + nickNameCliente + " y vuelo " + vueloId + ":");
-                            System.out.println(dtReserva);
-                        } catch (Exception ex) {
-                        }
-                    }
-
-                    String verReservaParam = request.getParameter("verReserva");
-
-                    if (dtReserva != null) {
-                        request.setAttribute("dtReservaExists", true);
-                        if ("1".equals(verReservaParam)) {
-                            request.setAttribute("dtReserva", dtReserva);
-                            System.out.println("DtReserva encontrada y guardada en sesión.");
-                        }
-                    } else {
-                        request.setAttribute("dtReservaExists", false);
-                        System.out.println("DtReserva no encontrada.");
-                    }
-
-                    request.setAttribute("nickNameCliente", nickNameCliente);
-                    request.setAttribute("dtReservaExists", dtReserva != null);
-
+                    // Obtener lista de reservas resumidas (ID o descripción)
+                    List<String> reservasCliente = port.obtenerReservasPorClienteVuelo(nickNameCliente, vueloId);
+                    request.setAttribute("reservasCliente", reservasCliente);
                 }
 
                 if ("AEROLINEA".equalsIgnoreCase(tipoUsuario)) {
                     try {
-                        System.out.println("Es aerolínea, listando reservas del vuelo " + vueloId);
                         List<DtReserva> reservasVuelo = port.listarDtReservasDeVuelo(vueloId);
-                        if (reservasVuelo != null && !reservasVuelo.isEmpty()) {
-                            request.setAttribute("reservasVuelo", reservasVuelo);
-                            System.out.println("Se encontraron " + reservasVuelo.size() + " reservas para este vuelo.");
-                        } else {
-                            System.out.println("No hay reservas para el vuelo " + vueloId);
-                        }
+                        request.setAttribute("reservasVuelo", reservasVuelo);
                     } catch (Exception ex) {
                         System.out.println("Error al listar reservas del vuelo: " + ex.getMessage());
                     }
                 }
-
             }
 
             if (rutaId != null && !rutaId.isEmpty()) {

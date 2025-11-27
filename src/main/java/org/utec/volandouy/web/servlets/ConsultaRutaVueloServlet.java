@@ -43,6 +43,7 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
             String aerolineaSeleccionada = request.getParameter("aerolinea");
             String rutaId = request.getParameter("rutaId");
 
+            // Cargar aerolíneas SIEMPRE
             try {
                 List<String> aerolineas = port.listarNicknamesAerolineas();
                 request.setAttribute("aerolineas", aerolineas);
@@ -50,16 +51,14 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
                 request.setAttribute("aerolineas", new ArrayList<String>());
             }
 
+            // Cargar categorías SIEMPRE
+            try {
+                List<String> categorias = port.listarNombresCategorias();
+                request.setAttribute("categorias", categorias);
+            } catch (Exception ex) {
+                request.setAttribute("categorias", new ArrayList<String>());
+            }
 
-            if ("listarCategorias".equalsIgnoreCase(action)) {
-                try {
-                    List<String> categorias = port.listarNombresCategorias();
-                    request.setAttribute("categorias", categorias);
-                } catch (Exception ex) {
-                    request.setAttribute("categorias", new ArrayList<String>());
-                }
-                request.setAttribute("mostrando", "categorias");
-                }
 
 
             if ("listarAerolineas".equalsIgnoreCase(action)) {
@@ -74,9 +73,7 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
 
                 if (categoriaSeleccionada != null && !categoriaSeleccionada.isBlank()) {
                     try {
-                        java.lang.reflect.Method m = port.getClass().getMethod("listarRutasPorCategoria", String.class);
-                        Object res = m.invoke(port, categoriaSeleccionada);
-                        if (res instanceof List<?>) rutas = (List<?>) res;
+                        rutas = port.listarRutasConfirmadasPorCategoria(categoriaSeleccionada);
                         request.setAttribute("filtroUsado", "categoria");
                     } catch (Exception ex) {
                         request.setAttribute("mensaje", "Error listando rutas por categoría.");
@@ -104,6 +101,8 @@ public class ConsultaRutaVueloServlet extends HttpServlet {
                 }
 
                 request.setAttribute("rutasDt", rutasDt);
+                request.setAttribute("rutasListadas", true);
+
             }
 
 

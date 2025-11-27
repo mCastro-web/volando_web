@@ -3,7 +3,7 @@
         <!-- Izquierda de la NAV-->
         <div class="navbar-start gap-2">
             <div class="sm:overlay-layout-open:ps-64 min-h-full bg-primary transition-all duration-300">
-            <div class="">
+            <div class="mt-1">
                 <button
                 type="button"
                 class="btn btn-sm btn-circle shadow-none btn-primary"
@@ -12,7 +12,7 @@
                 aria-controls="collapsible-sidebar"
                 data-overlay="#collapsible-sidebar"
                 >
-                    <span class="icon-[tabler--menu-2] size-5"></span>
+                    <span class="icon-[tabler--menu-2] size-7"></span>
                 </button>
             </div>
             </div>
@@ -21,18 +21,30 @@
               <img src="${pageContext.request.contextPath}/favicon.png" 
                   class="w-8 h-8 rounded-md cursor-pointer hover:scale-105 transition-transform" 
                   alt="logo" />
-              <span class="text-white text-lg hidden md:block">VolandoUy</span>
             </a>
         </div>
         
         <!-- Centro de la NAV-->
         <div class="navbar-center w-full max-w-md mx-4">
-            <form action="BusquedaServlet" method="GET" class="w-full">
-                <div class="relative w-full">
-                    <input type="text" name="queryBusqueda" placeholder="Buscar rutas, paquetes..." class="input input-sm input-bordered w-full pr-10 bg-base-100 text-base-content rounded-full" />
-                    <button type="submit" class="absolute right-0 top-0 bottom-0 px-3 text-base-content/70 hover:text-primary flex items-center">
-                        <span class="icon-[tabler--search] size-4"></span>
+            <form action="BusquedaServlet" method="GET" class="w-full flex justify-center">
+                <div class="flex items-center w-full max-w-3xl bg-base-200 rounded-full shadow-md border border-base-300 overflow-hidden">
+                    
+                    <!-- Input -->
+                    <input 
+                        type="text" 
+                        name="queryBusqueda" 
+                        placeholder="Buscar rutas, paquetes..."
+                        class="flex-grow px-4 py-2 bg-base-200 text-base-content focus:outline-none"
+                    />
+
+                    <!-- Botón de búsqueda -->
+                    <button 
+                        type="submit"
+                        class="px-4 py-2 bg-base-200 hover:bg-base-300 transition-colors flex items-center justify-center"
+                    >
+                        <span class="icon-[tabler--search] size-5 text-base-content/70"></span>
                     </button>
+
                 </div>
             </form>
         </div>

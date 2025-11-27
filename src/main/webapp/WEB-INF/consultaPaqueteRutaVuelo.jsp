@@ -30,12 +30,13 @@
                             } catch (Exception ex) { }
                             String tipo = (String) session.getAttribute("tipoUsuario");
 
-                            if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) {
+                            if ("CLIENTE".equalsIgnoreCase(tipoCuenta) || usuario == null) {
+                                String rolMostrar = (usuario == null) ? "Visitante" : "Cliente";
                         %>
 
                         <label class="label"><span class="label-text">Rol </span></label>
                         <select id="selRol" class="input input-bordered w-full bg-base-100">
-                            <option value="CLIENTE" selected>Cliente</option>
+                            <option value="<%= rolMostrar.toUpperCase() %>" selected><%= rolMostrar %></option>
                         </select>
                     </div>
 
@@ -48,160 +49,211 @@
                                 if (paquetes != null && !paquetes.isEmpty()) {
                                     for (String a : paquetes) {
                             %>
-                            <option value="<%= a %>"><%= a %></option>
+                            <option value="<%= a %>" <%= a.equals(request.getAttribute("paqueteSeleccionado")) ? "selected" : "" %>>
+                                <%= a %>
+                            </option>
                             <%
-                                    }
+                                }
+                            } else {
+                            %>
+                            <option value="">No hay paquetes disponibles</option>
+                            <%
                                 }
                             %>
                         </select>
+                    </div>
 
+                    <!-- Botón filtrar -->
+                    <div class="form-control">
+                        <button type="submit" id="btnFiltrar" class="btn btn-primary w-full">Ver datos del paquete</button>
+                    </div>
+                </div>
 
-                        <!-- Paso 3: Rutas del paquete -->
-                        <div class="mt-8">
-                            <h3 class="font-semibold mb-2">Rutas del paquete</h3>
-                            <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <%
+    DtPaqueteVuelo paqueteDt = (DtPaqueteVuelo) request.getAttribute("paqueteDt");
+    if (paqueteDt != null) {
+%>
+                <div class="mt-6 p-4 rounded-lg border bg-base-200 shadow-sm">
+                    <h3 class="text-xl text-center font-semibold mb-3">
+                        Detalles del paquete "<%= paqueteDt.getNombre() %>"
+                    </h3>
+                    <hr class="mb-4">
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <p class="font-medium">Nombre:</p>
+                            <p><%= paqueteDt.getNombre() %></p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Descripción:</p>
+                            <p><%= paqueteDt.getDescripcion() %></p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Costo:</p>
+                            <p>USD <%= paqueteDt.getCosto() %></p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Descuento:</p>
+                            <p><%= paqueteDt.getDescuento() %> %</p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Días de validez:</p>
+                            <p><%= paqueteDt.getDiasValidez() %></p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Fecha de alta:</p>
+                            <p><%= paqueteDt.getAltaFecha() %></p>
+                        </div>
+                    </div>
+                </div>
+                    <%
+    } else if (request.getParameter("paquete") != null) {
+%>
+                <p class="mt-4 text-base-content/70 text-center">
+                    No se encontraron detalles para el paquete seleccionado.
+                </p>
+                    <%
+    }
+%>
 
-                                <%
-                                    List<String> rutas = (List<String>) request.getAttribute("rutas");
-                                    if (rutas != null && !rutas.isEmpty()) {
-                                        for (String nombreRuta : rutas) {
-                                %>
-                                <div class="card bg-base-100 shadow-xl">
-                                    <div class="form-control">
-                                        <form action="${pageContext.request.contextPath}/ConsultaRutaVueloServlet" method="get">
-                                            <input type="hidden" name="aerolinea" value="<%= request.getParameter("aerolinea") != null ? request.getParameter("aerolinea") : "" %>">
-                                            <button type="submit" name="rutaId" value="<%= nombreRuta %>" class="btn btn-primary w-full">
-                                                <%= nombreRuta %>
-                                            </button>
-                                        </form>
+                <!-- Paso 3: Rutas del paquete -->
+                <div class="mt-8">
+                    <h3 class="font-semibold mb-2">Rutas del paquete</h3>
+                    <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="text-sm text-base-content/70">
-                                            Ruta asociada al paquete seleccionado
-                                        </p>
-                                    </div>
-                                </div>
-                                <%
-                                    }
-                                } else if (request.getParameter("paquete") != null) {
-                                %>
-                                <p class="col-span-full text-center text-base-content/70">
-                                    No hay rutas asociadas a este paquete.
+                        <%
+                            List<String> rutas = (List<String>) request.getAttribute("rutas");
+                            if (rutas != null && !rutas.isEmpty()) {
+                                for (String nombreRuta : rutas) {
+                        %>
+                        <div class="card bg-base-100 shadow-xl">
+                            <div class="form-control">
+                                <a href="${pageContext.request.contextPath}/ConsultaRutaVueloServlet?rutaId=<%= nombreRuta %>&aerolinea=<%= request.getParameter("aerolinea") != null ? request.getParameter("aerolinea") : "" %>"
+                                   class="btn btn-primary w-full">
+                                    <%= nombreRuta %>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-sm text-base-content/70">
+                                    Ruta asociada al paquete seleccionado
                                 </p>
-                                <%
-                                    }
-                                %>
                             </div>
                         </div>
+                        <%
+                            }
+                        } else if (request.getParameter("paquete") != null) {
+                        %>
+                        <p class="col-span-full text-center text-base-content/70">
+                            No hay rutas asociadas a este paquete.
+                        </p>
+                        <%
+                            }
+                        %>
+                    </div>
+                </div>
 
-                        <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/'">Listar Rutas de Paquete</button>
+                <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/index'">Volver</button>
     </section>
 
     <% } else if ("AEROLINEA".equalsIgnoreCase(tipoCuenta)) { %>
 
-    <!-- FILTROS AEROLÍNEA -->
-    <div class="rounded-box border p-4 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div class="form-control">
-                <label class="label"><span class="label-text">Rol </span></label>
-                <select id="selRol" class="input input-bordered w-full bg-base-100">
-                    <option value="AEROLINEA" selected>Aerolínea</option>
-                </select>
-            </div>
+    <label class="label"><span class="label-text">Rol </span></label>
+    <select id="selRol" class="input input-bordered w-full bg-base-100">
+        <option value="AEROLINEA" selected>Aerolínea</option>
+    </select>
+    </div>
 
+    <%
+        String nickNameAero = "Usuario";
+        try {
+            java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
+            Object nombreObj = getNickname.invoke(usuario);
+            if (nombreObj != null) nickNameAero = nombreObj.toString();
+        } catch (Exception ex) { }
+    %>
+
+    <div class="form-control">
+        <label class="label"><span class="label-text">Aerolínea</span></label>
+        <select id="nicknameAero" name="aerolinea" class="input input-bordered w-full">
+            <option value="<%= nickNameAero %>" selected><%= nickNameAero %></option>
+        </select>
+    </div>
+
+    <div class="form-control">
+        <button type="submit" id="btnFiltrar" class="btn btn-primary w-full">Listar rutas confirmadas</button>
+    </div>
+    </div>
+
+    <!-- Paso 2: Rutas confirmadas (AEROLÍNEA) -->
+    <div>
+        <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
+        <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <%
-                String nickNameAero = "Usuario";
-                try {
-                    java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
-                    Object nombreObj = getNickname.invoke(usuario);
-                    if (nombreObj != null) nickNameAero = nombreObj.toString();
-                } catch (Exception ex) { }
+                List<DtRutaVuelo> rutasDt2 = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
+                if (rutasDt2 != null && !rutasDt2.isEmpty()) {
+                    for (DtRutaVuelo ruta : rutasDt2) {
+                        String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
+                        String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
             %>
-
-            <div class="form-control">
-                <label class="label"><span class="label-text">Aerolínea</span></label>
-                <select id="nicknameAero" name="aerolinea" class="input input-bordered w-full">
-                    <option value="<%= nickNameAero %>" selected><%= nickNameAero %></option>
-                </select>
-            </div>
-
-            <div class="form-control">
-                <button type="submit" id="btnFiltrar" class="btn btn-primary w-full">Listar rutas confirmadas</button>
-            </div>
-        </div>
-
-        <!-- Paso 2: Rutas confirmadas (AEROLÍNEA) -->
-        <div>
-            <h3 class="font-semibold mb-2">Rutas confirmadas</h3>
-            <div id="rutasWrap" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <%
-                    List<DtRutaVuelo> rutasDt2 = (List<DtRutaVuelo>) request.getAttribute("rutasDt");
-                    if (rutasDt2 != null && !rutasDt2.isEmpty()) {
-                        for (DtRutaVuelo ruta : rutasDt2) {
-                            String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
-                            String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
-                %>
-                <div class="card bg-base-100 shadow-xl">
-                    <div class="form-control">
-                        <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
-                            <%= nombre %>
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-sm text-base-content/70">
-                            <%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %>
-                        </p>
-                    </div>
+            <div class="card bg-base-100 shadow-xl">
+                <div class="form-control">
+                    <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
+                        <%= nombre %>
+                    </button>
                 </div>
-                <%
-                    }
-                } else if (request.getParameter("aerolinea") != null) {
-                %>
-                <p class="col-span-full text-center text-base-content/70">No hay rutas confirmadas para esta aerolínea</p>
-                <%
-                    }
-                %>
-            </div>
-        </div>
-
-        <!-- Vuelos y reservas (AEROLÍNEA) -->
-            <%
-    List<?> vuelos2 = (List<?>) request.getAttribute("vuelos");
-    String rutaSeleccionada2 = (String) request.getAttribute("rutaIdSeleccionada");
-    if (vuelos2 != null && !vuelos2.isEmpty()) {
-%>
-        <div class="mt-6">
-            <h3 class="font-semibold mb-2">Vuelos en ruta: <span class="font-normal"><%= rutaSeleccionada2 %></span></h3>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <%
-                    for (Object v : vuelos2) {
-                        String vNombre = (v != null) ? v.toString() : "Sin nombre";
-                %>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <p class="font-medium mb-2"><%= vNombre %></p>
-                        <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">
-                            Ver reservas del vuelo
-                        </button>
-                    </div>
+                <div class="card-body">
+                    <p class="text-sm text-base-content/70">
+                        <%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %>
+                    </p>
                 </div>
-                <%
-                    }
-                %>
             </div>
-        </div>
             <%
+                }
+            } else if (request.getParameter("aerolinea") != null) {
+            %>
+            <p class="col-span-full text-center text-base-content/70">No hay rutas confirmadas para esta aerolínea</p>
+            <%
+                }
+            %>
+        </div>
+    </div>
+
+    <!-- Vuelos y reservas (AEROLÍNEA) -->
+    <%
+        List<?> vuelos2 = (List<?>) request.getAttribute("vuelos");
+        String rutaSeleccionada2 = (String) request.getAttribute("rutaIdSeleccionada");
+        if (vuelos2 != null && !vuelos2.isEmpty()) {
+    %>
+    <div class="mt-6">
+        <h3 class="font-semibold mb-2">Vuelos en ruta: <span class="font-normal"><%= rutaSeleccionada2 %></span></h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <%
+                for (Object v : vuelos2) {
+                    String vNombre = (v != null) ? v.toString() : "Sin nombre";
+            %>
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <p class="font-medium mb-2"><%= vNombre %></p>
+                    <button type="submit" name="vueloId" value="<%= vNombre %>" class="btn btn-outline w-full">
+                        Ver reservas del vuelo
+                    </button>
+                </div>
+            </div>
+            <%
+                }
+            %>
+        </div>
+    </div>
+    <%
     } else if (request.getParameter("rutaId") != null) {
-%>
-        <p class="mt-4 text-base-content/70">No hay vuelos para la ruta seleccionada.</p>
-            <%
-    }
-%>
+    %>
+    <p class="mt-4 text-base-content/70">No hay vuelos para la ruta seleccionada.</p>
+    <%
+        }
+    %>
 
-        <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
-        </section>
-            <% } %>
+    <button class="btn btn-primary btn-block mt-6" onclick="window.location.href='${pageContext.request.contextPath}/'">Volver</button>
+    </section>
+    <% } %>
 
 </main>
 
@@ -213,5 +265,6 @@
 
 <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
 <script src="${pageContext.request.contextPath}/js/consultaPaqueteRutaVuelo.js"></script>
+</form>
 </body>
 </html>
