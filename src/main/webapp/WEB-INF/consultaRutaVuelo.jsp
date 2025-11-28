@@ -101,15 +101,26 @@
                             String nombre = ruta.getNombre() != null ? ruta.getNombre() : ruta.toString();
                             String descripcion = ruta.getDescripcion() != null ? ruta.getDescripcion() : "";
                 %>
-                    <div class="card bg-base-100 shadow-xl">
-                        <div class="form-control p-3">
-                            <!-- este submit envía rutaId al servlet y mantiene filtros previos -->
-                            <button type="submit" name="rutaId" value="<%= nombre %>" class="btn btn-primary w-full">
+                    <div class="card bg-base-100 shadow-xl overflow-hidden">
+                        <!-- Image -->
+                        <% if (ruta.getUrlImagen() != null && !ruta.getUrlImagen().isBlank()) { %>
+                        <figure class="h-48">
+                            <img src="<%= ruta.getUrlImagen() %>" 
+                                 alt="<%= nombre %>" 
+                                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                        </figure>
+                        <% } %>
+                        
+                        <div class="card-body p-4">
+                            <!-- Route name button -->
+                            <button type="submit" name="rutaId" value="<%= nombre %>" 
+                                    class="btn btn-primary w-full mb-2">
                                 <%= nombre %>
                             </button>
-                        </div>
-                        <div class="card-body">
-                            <p class="text-sm text-base-content/70"><%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %></p>
+                            <!-- Description -->
+                            <p class="text-sm text-base-content/70 line-clamp-2">
+                                <%= descripcion.isBlank() ? "Sin descripción disponible" : descripcion %>
+                            </p>
                         </div>
                     </div>
                 <%

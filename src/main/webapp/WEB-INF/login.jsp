@@ -38,6 +38,7 @@
               <label class="input-floating-label bg-base-200" for="user">
                 Correo electrónico o Nickname
               </label>
+              <div id="user-feedback"></div>
 
               <% String errorUser = (String) request.getAttribute("errorUser");
                 if (errorUser != null) { %>
@@ -114,5 +115,48 @@
     </footer>
 
     <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
+    <script>
+      function debounce(func, wait) {
+          let timeout;
+          return function(...args) {
+              const context = this;
+              clearTimeout(timeout);
+              timeout = setTimeout(() => func.apply(context, args), wait);
+          };
+      }
+
+      async function validateLoginUser(value) {
+          const feedbackElement = document.getElementById('user-feedback');
+          const inputElement = document.getElementById('user');
+          
+          if (!value) {
+              feedbackElement.textContent = "";
+              inputElement.classList.remove("input-error", "input-success");
+              return;
+          }
+
+          try {
+              const response = await fetch('ValidacionServlet?type=login_user&value=' + encodeURIComponent(value));
+              const data = await response.json();
+              
+              if (!data.exists) {
+                  feedbackElement.textContent = data.message;
+                  feedbackElement.className = "text-error text-sm mt-1";
+                  inputElement.classList.add("input-error");
+                  inputElement.classList.remove("input-success");
+              } else {
+                  feedbackElement.textContent = "";
+                  inputElement.classList.remove("input-error");
+                  inputElement.classList.add("input-success");
+              }
+          } catch (error) {
+              console.error('Error validating user', error);
+          }
+      }
+
+      document.getElementById('user').addEventListener('input', debounce(function(e) {
+          validateLoginUser(e.target.value);
+      }, 500));
+    </script>
   </body>
 </html>

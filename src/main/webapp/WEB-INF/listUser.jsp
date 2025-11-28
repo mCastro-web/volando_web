@@ -8,40 +8,48 @@
 <jsp:include page="includes/head.jsp" />
 <body class="bg-base-200 min-h-screen flex flex-col">
 
-    <!-- NAV -->
-    <jsp:include page="includes/nav.jsp" />
+<!-- NAV -->
+<jsp:include page="includes/nav.jsp" />
 
-    <div class="w-full mx-auto max-w-4xl">
-        <h1 class="text-3xl mb-2">Listar Usuarios</h1>
-        <p class="text-sm mb-6">
-            A continuación se muestra una lista de todos los <b>usuarios registrados</b> en la plataforma VolandoUy.
-        </p>
+<div class="w-full mx-auto max-w-4xl">
+    <h1 class="text-3xl mb-2">Listar Usuarios</h1>
+    <p class="text-sm mb-6">
+        A continuación se muestra una lista de todos los <b>usuarios registrados</b> en la plataforma VolandoUy.
+    </p>
 
-        <h2 class="text-xl">Datos del Usuario</h2>
-        <p class="text-sm mb-4 text-base-content/80">
-            Revisa los perfiles de los usuarios registrados, incluyendo sus nombres, apellidos y direcciones de correo <br/>
-            Haz clic en los usuarios para obtener más detalles.
-        </p>
-    </div>
+    <h2 class="text-xl">Datos del Usuario</h2>
+    <p class="text-sm mb-4 text-base-content/80">
+        Revisa los perfiles de los usuarios registrados, incluyendo sus nombres, apellidos y direcciones de correo <br/>
+        Haz clic en los usuarios para obtener más detalles.
+    </p>
+</div>
 
 <div id="listaUsuarios" class="grid grid-cols-2 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
-
     <!-- ============================ -->
     <!--       LISTA DE CLIENTES      -->
     <!-- ============================ -->
-
     <div class="space-y-3 w-full">
         <h2 class="text-xl font-semibold mb-2 text-center">Clientes</h2>
 
         <%
             List<DtCliente> clientes = (List<DtCliente>) request.getAttribute("clientes");
+            Map<String, List<String>> seguidoresPorUsuario = (Map<String, List<String>>) request.getAttribute("seguidoresPorUsuario");
+            Map<String, List<String>> seguidosPorUsuario = (Map<String, List<String>>) request.getAttribute("seguidosPorUsuario");
+            List<String> misReservas = (List<String>) request.getAttribute("misReservas");
+            List<String> misPaquetes = (List<String>) request.getAttribute("misPaquetes");
+            String nicknameLogueado = null;
+            if(session != null && session.getAttribute("usuario") != null) {
+                nicknameLogueado = ((publicadores.DtUsuario)session.getAttribute("usuario")).getNickname();
+            }
+
             if (clientes != null && !clientes.isEmpty()) {
                 for (DtCliente c : clientes) {
                     String modalId = "modal-" + c.getNickname();
         %>
 
-        <div onclick="document.getElementById('<%= modalId %>').classList.remove('hidden')"
-             class="card bg-base-100 shadow-md p-4 flex items-start justify-between cursor-pointer hover:bg-base-300 transition">
+
+        <div class="card bg-base-100 shadow-md p-4 flex items-start justify-between cursor-pointer hover:bg-base-300 transition"
+             onclick="document.getElementById('<%= modalId %>').classList.remove('hidden')">
 
             <div class="flex items-center gap-4">
                 <img src="<%= c.getUrlImagen() != null ? c.getUrlImagen() : (request.getContextPath() + "/img/default-user.jpg") %>"
@@ -52,7 +60,7 @@
                     <h3 class="font-bold text-lg">
                         <%= c.getNombre() %> <%= c.getApellido() %>
                     </h3>
-                    <span class="text-sm opacity-70"><%= c.getEmail() %></span>
+                    <p class="text-sm opacity-70">Haz click para saber más sobre este usuario.</p>
                 </div>
             </div>
         </div>
@@ -69,13 +77,107 @@
                 <div class="flex flex-col items-center text-center space-y-3">
                     <img src="<%= c.getUrlImagen() != null ? c.getUrlImagen() : (request.getContextPath() + "/img/default-user.jpg") %>"
                          class="w-24 h-24 object-cover rounded-full border shadow">
-
                     <h3 class="font-bold text-xl"><%= c.getNombre() %> <%= c.getApellido() %></h3>
                     <p class="text-sm text-gray-500"><%= c.getEmail() %></p>
                     <p class="text-sm text-gray-500">Documento: <%= c.getNumeroDoc() %></p>
                     <p class="text-sm text-gray-500">Nacionalidad: <%= c.getNacionalidad() %></p>
                     <p class="text-sm text-gray-500">Tipo Documento: <%= c.getTipoDoc() %></p>
                 </div>
+
+                <!-- SEGUIDORES / SEGUIDOS -->
+                <div class="mt-4 w-full text-left">
+                    <h4 class="font-semibold text-sm mb-1">Seguidores:</h4>
+                    <ul class="list-disc ml-6 text-sm">
+                        <%
+                            List<String> seguidores = seguidoresPorUsuario.get(c.getNickname());
+                            if(seguidores != null && !seguidores.isEmpty()) {
+                                for(String s : seguidores){ %>
+                        <li><%= s %></li>
+                        <%      }
+                        } else { %>
+                        <li class="text-gray-400 italic">No tiene seguidores</li>
+                        <% } %>
+                    </ul>
+
+                    <h4 class="font-semibold text-sm mb-1 mt-2">Seguidos:</h4>
+                    <ul class="list-disc ml-6 text-sm">
+                        <%
+                            List<String> seguidos = seguidosPorUsuario.get(c.getNickname());
+                            if(seguidos != null && !seguidos.isEmpty()) {
+                                for(String s : seguidos){ %>
+                        <li><%= s %></li>
+                        <%      }
+                        } else { %>
+                        <li class="text-gray-400 italic">No sigue a nadie</li>
+                        <% } %>
+                    </ul>
+                </div>
+
+                <!-- SOLO SI EL CLIENTE LOGUEADO ESTÁ VIENDO SU PERFIL -->
+                <% if(c.getNickname().equals(nicknameLogueado)) { %>
+                <div class="mt-4 w-full text-left">
+
+                    <!-- Mis Reservas -->
+                    <h4 class="font-semibold text-sm mb-1">Mis Reservas:</h4>
+                    <ul class="list-disc ml-6 text-sm">
+                        <% if(misReservas != null && !misReservas.isEmpty()) {
+                            for(String r : misReservas){
+                                // Parse: "Reserva Nro: 83 - Vuelo: R3-001 - Pasajes: 2 - Tipo: EJECUTIVO"
+                                String reservaId = "";
+                                String vueloId = "";
+                                if(r.contains("Reserva Nro: ")) {
+                                    int nroStart = r.indexOf("Nro: ") + 5;
+                                    int nroEnd = r.indexOf(" -", nroStart);
+                                    if(nroEnd > nroStart) reservaId = r.substring(nroStart, nroEnd).trim();
+                                }
+                                if(r.contains("Vuelo: ")) {
+                                    int vueloStart = r.indexOf("Vuelo: ") + 7;
+                                    int vueloEnd = r.indexOf(" -", vueloStart);
+                                    if(vueloEnd > vueloStart) vueloId = r.substring(vueloStart, vueloEnd).trim();
+                                }
+                        %>
+                        <li>
+                            <%= r %>
+                            <!-- Ver Reserva: needs vueloId to find reservation  -->
+                            <a class="btn btn-xs btn-primary ml-2"
+                               href="<%= request.getContextPath() %>/ConsultaReservaVueloServlet?vueloId=<%= vueloId %>">Ver Reserva</a>
+                            <!-- Ver Ruta: show route via vueloId -->
+                            <a class="btn btn-xs btn-secondary ml-2"
+                               href="<%= request.getContextPath() %>/ConsultaVueloServlet?vueloId=<%= vueloId %>">Ver Ruta</a>
+                        </li>
+                        <%  }
+                        } else { %>
+                        <li class="text-gray-400 italic">No tiene reservas</li>
+                        <% } %>
+                    </ul>
+
+                    <!-- Mis Paquetes -->
+                    <h4 class="font-semibold text-sm mb-1 mt-2">Mis Paquetes:</h4>
+                    <ul class="list-disc ml-6 text-sm">
+                        <% if(misPaquetes != null && !misPaquetes.isEmpty()) {
+                            for(String p : misPaquetes){
+                                // Parse: "Reserva Nro: 78 - Paquete: paq131"
+                                String paqueteNombre = "";
+                                if(p.contains("Paquete: ")) {
+                                    paqueteNombre = p.substring(p.indexOf("Paquete: ") + 9).trim();
+                                }
+                        %>
+                        <li>
+                            <%= p %>
+                            <!-- Use 'paquete' parameter, not 'paqueteId' -->
+                            <a class="btn btn-xs btn-primary ml-2"
+                               href="<%= request.getContextPath() %>/ConsultaPaqueteRutaVueloServlet?paquete=<%= java.net.URLEncoder.encode(paqueteNombre, "UTF-8") %>">Ver Paquete</a>
+                        </li>
+                        <%  }
+                        } else { %>
+                        <li class="text-gray-400 italic">No tiene paquetes</li>
+                        <% } %>
+                    </ul>
+
+                </div>
+                <% } %>
+
+
 
                 <div class="mt-6 flex justify-center">
                     <button class="btn btn-primary"
@@ -86,14 +188,11 @@
             </div>
         </div>
 
-        <%
-                }
-            } else {
-        %>
+        <% }
+        } else { %>
         <p class="text-gray-500 text-center">No hay clientes registrados.</p>
         <% } %>
     </div>
-
     <!-- ============================ -->
     <!--       LISTA AEROLÍNEAS       -->
     <!-- ============================ -->
@@ -170,28 +269,59 @@
 
                     <% if ("AEROLINEA".equalsIgnoreCase(tipo)) { %>
 
-                        <% if (rutasAll != null && !rutasAll.isEmpty()) { %>
-                            <ul class="list-disc ml-6 text-sm space-y-1">
-                                <% for (String r : rutasAll) { %>
-                                    <li><%= r %></li>
-                                <% } %>
-                            </ul>
-                        <% } else { %>
-                            <p class="text-sm text-gray-400 italic ml-1">No hay rutas confirmadas.</p>
+                    <% if (rutasAll != null && !rutasAll.isEmpty()) { %>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <% for (String r : rutasAll) { %>
+                        <li><a href="<%= request.getContextPath() %>/ConsultaRutaVueloServlet?rutaId=<%= java.net.URLEncoder.encode(r, "UTF-8") %>" 
+                               class="text-primary hover:underline"><%= r %></a></li>
                         <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p class="text-sm text-gray-400 italic ml-1">No hay rutas confirmadas.</p>
+                    <% } %>
 
                     <% } else { %>
 
-                        <% if (rutas != null && !rutas.isEmpty()) { %>
-                            <ul class="list-disc ml-6 text-sm space-y-1">
-                                <% for (String r : rutas) { %>
-                                    <li><%= r %></li>
-                                <% } %>
-                            </ul>
-                        <% } else { %>
-                            <p class="text-sm text-gray-400 italic ml-1">No hay rutas confirmadas.</p>
+                    <% if (rutas != null && !rutas.isEmpty()) { %>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <% for (String r : rutas) { %>
+                        <li><a href="<%= request.getContextPath() %>/ConsultaRutaVueloServlet?rutaId=<%= java.net.URLEncoder.encode(r, "UTF-8") %>" 
+                               class="text-primary hover:underline"><%= r %></a></li>
                         <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p class="text-sm text-gray-400 italic ml-1">No hay rutas confirmadas.</p>
+                    <% } %>
 
+                    <% } %>
+                </div>
+
+                <%
+                    List<String> seguidoresA = seguidoresPorUsuario.get(a.getNickname());
+                    List<String> seguidosA = seguidosPorUsuario.get(a.getNickname());
+                %>
+
+                <div class="mt-4 w-full text-left">
+                    <h4 class="font-semibold text-sm mb-1">Seguidores</h4>
+                    <% if (seguidoresA != null && !seguidoresA.isEmpty()) { %>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <% for (String s : seguidoresA) { %>
+                        <li><%= s %></li>
+                        <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p class="text-sm text-gray-400 italic ml-1">No tiene seguidores.</p>
+                    <% } %>
+
+                    <h4 class="font-semibold text-sm mt-3 mb-1">Seguidos</h4>
+                    <% if (seguidosA != null && !seguidosA.isEmpty()) { %>
+                    <ul class="list-disc ml-6 text-sm space-y-1">
+                        <% for (String s : seguidosA) { %>
+                        <li><%= s %></li>
+                        <% } %>
+                    </ul>
+                    <% } else { %>
+                    <p class="text-sm text-gray-400 italic ml-1">No sigue a ningún usuario.</p>
                     <% } %>
                 </div>
 
@@ -204,8 +334,8 @@
         </div>
 
         <%
-                }
-            } else {
+            }
+        } else {
         %>
         <p class="text-gray-500 text-center">No hay aerolíneas registradas.</p>
         <% } %>

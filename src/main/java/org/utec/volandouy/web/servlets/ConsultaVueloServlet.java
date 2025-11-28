@@ -29,7 +29,6 @@ public class ConsultaVueloServlet extends HttpServlet {
             ControladorSistemaPublish port = getPort();
 
             String aerolineaSeleccionada = request.getParameter("aerolinea");
-            List<String> aerolineas = port.listarNicknamesAerolineas();
             String rutaId = request.getParameter("rutaId");
             String vueloId = request.getParameter("vueloId");
 
@@ -52,6 +51,8 @@ public class ConsultaVueloServlet extends HttpServlet {
 
             request.setAttribute("nickNameAero", nickNameAero);
 
+            // Siempre cargar aerolíneas para mantener el selector funcional
+            List<String> aerolineas = port.listarNicknamesAerolineas();
             request.setAttribute("aerolineas", aerolineas);
             request.setAttribute("aerolineaSeleccionada", aerolineaSeleccionada);
 
@@ -68,7 +69,8 @@ public class ConsultaVueloServlet extends HttpServlet {
                                 if (dt != null)
                                     rutasDt.add(dt);
                             }
-                        } catch (Exception ex) { }
+                        } catch (Exception ex) {
+                        }
                     }
                 }
                 request.setAttribute("rutasDt", rutasDt);

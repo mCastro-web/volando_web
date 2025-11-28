@@ -31,52 +31,53 @@
         <% if ("CLIENTE".equalsIgnoreCase(tipoCuenta) || "PUBLICO".equalsIgnoreCase(tipoCuenta)) { %>
 
         <!-- FILTROS -->
-        <div class="rounded-box  p-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+            <div class="rounded-box p-4 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
-                <!-- Rol -->
-                <div class="form-control">
-                    <label class="label"><span class="label-text">Rol</span></label>
-                    <select id="selRol" class="input input-bordered w-full bg-base-100" disabled>
-                        <% if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) { %>
-                        <option value="CLIENTE" selected>Cliente</option>
-                        <% } else if ("PUBLICO".equalsIgnoreCase(tipoCuenta)) { %>
-                        <option value="PUBLICO" selected>Visitante</option>
-                        <% } %>
-                    </select>
-                </div>
+                    <!-- Rol -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Rol</span></label>
+                        <select id="selRol" class="input input-bordered w-full bg-base-100" disabled>
+                            <% if ("CLIENTE".equalsIgnoreCase(tipoCuenta)) { %>
+                            <option value="CLIENTE" selected>Cliente</option>
+                            <% } else if ("PUBLICO".equalsIgnoreCase(tipoCuenta)) { %>
+                            <option value="PUBLICO" selected>Visitante</option>
+                            <% } %>
+                        </select>
+                    </div>
 
-
-                <!-- Aerolínea -->
-                <div class="form-control">
-                    <label class="label"><span class="label-text">Aerolínea</span></label>
-                    <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+                    <!-- Aerolínea -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Aerolínea</span></label>
                         <select id="selAero" name="aerolinea" class="select select-bordered w-full">
+                            <option value="">Seleccione una Aerolínea</option>
                             <%
                                 List<String> aerolineas = (List<String>) request.getAttribute("aerolineas");
+                                String aeroSel = (String) request.getAttribute("aerolineaSeleccionada");
                                 if (aerolineas != null && !aerolineas.isEmpty()) {
                                     for (String a : aerolineas) {
                             %>
-                            <option value="<%= a %>"
-                                    <%= a.equals(request.getAttribute("aerolineaSeleccionada")) ? "selected" : "" %>>
-                                <%= a %>
-                            </option>
+                            <option value="<%= a %>" <%= a.equals(aeroSel) ? "selected" : "" %>><%= a %></option>
                             <%
-                                }
-                            } else {
+                                    }
+                                } else {
                             %>
                             <option value="">No hay aerolíneas disponibles</option>
                             <%
                                 }
                             %>
                         </select>
+                    </div>
 
-                    </form>
-                </div>
-                <div>
-                    <button type="submit" id="btnFiltrar" class="btn btn-primary w-full mt-3">Listar rutas confirmadas</button>
+                    <!-- Botón Listar Rutas -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">&nbsp;</span></label>
+                        <button type="submit" class="btn btn-primary w-full">Listar rutas confirmadas</button>
+                    </div>
                 </div>
             </div>
+        </form>
 
             <!-- Paso 2: Rutas confirmadas -->
             <div>
@@ -198,47 +199,49 @@
 
 
         <!-- FILTROS -->
-        <div class="rounded-box border p-4 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+            <div class="rounded-box border p-4 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
-                <!-- Rol -->
-                <div class="form-control">
-                    <label class="label"><span class="label-text">Rol </span></label>
-                    <select id="selRol" class="input input-bordered w-full bg-base-100">
-                        <option value="AEROLINEA" selected>Aerolínea</option>
-                    </select>
-                </div>
+                    <!-- Rol -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Rol </span></label>
+                        <select id="selRol" class="input input-bordered w-full bg-base-100">
+                            <option value="AEROLINEA" selected>Aerolínea</option>
+                        </select>
+                    </div>
 
-                <!-- Aerolínea -->
-                <div class="form-control">
-                    <label class="label"><span class="label-text">Aerolínea</span></label>
-                    <form action="${pageContext.request.contextPath}/ConsultaVueloServlet" method="get">
+                    <!-- Aerolínea -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">Aerolínea</span></label>
                         <select id="selAero" name="aerolinea" class="select select-bordered w-full">
+                            <option value="">Seleccione una Aerolínea</option>
                             <%
                                 List<String> aerolineas = (List<String>) request.getAttribute("aerolineas");
                                 String aeroSel = (String) request.getAttribute("aerolineaSeleccionada");
                                 if (aerolineas != null && !aerolineas.isEmpty()) {
                                     for (String a : aerolineas) {
                             %>
-                            <option value="<%= a %>"
-                                    <%= a.equals(aeroSel) ? "selected" : "" %>>
-                                <%= a %>
-                            </option>
+                            <option value="<%= a %>" <%= a.equals(aeroSel) ? "selected" : "" %>><%= a %></option>
                             <%
-                                }
-                            } else {
+                                    }
+                                } else {
                             %>
                             <option value="">No hay aerolíneas disponibles</option>
                             <%
                                 }
                             %>
                         </select>
-                        <button type="submit" id="btnFiltrar" class="btn btn-primary w-full mt-3">
-                            Listar rutas confirmadas
-                        </button>
-                    </form>
+                    </div>
+
+                    <!-- Botón Listar Rutas -->
+                    <div class="form-control">
+                        <label class="label"><span class="label-text">&nbsp;</span></label>
+                        <button type="submit" class="btn btn-primary w-full">Listar rutas confirmadas</button>
+                    </div>
                 </div>
             </div>
+        </form>
 
             <!-- Paso 2: Rutas confirmadas -->
             <div>
@@ -313,7 +316,7 @@
                             <!-- Si el nickname logueado coincide con la aerolínea consultada -->
                             <% if (nickLogueado != null && aerolineaSeleccionada != null
                                     && nickLogueado.equalsIgnoreCase(aerolineaSeleccionada)) { %>
-                            <a href="http://localhost:8080/ConsultaReservaVueloServlet?aerolinea=<%= aerolineaSeleccionada %>&vueloId=<%= vNombre %>"
+                            <a href="http://localhost:9090/ConsultaReservaVueloServlet?aerolinea=<%= aerolineaSeleccionada %>&vueloId=<%= vNombre %>"
                                class="btn btn-primary w-full mt-2">
                                 Ver reservas del vuelo
                             </a>

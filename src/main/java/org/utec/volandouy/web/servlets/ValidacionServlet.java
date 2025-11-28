@@ -39,6 +39,9 @@ public class ValidacionServlet extends HttpServlet {
             } else if ("email".equals(type)) {
                 exists = port.existeEmail(value);
                 message = exists ? "El email ya está registrado" : "El email está disponible";
+            } else if ("login_user".equals(type)) {
+                exists = port.existeNickname(value) || port.existeEmail(value);
+                message = exists ? "Usuario encontrado" : "Usuario inexistente";
             }
 
             // JSON manual construction

@@ -86,6 +86,7 @@ Esta información se utilizará para la <b>emisión de vuelos, facturación y ve
           <span class="label-text font-medium">Nickname</span>
         </div>
         <input required id="nicknameAerolinea" name="nicknameAerolinea" type="text" placeholder="Ingresa tu nombre o nombres" class="input input-bordered w-full bg-base-200" />
+        <div id="nickname-feedback"></div>
         <span class="label-text-alt text-xs opacity-70">El nickname debe ser único y representativo de tu aerolínea.</span>
       </label>
 
@@ -104,6 +105,7 @@ Esta información se utilizará para la <b>emisión de vuelos, facturación y ve
           <span class="label-text font-medium">Correo electrónico</span>
         </div>
         <input required id="emailAerolinea" name="emailAerolinea" type="text" placeholder="Ingresa tu correo electrónico" class="input input-bordered w-full bg-base-200" required />
+        <div id="email-feedback"></div>
         <div class="label">
           <span class="label-text-alt text-xs opacity-70"><b>Prefiere tu email empresarial </b> para asegurar que recibas nuestra comunicación.</span>
         </div>
@@ -237,5 +239,53 @@ Esta información se utilizará para la <b>emisión de vuelos, facturación y ve
   <jsp:include page="includes/aside.jsp" />
 
   <script src="${pageContext.request.contextPath}/js/flyonui.js"></script>
+  <script>
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
+
+    async function validateField(type, value, elementId, feedbackId) {
+        const feedbackElement = document.getElementById(feedbackId);
+        const inputElement = document.getElementById(elementId);
+        
+        if (!value) {
+            feedbackElement.textContent = "";
+            inputElement.classList.remove("input-error", "input-success");
+            return;
+        }
+
+        try {
+            const response = await fetch('ValidacionServlet?type=' + type + '&value=' + encodeURIComponent(value));
+            const data = await response.json();
+            
+            if (data.exists) {
+                feedbackElement.textContent = data.message;
+                feedbackElement.className = "text-error text-sm mt-1";
+                inputElement.classList.add("input-error");
+                inputElement.classList.remove("input-success");
+            } else {
+                feedbackElement.textContent = data.message;
+                feedbackElement.className = "text-success text-sm mt-1";
+                inputElement.classList.add("input-success");
+                inputElement.classList.remove("input-error");
+            }
+        } catch (error) {
+            console.error('Error validating ' + type, error);
+        }
+    }
+
+    document.getElementById('nicknameAerolinea').addEventListener('input', debounce(function(e) {
+        validateField('nickname', e.target.value, 'nicknameAerolinea', 'nickname-feedback');
+    }, 500));
+
+    document.getElementById('emailAerolinea').addEventListener('input', debounce(function(e) {
+        validateField('email', e.target.value, 'emailAerolinea', 'email-feedback');
+    }, 500));
+  </script>
 </body>
 </html>

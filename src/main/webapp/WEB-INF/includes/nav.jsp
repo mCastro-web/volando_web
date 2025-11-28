@@ -19,13 +19,13 @@
             
             <a href="${pageContext.request.contextPath}/" class="flex items-center gap-2">
               <img src="${pageContext.request.contextPath}/favicon.png" 
-                  class="w-8 h-8 rounded-md cursor-pointer hover:scale-105 transition-transform" 
+                  class="w-8 h-8 mt-0.5 rounded-md cursor-pointer hover:scale-105 transition-transform" 
                   alt="logo" />
             </a>
         </div>
         
-        <!-- Centro de la NAV-->
-        <div class="navbar-center w-full max-w-md mx-4">
+        <!-- Centro de la NAV - OCULTO EN MÓVIL-->
+        <div class="navbar-center w-full max-w-md mx-4 hidden md:flex">
             <form action="BusquedaServlet" method="GET" class="w-full flex justify-center">
                 <div class="flex items-center w-full max-w-3xl bg-base-200 rounded-full shadow-md border border-base-300 overflow-hidden">
                     
@@ -58,20 +58,11 @@
 
         <button
           onclick="window.location.href='login'"
-          class="border-white text-sm btn btn-sm btn-primary rounded mr-1 shadow-none"
+          class="rounded-full border-white text-sm btn btn-sm btn-primary mr-1 shadow-none px-4"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"
-            />
-          </svg>
-          Iniciar Sesion
+        
+          Login
+          <span class="icon-[tabler--login] size-5"></span>
         </button>
      
         </div>

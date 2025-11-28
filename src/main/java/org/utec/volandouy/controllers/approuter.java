@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class approuter {
-    
+
     @GetMapping("/")
     public String index() {
-        return "index"; 
+        return "index";
     }
 
     @GetMapping("/login")
@@ -24,28 +24,27 @@ public class approuter {
 
     @PostMapping("/login")
     public String loginPost() {
-        return "index"; 
+        return "index";
     }
 
-    @GetMapping("/modUser") 
+    @GetMapping("/modUser")
     public String modUser() {
-        return "modUser"; 
+        return "modUser";
     }
 
-
-    @GetMapping("/altavuelo") 
+    @GetMapping("/altavuelo")
     public String altavuelo() {
-        return "altavuelo"; 
+        return "altavuelo";
     }
 
-    @GetMapping("/consultaVuelo") 
+    @GetMapping("/consultaVuelo")
     public String consultaVuelo() {
-        return "consultaVuelo"; 
+        return "consultaVuelo";
     }
 
-        @PostMapping("/altaRutaVuelo")
+    @PostMapping("/altaRutaVuelo")
     public String AltaRutaVuelo() {
-        return "altaRutaVuelo"; 
+        return "altaRutaVuelo";
     }
 
     @GetMapping("/registerindex")
@@ -68,9 +67,9 @@ public class approuter {
         return "testServlet";
     }
 
-    @GetMapping("/consultaRutaVuelo") 
+    @GetMapping("/consultaRutaVuelo")
     public String consultaRutaVuelo() {
-        return "consultaRutaVuelo"; 
+        return "consultaRutaVuelo";
     }
 
     @GetMapping("/reservarVuelo")
@@ -83,18 +82,18 @@ public class approuter {
         return "compraPaquete";
     }
 
-    @GetMapping("/consultaReservaVuelo") 
+    @GetMapping("/consultaReservaVuelo")
     public String consultaReservaVuelo() {
-        return "consultaReservaVuelo"; 
+        return "consultaReservaVuelo";
     }
 
-    @GetMapping("/consultaPaqueteRutaVuelo") 
+    @GetMapping("/consultaPaqueteRutaVuelo")
     public String consultaPaqueteRutaVuelo() {
-        return "consultaPaqueteRutaVuelo"; 
+        return "consultaPaqueteRutaVuelo";
     }
 
-    @GetMapping("/seguir") 
+    @GetMapping("/seguir")
     public String seguir() {
-        return "seguir"; 
+        return "seguir";
     }
 }
