@@ -118,7 +118,7 @@
 
     <div>
         <label>Cantidad de Pasajes</label>
-        <input type="number" name="cantidad_pasajes" min="1"
+        <input onchange="refrescar('cantidad_pasajes', this.value)" type="number" name="cantidad_pasajes" min="1"
                value="<%= request.getAttribute("cantPasajeros") != null ? request.getAttribute("cantPasajeros") : 1 %>"
                class="input input-bordered w-full bg-base-200" />
     </div>
@@ -167,27 +167,43 @@
     </div>
 
     <%
-        String metodoPagoSel = request.getParameter("metodo_pago");
-        if ("paquete_comprado".equalsIgnoreCase(metodoPagoSel)) {
-            List<String> paquetesCliente = (List<String>) request.getAttribute("paquetesCliente");
+    String metodoPagoSel = request.getParameter("metodo_pago");
+    if ("paquete_comprado".equalsIgnoreCase(metodoPagoSel)) {
+        List<String> paquetesCliente = (List<String>) request.getAttribute("paquetesCliente");
     %>
-    <div>
-        <label>Selecciona un Paquete Comprado</label>
-        <select name="paquete_seleccionado" class="select select-bordered w-full bg-base-200">
-            <option value="" disabled selected>Selecciona un paquete disponible</option>
+<div>
+    <label>Selecciona un Paquete Comprado</label>
+    <select name="paquete_seleccionado" class="select select-bordered w-full bg-base-200">
+        <option value="" disabled selected>Selecciona un paquete disponible</option>
 
-            <% if (paquetesCliente != null && !paquetesCliente.isEmpty()) {
-                for (String paq : paquetesCliente) {
-            %>
-            <option value="<%= paq %>"><%= paq %></option>
-            <%     }
-            } else { %>
+        <% if (paquetesCliente != null && !paquetesCliente.isEmpty()) {
+               for (String paq : paquetesCliente) {
+                   String nombrePaq = paq.trim();
+                   String id = "";
+
+                   // Buscar el número (ID) al final del string
+                   int lastDigitIndex = -1;
+                   for (int i = nombrePaq.length() - 1; i >= 0; i--) {
+                       if (Character.isDigit(nombrePaq.charAt(i))) {
+                           lastDigitIndex = i;
+                       } else {
+                           break;
+                       }
+                   }
+
+                   if (lastDigitIndex != -1) {
+                       id = nombrePaq.replaceAll("\\D", ""); // elimina todo lo NO numérico
+                       nombrePaq = nombrePaq.substring(0, lastDigitIndex).trim(); // solo el nombre
+                   }
+        %>
+            <option value="<%= id %>"><%= nombrePaq %></option>
+        <%     }
+           } else { %>
             <option disabled>No tienes paquetes comprados</option>
-            <% } %>
-        </select>
-    </div>
-    <% } %>
-
+        <% } %>
+    </select>
+</div>
+<% } %>
 
     <%
 Boolean rutaEnPaquete = (Boolean) request.getAttribute("rutaEnPaquete");
