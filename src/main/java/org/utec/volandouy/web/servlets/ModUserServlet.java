@@ -83,8 +83,10 @@ public class ModUserServlet extends HttpServlet {
             String url = null;
 
             if (fotoPerfilC != null && fotoPerfilC.getSize() > 0) {
-                // WS adaptation: Just get the filename, upload not supported via WS yet
-                url = fotoPerfilC.getSubmittedFileName();
+                byte[] imageBytes = fotoPerfilC.getInputStream().readAllBytes();
+                String fileName = fotoPerfilC.getSubmittedFileName();
+                String contentType = fotoPerfilC.getContentType();
+                url = port.subirImagen(imageBytes, fileName, contentType, nickNameCliente);
             } else {
                 try {
                     Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");
@@ -130,8 +132,10 @@ public class ModUserServlet extends HttpServlet {
             String urlFoto = null;
 
             if (fotoPerfilA != null && fotoPerfilA.getSize() > 0) {
-                // WS adaptation: Just get the filename
-                urlFoto = fotoPerfilA.getSubmittedFileName();
+                byte[] imageBytes = fotoPerfilA.getInputStream().readAllBytes();
+                String fileName = fotoPerfilA.getSubmittedFileName();
+                String contentType = fotoPerfilA.getContentType();
+                urlFoto = port.subirImagen(imageBytes, fileName, contentType, nickNameCliente);
             } else {
                 try {
                     Method getUrlImagen = usuario.getClass().getMethod("getUrlImagen");

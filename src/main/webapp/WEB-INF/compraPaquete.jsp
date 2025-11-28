@@ -76,7 +76,7 @@
         <div class="card sm:max-w-sm mt-6">
             <figure class="h-48 w-full overflow-hidden">
                 <img
-                        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&w=1000&q=80"
+                        src="https://www.solumex.com/wp-content/uploads/2013/11/dummy-image-square.jpg"
                         alt="Imagen del paquete"
                         class="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
                 />

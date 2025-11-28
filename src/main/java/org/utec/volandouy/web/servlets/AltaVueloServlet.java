@@ -105,13 +105,16 @@ public class AltaVueloServlet extends HttpServlet {
 
         LocalDate fechaAlta = LocalDate.now();
 
+        ControladorSistemaPublish port = getPort();
         String imagenVuelo = null;
         try {
             Part filePart = request.getPart("file");
             if (filePart != null && filePart.getSize() > 0) {
-                // WS adaptation: Just get the filename, upload not supported via WS yet
-                imagenVuelo = filePart.getSubmittedFileName();
-                System.out.println("Imagen seleccionada: " + imagenVuelo);
+                byte[] imageBytes = filePart.getInputStream().readAllBytes();
+                String fileName = filePart.getSubmittedFileName();
+                String contentType = filePart.getContentType();
+                imagenVuelo = port.subirImagen(imageBytes, fileName, contentType, nombreVuelo);
+                System.out.println("Imagen subida: " + imagenVuelo);
             } else {
                 System.out.println("No se recibió archivo de imagen");
             }
@@ -127,7 +130,6 @@ public class AltaVueloServlet extends HttpServlet {
         }
 
         try {
-            ControladorSistemaPublish port = getPort();
             // WS expects Strings for dates usually, but let's check the method signature in
             // ControladorSistemaPublish.java
             // altaVuelo(String nombre, String fecha, String duracion, int asientosTurista,

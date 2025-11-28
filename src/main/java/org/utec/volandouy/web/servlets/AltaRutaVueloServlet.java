@@ -55,7 +55,10 @@ public class AltaRutaVueloServlet extends HttpServlet {
             Part imagen = request.getPart("fotoRepresentativa");
             String nombreArchivo = null;
             if (imagen != null && imagen.getSize() > 0) {
-                nombreArchivo = imagen.getSubmittedFileName();
+                byte[] imageBytes = imagen.getInputStream().readAllBytes();
+                String fileName = imagen.getSubmittedFileName();
+                String contentType = imagen.getContentType();
+                nombreArchivo = port.subirImagen(imageBytes, fileName, contentType, nombre);
             }
 
             String urlVideo = request.getParameter("urlVideo");

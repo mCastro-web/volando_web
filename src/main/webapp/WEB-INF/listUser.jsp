@@ -11,7 +11,7 @@
 <!-- NAV -->
 <jsp:include page="includes/nav.jsp" />
 
-<div class="w-full mx-auto max-w-4xl">
+<div class="w-full mx-auto max-w-4xl mt-10">
     <h1 class="text-3xl mb-2">Listar Usuarios</h1>
     <p class="text-sm mb-6">
         A continuación se muestra una lista de todos los <b>usuarios registrados</b> en la plataforma VolandoUy.
@@ -24,7 +24,7 @@
     </p>
 </div>
 
-<div id="listaUsuarios" class="grid grid-cols-2 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+<div id="listaUsuarios" class="grid grid-cols-2 md:grid-cols-2 mt-10 gap-6 max-w-7xl mx-auto">
     <!-- ============================ -->
     <!--       LISTA DE CLIENTES      -->
     <!-- ============================ -->

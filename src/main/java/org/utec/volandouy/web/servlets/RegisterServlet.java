@@ -60,11 +60,16 @@ public class RegisterServlet extends HttpServlet {
         }
 
         Part filePart = request.getPart("fotoPerfil");
-        // WS adaptation: Just get the filename, upload not supported via WS yet
-        String url = filePart.getSubmittedFileName();
+        ControladorSistemaPublish port = getPort();
+        String url = null;
+        if (filePart != null && filePart.getSize() > 0) {
+            byte[] imageBytes = filePart.getInputStream().readAllBytes();
+            String fileName = filePart.getSubmittedFileName();
+            String contentType = filePart.getContentType();
+            url = port.subirImagen(imageBytes, fileName, contentType, user);
+        }
 
         try {
-            ControladorSistemaPublish port = getPort();
             port.altaCliente(user, name, email, pass, url, apellido, bdate.toString(), nacionalidad, tipoDoc.toString(),
                     numeroDoc);
 
@@ -72,8 +77,7 @@ public class RegisterServlet extends HttpServlet {
             request.setAttribute("tipo", "success");
             response.sendRedirect(request.getContextPath() + "/");
 
-        } catch (IllegalArgumentException e) { // Catching IllegalArgumentException if WS throws it wrapped or directly
-            // Or generic Exception
+        } catch (IllegalArgumentException e) {
             handleException(request, response, e);
         } catch (Exception e) {
             handleException(request, response, e);

@@ -38,17 +38,22 @@ public class RegisterAServlet extends HttpServlet {
         System.out.println("Archivo recibido: " + filePart.getSubmittedFileName());
         System.out.println("Tamaño: " + filePart.getSize());
 
-        // WS adaptation: Just get the filename, upload not supported via WS yet
-        String url = filePart.getSubmittedFileName();
-        System.out.println("URL (filename) seleccionada: " + url);
+        ControladorSistemaPublish port = getPort();
+        String url = null;
+        if (filePart != null && filePart.getSize() > 0) {
+            byte[] imageBytes = filePart.getInputStream().readAllBytes();
+            String fileName = filePart.getSubmittedFileName();
+            String contentType = filePart.getContentType();
+            url = port.subirImagen(imageBytes, fileName, contentType, nicknameAerolinea);
+        }
+        System.out.println("URL generada: " + url);
 
         if (url == null || url.isEmpty()) {
-            response.sendRedirect("error.jsp?message=Error al subir imagen (nombre vacío)");
+            response.sendRedirect("error.jsp?message=Error al subir imagen");
             return;
         }
 
         try {
-            ControladorSistemaPublish port = getPort();
             port.altaAerolinea(nicknameAerolinea, nombre, email, password, url, descripcion, sitioWeb);
             response.sendRedirect(request.getContextPath() + "/");
         } catch (Exception e) {

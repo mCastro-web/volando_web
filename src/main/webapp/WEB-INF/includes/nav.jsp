@@ -133,19 +133,20 @@
                 </li>
                 <li>
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/modUser">
-                    <span class="icon-[tabler--user]"></span>
+                    <span class="material-icons-outlined">person</span>
                     Mi Usuario
                 </a>
                 </li>
                 <li>
-                <a class="dropdown-item" href="#">
-                    <span class="icon-[tabler--settings]"></span>
-                    Configuracion
-                </a>
+                <a href="${pageContext.request.contextPath}/SeguirServlet" class="dropdown-item">
+                    <span class="material-icons-outlined">person_add</span>
+                    Seguir Usuarios
+                </a>                    
+
                 </li>
                 <li class="dropdown-footer gap-2">
                     <a class="btn btn-error btn-soft btn-block" href="LogoutServlet">
-                    <span class="icon-[tabler--logout]"></span>
+                    <span class="material-icons-outlined">logout</span>
                     Cerrar Sesion
                     </a>
                 </li>
