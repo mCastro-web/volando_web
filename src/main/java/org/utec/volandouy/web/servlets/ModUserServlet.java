@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDate;
-import org.mindrot.jbcrypt.BCrypt;
 import publicadores.TipoDoc;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -73,10 +72,16 @@ public class ModUserServlet extends HttpServlet {
 
             String numDoc = request.getParameter("numDoc");
             String password = request.getParameter("password");
-            if (password != null && !password.isEmpty() && password.equals(confirmPassword)) {
-                password = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            // Validate passwords match before sending to WS
+            if (password != null && !password.isEmpty()) {
+                if (!password.equals(confirmPassword)) {
+                    System.out.println("Las contraseñas no coinciden");
+                    password = null; // Don't change password
+                }
+                // Send plain password to WS - DAO will hash it
             } else {
-                password = null;
+                password = null; // Empty = don't change password
             }
 
             Part fotoPerfilC = request.getPart("fotoPerfilMod");
@@ -122,10 +127,15 @@ public class ModUserServlet extends HttpServlet {
             String passwordA = request.getParameter("passwordA");
             String confirmPasswordA = request.getParameter("confirmPasswordA");
 
-            if (passwordA != null && !passwordA.isEmpty() && passwordA.equals(confirmPasswordA)) {
-                passwordA = BCrypt.hashpw(passwordA, BCrypt.gensalt());
+            // Validate passwords match before sending to WS
+            if (passwordA != null && !passwordA.isEmpty()) {
+                if (!passwordA.equals(confirmPasswordA)) {
+                    System.out.println("Las contraseñas no coinciden");
+                    passwordA = null; // Don't change password
+                }
+                // Send plain password to WS - DAO will hash it
             } else {
-                passwordA = null;
+                passwordA = null; // Empty = don't change password
             }
 
             Part fotoPerfilA = request.getPart("fotoPerfilA");

@@ -40,10 +40,24 @@ public class CompraPaqueteServlet extends HttpServlet {
             request.setAttribute("paqueteSeleccionado", dto);
         }
 
+        // 🔧 Leer mensajes de la sesión (enviados desde el POST)
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String success = (String) session.getAttribute("notyf_success");
+            String error = (String) session.getAttribute("notyf_error");
+
+            if (success != null) {
+                request.setAttribute("notyf_success", success);
+                session.removeAttribute("notyf_success");
+            }
+            if (error != null) {
+                request.setAttribute("notyf_error", error);
+                session.removeAttribute("notyf_error");
+            }
+        }
 
         request.getRequestDispatcher("/WEB-INF/compraPaquete.jsp").forward(request, response);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -58,45 +72,64 @@ public class CompraPaqueteServlet extends HttpServlet {
         }
 
         Object usuario = session.getAttribute("usuario");
-
         String nickNameCliente = "";
+
         try {
             java.lang.reflect.Method getNickname = usuario.getClass().getMethod("getNickname");
             Object tipoObj = getNickname.invoke(usuario);
             if (tipoObj != null)
                 nickNameCliente = tipoObj.toString();
         } catch (Exception e) {
-            System.out.println("Error obteniendo tipo de usuario: " + e.getMessage());
+            System.out.println("Error obteniendo nickname de usuario: " + e.getMessage());
+            session.setAttribute("notyf_error", "Error al obtener datos del usuario");
+            response.sendRedirect(request.getContextPath() + "/CompraPaqueteServlet?paquete_seleccionado=" + nombrePaquete);
+            return;
         }
 
         ControladorSistemaPublish port = getPort();
 
         if (nombrePaquete != null && !nombrePaquete.isEmpty()) {
-            DtPaqueteVuelo paquete = port.obtenerDtPaquetePorNombre(nombrePaquete);
-            request.setAttribute("paqueteSeleccionado", paquete);
+            try {
+                DtPaqueteVuelo paquete = port.obtenerDtPaquetePorNombre(nombrePaquete);
 
-            if (paquete != null) {
-                LocalDate hoy = LocalDate.now();
-                try {
-                    port.comprarPaquete(nickNameCliente, paquete.getNombre(), hoy.toString());
-                    request.setAttribute("notyf_success",
-                            "Paquete '" + paquete.getNombre() + "' comprado correctamente.");
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    // Cliente ya compró este paquete
-                    request.setAttribute("errorMsg", e.getMessage());
-                } catch (IllegalArgumentException e) {
-                    // Cliente no encontrado
-                    request.setAttribute("errorMsg", "Cliente no encontrado. Por favor, logueate nuevamente.");
-                } catch (Exception e) {
-                    request.setAttribute("errorMsg", e.getMessage());
+                if (paquete == null) {
+                    session.setAttribute("notyf_error", "Paquete no encontrado");
+                    response.sendRedirect(request.getContextPath() + "/CompraPaqueteServlet");
+                    return;
                 }
+
+                // Intentar comprar el paquete
+                LocalDate hoy = LocalDate.now();
+                port.comprarPaquete(nickNameCliente, paquete.getNombre(), hoy.toString());
+
+                // ✅ ÉXITO - Guardar mensaje en sesión
+                session.setAttribute("notyf_success",
+                        "¡Paquete '" + paquete.getNombre() + "' comprado exitosamente!");
+
+            } catch (IllegalStateException e) {
+                // Cliente ya compró este paquete
+                System.err.println("Cliente ya compró el paquete: " + e.getMessage());
+                session.setAttribute("notyf_error",
+                        "Ya compraste este paquete anteriormente");
+
+            } catch (IllegalArgumentException e) {
+                // Cliente no encontrado u otro argumento inválido
+                System.err.println("Argumento inválido: " + e.getMessage());
+                session.setAttribute("notyf_error",
+                        "Error: Cliente no encontrado. Por favor, inicia sesión nuevamente");
+
+            } catch (Exception e) {
+                // Cualquier otro error
+                System.err.println("Error inesperado al comprar paquete: " + e.getMessage());
+                e.printStackTrace();
+                session.setAttribute("notyf_error",
+                        "Ocurrió un error al procesar tu compra. Intenta nuevamente");
             }
+        } else {
+            session.setAttribute("notyf_error", "Debes seleccionar un paquete");
         }
 
-        List<String> nombres = port.listarNombresPaquetesConRutas();
-        request.setAttribute("paquetes", nombres);
-
-        request.getRequestDispatcher("/WEB-INF/compraPaquete.jsp").forward(request, response);
+        // 🔧 REDIRECT en lugar de forward (patrón POST-REDIRECT-GET)
+        response.sendRedirect(request.getContextPath() + "/CompraPaqueteServlet?paquete_seleccionado=" + nombrePaquete);
     }
 }
