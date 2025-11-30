@@ -109,7 +109,7 @@ mvn clean package
 mvn spring-boot:run
 ```
 
-La aplicación estará disponible en: `http://localhost:8080`
+La aplicación estará disponible en el puerto y direccion especificados en config.propoerties
 
 ### Despliegue en Servidor de Aplicaciones
 
