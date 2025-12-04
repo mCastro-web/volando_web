@@ -57,7 +57,7 @@ Volando.uy es una plataforma web de gestión de vuelos orientada a usuarios fina
 ### Frontend
 - **JSP (Jakarta Server Pages)** - Motor de vistas
 - **JSTL 3.0** - Jakarta Standard Tag Library
-- **Material Design Web Components 2.4.0** - Componentes UI
+- **Flyion UI** - Componentes UI
 - **Material Icons 1.13.14** - Iconografía
 - **Notyf 3.10.0** - Notificaciones
 
